@@ -1,5 +1,3 @@
 Copyright 2019 Kevin Lamping
 
-The contents in this repository are free for personal use.
-
-It is not permitted to copy (with the exception of Github forks), distribute, display, and perform the work, as well as make and distribute derivative works based on it, unless specifically granted.
+This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
