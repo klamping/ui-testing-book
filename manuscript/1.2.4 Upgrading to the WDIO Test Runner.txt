@@ -134,7 +134,7 @@ Even though we're not passing in the `config` flag to that command (although you
 
 You should see a screen like this appear:
 
-![IMAGE](quiver-image-url/29B218703E76D944A64AE4336BC0259A.jpg =757x202)
+![IMAGE](quiver-image-url/29B218703E76D944A64AE4336BC0259A.jpg)
 
 What this configuration utility will do is ask you a series of questions in regards to how you want your tests to run. The first question asks where to launch your tests, and right now only gives you one option. We can therefore ignore it and just hit 'enter' to continue to the next question.
 
@@ -219,7 +219,7 @@ Reporters are utilities that display the results of our tests in a more consumab
 
 Here are the two reporters showing the results of the same test run
 
-![IMAGE](quiver-image-url/EF5A75773DA8AA7DDFEF0F9AEB5D67E5.jpg =1082x637)
+![IMAGE](quiver-image-url/EF5A75773DA8AA7DDFEF0F9AEB5D67E5.jpg)
 
 On top is `dot`, which is quite succinct. `spec` is much more verbose, giving us more detail into what test specific failed.
 

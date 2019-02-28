@@ -49,7 +49,7 @@ To install the NPM package, run
 npm install -g chromedriver
 ```
 
-![IMAGE](images/19777E6D3338056789E9EBC378A1D8CD.jpg =1211x305)
+![IMAGE](images/19777E6D3338056789E9EBC378A1D8CD.jpg)
 
 You can then start a chromdriver instance by running:
 
@@ -57,7 +57,7 @@ You can then start a chromdriver instance by running:
 chromedriver
 ```
 
-![IMAGE](images/BB7464A817E912436260B942FD7FEF88.jpg =864x79)
+![IMAGE](images/BB7464A817E912436260B942FD7FEF88.jpg)
 
 This intance will continue to run until you stop it. To do that, issue an 'exit' command by pressing the `ctrl+c` key combo.
 
@@ -86,7 +86,7 @@ To run the install, issue this command:
 selenium-standalone install
 ```
 
-![Install output](images/F1C94C62E9E56D60383555358950EE45.jpg =1048x481)
+![Install output](images/F1C94C62E9E56D60383555358950EE45.jpg)
 
 You should only need to do this once (although you may need to run it again after driver updates occur).
 
@@ -96,7 +96,7 @@ Then, to start your server, run:
 selenium-standalone start
 ```
 
-![IMAGE](images/DB0D2292AFCF099D396202F158752795.jpg =927x147)
+![IMAGE](images/DB0D2292AFCF099D396202F158752795.jpg)
 
 This server will run until it recieves an exit command (similar to how Chromedriver works). You can issue that command with the `ctrl+c` key combo).
 

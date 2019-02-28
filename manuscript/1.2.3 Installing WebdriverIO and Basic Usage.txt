@@ -87,7 +87,7 @@ Aside from seeing the server running in your terminal, you can check that you ha
 
 You should see a website looking a lot like this:
 
-![IMAGE](images/36DFFD8164ACC4192A2D97CB974C62FC.jpg =610x296)
+![IMAGE](images/36DFFD8164ACC4192A2D97CB974C62FC.jpg)
 
 If you get a 404 error, something went wrong starting your server, and you'll need further debugging to resolve it.
 
@@ -119,7 +119,7 @@ Title was: WebdriverIO · Next-gen WebDriver test framework for Node.js
 2019-02-20T03:10:47.189Z INFO webdriver: [DELETE] http://0.0.0.0:4444/wd/hub/session/e3ed3a80bff9fc7a021d6c09cedbbcf3
 ```
 
-![IMAGE](images/AA4D4E0244560ACB403160A59B041A44.jpg =1010x280)
+![IMAGE](images/AA4D4E0244560ACB403160A59B041A44.jpg)
 
 If you instead see an error that includes `Request failed due to Error: connect ECONNREFUSED 0.0.0.0:4444`, this means your Selenium server wasn't running. Start it back up and try again. 
 
