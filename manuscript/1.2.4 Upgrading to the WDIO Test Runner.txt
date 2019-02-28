@@ -1,3 +1,5 @@
+# Upgrading to the Test Runner
+
 There are a plethora of WebDriver tutorials out there. Many of them cover the basics of installing and running a specific tool, but lack the depth to teach you how to test at a larger scale. 
 
 Here are several things most tutorials omit (mostly for the sake of time):

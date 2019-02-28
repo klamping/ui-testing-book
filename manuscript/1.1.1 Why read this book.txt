@@ -1,3 +1,5 @@
+# Why This Book?
+
 While I'd love to start things off by diving deep into technical details, it would be good to explain a few things first.
 
 Before investing time into a new tool, it's good to know why you'd want to learn how to use it.

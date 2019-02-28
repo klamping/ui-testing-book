@@ -1,3 +1,5 @@
+# Technical Details
+
 ## Versions
 
 Because technology changes fast, it's good to cover what versions of software I used when creating these exercises.

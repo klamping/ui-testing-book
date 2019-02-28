@@ -1,3 +1,5 @@
+# Browsers and Driving Them
+
 We normally use browsers by clicking with our mouse and typing with our keyboard. That works well for humans, but doesn't make sense when trying to write automated tests.
 
 Instead of building some sort of physical robot that can control a mouse and type on a keyboard, we invented software that mimicks these actions. Selenium RC was one of the original tools to do this. WebDriver, which was also developed around the same time as Selenium RC, became a popular alternative. In 2009, the two teams combined forces to create Selenium WebDriver.
@@ -47,7 +49,7 @@ To install the NPM package, run
 npm install -g chromedriver
 ```
 
-![IMAGE](resources/19777E6D3338056789E9EBC378A1D8CD.jpg =1211x305)
+![IMAGE](images/19777E6D3338056789E9EBC378A1D8CD.jpg =1211x305)
 
 You can then start a chromdriver instance by running:
 
@@ -55,7 +57,7 @@ You can then start a chromdriver instance by running:
 chromedriver
 ```
 
-![IMAGE](resources/BB7464A817E912436260B942FD7FEF88.jpg =864x79)
+![IMAGE](images/BB7464A817E912436260B942FD7FEF88.jpg =864x79)
 
 This intance will continue to run until you stop it. To do that, issue an 'exit' command by pressing the `ctrl+c` key combo.
 
@@ -84,7 +86,7 @@ To run the install, issue this command:
 selenium-standalone install
 ```
 
-![Install output](resources/F1C94C62E9E56D60383555358950EE45.jpg =1048x481)
+![Install output](images/F1C94C62E9E56D60383555358950EE45.jpg =1048x481)
 
 You should only need to do this once (although you may need to run it again after driver updates occur).
 
@@ -94,7 +96,7 @@ Then, to start your server, run:
 selenium-standalone start
 ```
 
-![IMAGE](resources/DB0D2292AFCF099D396202F158752795.jpg =927x147)
+![IMAGE](images/DB0D2292AFCF099D396202F158752795.jpg =927x147)
 
 This server will run until it recieves an exit command (similar to how Chromedriver works). You can issue that command with the `ctrl+c` key combo).
 
