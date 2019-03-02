@@ -225,3 +225,28 @@ On top is `dot`, which is quite succinct. `spec` is much more verbose, giving us
 
 I much prefer `spec` over `dot`, as I need to know these details. You'll probably want them as well, so let's select that as our reporter (press the down arrow, then space, then enter).
 
+Answering 'Yes' to the reporter install question, we're now asked if we want any services set up for us. Services are useful extensions to the main WebdriverIO functionality. There are many official services, a plethora of third-party ones and you can even write your own.
+
+You can find out more about each service by clicking in the link provided next to it. We're going to skip all of the options though, as they're more advanced than our needs require right now. Just hit enter without selecting any options and it will jump you to the next step.
+
+Getting close to being done with the questions. Next up it asks about your desired "Level of logging verbosity".
+
+These levels correspond to common log levels in code output, and the higher on the list your choose (trace being highest), the more log output you'll get. This can be helpful for debugging later on. Silent, on the other hand, doesn't log anything when running tests, and can be useful for avoiding a lot of noise in your test run.
+
+Choose whichever you prefer. I'd recommend either trace or debug.
+
+The last question asks what `baseUrl` we want. By setting this value, we can shorten our `browser.url` calls. We'll talk about it soon, but for now just type in `https://webdriver.io` and hit enter. 
+
+That finishes up all the questions. Now WebdriverI takes over and runs the NPM installs for the packages we requested, along with building out our configuration file.
+
+If all went well, you should see this message:
+
+```
+Configuration file was created successfully!
+To run your tests, execute:
+$ wdio wdio.conf.js
+```
+
+If you messed something up and need to run the config generator again, you can either delete your `wdio.conf.js` file and run the command again, or manually request the config builder with `npx wdio config`. Do know that this second option will overwrite any existing `wdio.conf.js` file.
+
+As many options as we went through just now, the config file actually sets quite a few more. We'll take a look through this newly generated file next.
