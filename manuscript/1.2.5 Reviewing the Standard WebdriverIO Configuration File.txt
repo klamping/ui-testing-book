@@ -1,0 +1,244 @@
+# Reviewing the Standard WebdriverIO Configuration File
+
+We just used the WebdriverIO test runner to help us create a configuration file to hold all of our settings. Let's go ahead and take a look at that file.
+
+Open up the newly created `wdio.conf.js` file in your text editor of choice. They file is saved in JavaScript format, so using a text editor with JavaScript syntax highlighting is a good idea.
+
+In our file, the first thing we'll check out is the `exports.config` line. If you're familiar with NodeJS, you'll recognize the use of the `exports` global variable.
+
+If you're unfamiliar with it, here's a basic description: NodeJS has a predefined `exports` object available for us to attach properties to, and WebdriverIO looks at the `config` property on this `exports` object for all of our settings.
+
+Because this is just a plain JavaScript file, it gives us the ability to run normal Node.js commands. For example, at the very top of the file, add a `console.log` command to show that we're in fact using this file.
+
+```js
+console.log('I am inside your configuration file, running your tests!')
+
+exports.config = { // rest of the file would be below
+```
+
+There are some added benefits to being able to run Node.js code. For instance, you can customize your settings based on environmental variables, handle custom command line arguments and other logic. This is a pretty in-depth topic though, so we'll leave that alone for now.
+
+Let's check out all the settings defined in our file. There are actually several more options here than just what we answered during our config step and it's good to know what those are.
+
+
+### Runner
+
+```js
+// ====================
+// Runner Configuration
+// ====================
+//
+// WebdriverIO allows it to run your tests in arbitrary locations (e.g. locally or
+// on a remote machine).
+runner: 'local',
+```
+
+The first setting is `runner`, which is based on our answer to the first question in the configuration. We're going to skip pass this option as it's not much use to us right now.
+
+### Specs and Exclude
+
+```js
+// ==================
+// Specify Test Files
+// ==================
+// Define which test specs should run. The pattern is relative to the directory
+// from which `wdio` was called. Notice that, if you are calling `wdio` from an
+// NPM script (see https://docs.npmjs.com/cli/run-script) then the current working
+// directory is where your package.json resides, so `wdio` will be called from there.
+//
+specs: [
+    './test/specs/**/*.js'
+],
+// Patterns to exclude.
+exclude: [
+    // 'path/to/excluded/files'
+],
+```
+
+Next is 'specs', which defines the folder path to our tests. We talked about this during our config setup, but notice that it's stored as an array. The reason for that is so we can add multiple patterns to search for, or specific files we'd like to run.
+
+Likewise, there's an `exclude` option, which allows us to exclude files based on a pattern or specific path.
+
+Both patterns are relative to the directory from which `wdio` was called.
+
+Let's move on to the capabilities section, which groups the information needed by WebdriverIO to initiate our desired WebDriver session. There are two parts to it:
+
+### Max Instances
+
+```js
+// First, you can define how many instances should be started at the same time. Let's
+// say you have 3 different capabilities (Chrome, Firefox, and Safari) and you have
+// set maxInstances to 1; wdio will spawn 3 processes. Therefore, if you have 10 spec
+// files and you set maxInstances to 10, all spec files will get tested at the same time
+// and 30 processes will get spawned. The property handles how many capabilities
+// from the same test should run tests.
+//
+maxInstances: 10,
+```
+
+WebdriverIO can run multiple capabilities at the same time, helping to saving time in your test runs.
+
+Say you have five test files, and each test file takes exactly 1 minute to run.
+
+Without this ability, the total time it would take your tests to run is five minutes. As each test file finishes, the next file is started.
+
+If you set `maxInstances` to 3, WebdriverIO will start 3 seperate sessions to run your seperate files. The first three tests would all run at the same time, taking one minute to complete overall. After the first two tests finish, WebdriverIO will automatically start running the remaining two tests. Alltogether the test suite would take 2 minutes to run (One minute for the first three tests and an additional minute for the final two).
+
+If you set `maxInstances` to 5, all five files would run at the same time, taking a total of one minute for all your tests to run.
+
+A word of warning. While running tests in parallel can certainly save time, it also requires you have a powerful computer to process all the commands. If you find you're CPU is maxing out when running all your tests, consider lowering this number to reduce the strain on your processor. Maxing out your CPU can definitely lead to failures in your test runner as the computer isn't able to keep up with all the requests.
+
+### Capabilities
+
+```js
+// If you have trouble getting all important capabilities together, check out the
+// Sauce Labs platform configurator - a great tool to configure your capabilities:
+// https://docs.saucelabs.com/reference/platforms-configurator
+//
+capabilities: [{
+    // maxInstances can get overwritten per capability. So if you have an in-house Selenium
+    // grid with only 5 firefox instances available you can make sure that not more than
+    // 5 instances get started at a time.
+    maxInstances: 5,
+    //
+    browserName: 'firefox',
+    // If outputDir is provided WebdriverIO can capture driver session logs
+    // it is possible to configure which logTypes to include/exclude.
+    // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
+    // excludeDriverLogs: ['bugreport', 'server'],
+}],
+```
+
+Up next is our `capabilities` setting. Again, the value is an array, which means that we can run our tests in multiple browsers each time we use the test runner.
+
+The configuration here looks similar to what we provided in the `desiredCapabilities` of our first `test.js` file. The default browser the test runner wants to use is Firefox, so we need to switch that to be Chrome for now just to be consistent with our previous test. Your capabilities setting can get pretty complex, but for now it should look like:
+
+```js
+capabilities: [{
+ browserName: 'chrome'
+}]
+```
+
+Note that within your capabilities you can overwrite the `spec`, `exclude`, and `maxInstances` options in order to group specific specs to a specific capability.
+
+### Log Level
+
+```js
+// ===================
+// Test Configurations
+// ===================
+// Define all options that are relevant for the WebdriverIO instance here
+//
+// Level of logging verbosity: trace | debug | info | warn | error | silent
+logLevel: 'info',
+```
+
+Next in our settings file is the test configurations section. We've already covered the `logLevel` setting, so let's skip on by that.
+
+### Bail
+
+```js
+// If you only want to run your tests until a specific amount of tests have failed use
+// bail (default is 0 - don't bail, run all tests).
+bail: 0,
+```
+
+The `bail` setting can be useful if you only want to run your tests until a specific amount of tests have failed use. This can help save time when debugging tests.
+
+### Base URL
+
+```js
+// Set a base URL in order to shorten url command calls. If your `url` parameter starts
+// with `/`, the base url gets prepended, not including the path portion of your baseUrl.
+// If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
+// gets prepended directly.
+baseUrl: 'https://webdriver.io',
+```
+
+We've also already talked about `baseUrl`, so we'll jump past that setting as well.
+
+### "waitFor" Timeout
+
+```js
+// Default timeout for all waitFor* commands.
+waitforTimeout: 10000,
+```
+
+`waitforTimeout` defines how long `waitFor` commands should wait until erroring out. We haven't covered these commands yet, so let's leave this at the default value.
+
+### Connection Retry Options
+
+```js
+// Default timeout in milliseconds for request
+// if Selenium Grid doesn't send response
+connectionRetryTimeout: 90000,
+//
+// Default request retries count
+connectionRetryCount: 3,
+```
+
+The `connectionRetryTimeout` and `connectionRetryCount` options are useful to adjust if you're having trouble connecting to your Selenium Grid. You should be good to leave these alone though.
+
+### Services
+
+```js
+// Test runner services
+// Services take over a specific job you don't want to take care of. They enhance
+// your test setup with almost no effort. Unlike plugins, they don't add new
+// commands. Instead, they hook themselves up into the test process.
+// services: [],
+```
+
+Commented out are options for WebdriverIO services. We'll cover using services later and will leave these options commented out until then.
+
+### Framework
+
+```js
+// Framework you want to run your specs with.
+// The following are supported: Mocha, Jasmine, and Cucumber
+// see also: https://webdriver.io/docs/frameworks.html
+//
+// Make sure you have the wdio adapter package for the specific framework installed
+// before running any tests.
+framework: 'mocha',
+```
+
+Next is the `framework` setting set to `mocha`, which is what we provided.
+
+### Reporters
+
+```js
+// Test reporter for stdout.
+// The only one supported by default is 'dot'
+// see also: https://webdriver.io/docs/dot-reporter.html
+reporters: ['spec'],
+```
+
+You'll also see the `reporter` option set to 'spec'. Since this is an array, you can pass in multiple reporters if you'd like.
+
+### Mocha Options
+
+```js
+// Options to be passed to Mocha.
+// See the full list at http://mochajs.org/
+mochaOpts: {
+    ui: 'bdd',
+    timeout: 60000
+},
+```
+
+The `mochaOpts` option is useful for passing configurations for Mocha to use. Here it defines using the `bdd` ui type, which says we want to write our tests in [the Behavior-driven Development style](https://mochajs.org/#interfaces).
+
+A `timeout` setting of 60000 is provided, which says that after 60000 milliseconds of running (or 60 seconds), our test will "timeout". Some tests can take up to three minutes to run, so updating this value to 180000 can be useful if you're tests take a little longer to complete.
+
+There are more options you can define here for Mocha, and you can get a full list of options to set via [the Mocha website](https://mochajs.org/#command-line-usage).
+
+### Hooks
+
+Finally, there are several hooks we can use to add functionality in the middle of the test process. This opens up a fair amount of potential to really add-on to the default WebdriverIO test runner functionality, and we'll look at an example of that later on.
+
+### The End
+
+That's the end of our settings file. We'll be jumping back in this file often to adjust settings and add new functionality.
+
+For now though, let's get our test file setup so we can try out all these new features.
