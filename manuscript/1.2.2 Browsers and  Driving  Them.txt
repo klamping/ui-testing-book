@@ -86,7 +86,7 @@ To run the install, issue this command:
 selenium-standalone install
 ```
 
-![Install output](quiver-image-url/F1C94C62E9E56D60383555358950EE45.jpg)
+![Install output](images/F1C94C62E9E56D60383555358950EE45.jpg)
 
 You should only need to do this once (although you may need to run it again after driver updates occur).
 
