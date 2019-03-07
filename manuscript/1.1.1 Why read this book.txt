@@ -1,4 +1,4 @@
-# Why This Book?
+# Why read this book?
 
 While I'd love to start things off by diving deep into technical details, it would be good to explain a few things first.
 

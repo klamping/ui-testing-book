@@ -1,4 +1,4 @@
-# Upgrading to the Test Runner
+# Upgrading to the WDIO Test Runner
 
 There are a plethora of WebDriver tutorials out there. Many of them cover the basics of installing and running a specific tool, but lack the depth to teach you how to test at a larger scale. 
 
@@ -194,12 +194,13 @@ browser.deleteSession();
 ```
 
 That's a lot cleaner and easier to scan through. Well, that's a feature the test runner gives you. It modifies the code you're running to automatically include those `await` statements, without you have to do the work yourself. 
+[TODO <https://github.com/webdriverio/webdriverio/issues/2542> sync vs async]
 
 Going back to our options, if you wanted to, you could stick with the `async` style of writing all your `await` keywords yourself. But me, I'm lazy, and I'll take any chance I can to do less work. 
 
 I'm going to assume you're like me and want to go with WebdriverIO handling the `async/await` nature of our tests (although you probably have better reasons than "I'm lazy"). To do that, choose `sync` as your option and hit enter. We'll still have a way to run custom `async` commands, but for now we've enabled a much simpler way to write our tests.
 
-Almost through the questions. Next up it asks `Where are your test specs located? (./test/specs/**/*.js)`. 
+Next up it asks `Where are your test specs located? (./test/specs/**/*.js)`. 
 
 By default they mark the location as the `test/specs` folder. However, you can change this if you prefer. We haven't created the folders yet but will in a second, so go with the default by pressing enter. Again, you can customize this if you prefer, but the examples in the book assume you used this default path. 
 
@@ -227,7 +228,11 @@ I much prefer `spec` over `dot`, as I need to know these details. You'll probabl
 
 Answering 'Yes' to the reporter install question, we're now asked if we want any services set up for us. Services are useful extensions to the main WebdriverIO functionality. There are many official services, a plethora of third-party ones and you can even write your own.
 
-You can find out more about each service by clicking in the link provided next to it. We're going to skip all of the options though, as they're more advanced than our needs require right now. Just hit enter without selecting any options and it will jump you to the next step.
+You can find out more about each service by clicking in the link provided next to it. The one service we're interested in installing right now is the `selenium-standalone` service. Arrow down to it and click `space`.
+
+Note: If you'd prefer to skip the Java install associated with using `selenium-standalone`, I will talk about how to use the chromedriver service a couple sections later. Feel free to hit enter without selecting any options if that's your preference. 
+
+Assuming you decided to use the `selenium-standalone` service, it will prompt you about installing it. Hit enter again to have it installed. 
 
 Getting close to being done with the questions. Next up it asks about your desired "Level of logging verbosity".
 

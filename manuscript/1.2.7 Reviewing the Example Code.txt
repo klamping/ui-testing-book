@@ -1,0 +1,47 @@
+# Reviewing the Example Test Code
+
+Just for a quick comparison, below is the sample code for standalone mode versus running through the test runner:
+
+**Standalone:**
+```js
+const { remote } = require('webdriverio');
+
+(async () => {
+    const browser = await remote({
+        capabilities: {
+            browserName: 'chrome'
+        }
+    });
+
+    await browser.url('https://webdriver.io');
+
+    const title = await browser.getTitle();
+    console.log('Title was: ' + title);
+
+    await browser.deleteSession();
+})().catch((e) => console.error(e));
+```
+
+**Test Runner:**
+```js
+const assert = require('assert');
+
+describe('webdriver.io page', () => {
+    it('should have the right title', () => {
+        browser.url('https://webdriver.io');
+        const title = browser.getTitle();
+        assert.equal(title, 'WebdriverIO · Next-gen WebDriver test framework for Node.js');
+    });
+});
+```
+
+Overall our test runner code is much more succinct. This is due to quite a few things:
+
+* **No need for `remote` and setting up our `browser` object**: This is all done via our configuration file and the test runner
+* **No need for `async` and `await` keywords**: By running our tests in `sync` mode, we no longer need to add all that extra code.
+* **No need to delete the session**: The test runner manages both creating and ending the sessions for us, so we don't manually have to do this.
+  
+
+Other things:
+  * Describe/it blocks (how mocha works)
+  * Assertions

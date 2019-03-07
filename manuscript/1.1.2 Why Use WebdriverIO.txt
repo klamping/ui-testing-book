@@ -1,8 +1,8 @@
-## Why WebdriverIO?
+# Why Use WebdriverIO?
 
 Back in the late 2000's, I had learned of a tool called Selenium that the tester's on my team were fairly interested in using.
 
-I thought it was a neat idea, but there was one big red-flag to me. It required writing the tests in the Java programming language.
+I thought it was a neat idea, but there was one big red flag to me. It required writing the tests in the Java programming language.
 
 I had taken a couple semesters of Java programming on college and actually enjoyed the object-oriented nature of the language. I had to wrap my head around some of the complexities of the language, but overall I found it a useful language to understand.
 

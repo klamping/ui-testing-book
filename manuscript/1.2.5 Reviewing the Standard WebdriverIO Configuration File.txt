@@ -6,7 +6,7 @@ Open up the newly created `wdio.conf.js` file in your text editor of choice. The
 
 In our file, the first thing we'll check out is the `exports.config` line. If you're familiar with NodeJS, you'll recognize the use of the `exports` global variable.
 
-If you're unfamiliar with it, here's a basic description: NodeJS has a predefined `exports` object available for us to attach properties to, and WebdriverIO looks at the `config` property on this `exports` object for all of our settings.
+If you're unfamiliar with it, here's a basic description: NodeJS has a predefined `exports` object available for us to attach properties to, and WebdriverIO looks at the `config` property on this `exports` object for all of our settings. 
 
 Because this is just a plain JavaScript file, it gives us the ability to run normal Node.js commands. For example, at the very top of the file, add a `console.log` command to show that we're in fact using this file.
 
@@ -16,7 +16,7 @@ console.log('I am inside your configuration file, running your tests!')
 exports.config = { // rest of the file would be below
 ```
 
-There are some added benefits to being able to run Node.js code. For instance, you can customize your settings based on environmental variables, handle custom command line arguments and other logic. This is a pretty in-depth topic though, so we'll leave that alone for now.
+There are some added benefits to being able to run Node.js code. For instance, you can customize your settings based on environmental variables, handle custom command line arguments and other logic. This is a pretty in-depth topic though, so we'll leave that alone for now. 
 
 Let's check out all the settings defined in our file. There are actually several more options here than just what we answered during our config step and it's good to know what those are.
 
@@ -55,11 +55,11 @@ exclude: [
 ],
 ```
 
-Next is 'specs', which defines the folder path to our tests. We talked about this during our config setup, but notice that it's stored as an array. The reason for that is so we can add multiple patterns to search for, or specific files we'd like to run.
+Next is 'specs', which defines the folder path to our tests. We talked about this during our config setup, but notice that it's stored as an array. The reason for that is so we can add multiple patterns to search for, or specific files we'd like to run. 
 
-Likewise, there's an `exclude` option, which allows us to exclude files based on a pattern or specific path.
+Likewise, there's an `exclude` option, which allows us to exclude files based on a pattern or specific path. 
 
-Both patterns are relative to the directory from which `wdio` was called.
+Both patterns are relative to the directory from which `wdio` was called. 
 
 Let's move on to the capabilities section, which groups the information needed by WebdriverIO to initiate our desired WebDriver session. There are two parts to it:
 
@@ -76,15 +76,15 @@ Let's move on to the capabilities section, which groups the information needed b
 maxInstances: 10,
 ```
 
-WebdriverIO can run multiple capabilities at the same time, helping to saving time in your test runs.
+WebdriverIO can run multiple capabilities at the same time, helping to saving time in your test runs. 
 
 Say you have five test files, and each test file takes exactly 1 minute to run.
 
-Without this ability, the total time it would take your tests to run is five minutes. As each test file finishes, the next file is started.
+Without this ability, the total time it would take your tests to run is five minutes. As each test file finishes, the next file is started. 
 
 If you set `maxInstances` to 3, WebdriverIO will start 3 seperate sessions to run your seperate files. The first three tests would all run at the same time, taking one minute to complete overall. After the first two tests finish, WebdriverIO will automatically start running the remaining two tests. Alltogether the test suite would take 2 minutes to run (One minute for the first three tests and an additional minute for the final two).
 
-If you set `maxInstances` to 5, all five files would run at the same time, taking a total of one minute for all your tests to run.
+If you set `maxInstances` to 5, all five files would run at the same time, taking a total of one minute for all your tests to run. 
 
 A word of warning. While running tests in parallel can certainly save time, it also requires you have a powerful computer to process all the commands. If you find you're CPU is maxing out when running all your tests, consider lowering this number to reduce the strain on your processor. Maxing out your CPU can definitely lead to failures in your test runner as the computer isn't able to keep up with all the requests.
 
@@ -111,7 +111,9 @@ capabilities: [{
 
 Up next is our `capabilities` setting. Again, the value is an array, which means that we can run our tests in multiple browsers each time we use the test runner.
 
-The configuration here looks similar to what we provided in the `desiredCapabilities` of our first `test.js` file. The default browser the test runner wants to use is Firefox, so we need to switch that to be Chrome for now just to be consistent with our previous test. Your capabilities setting can get pretty complex, but for now it should look like:
+The configuration here looks similar to what we provided in the `desiredCapabilities` of our first `test.js` file.
+
+The default browser the test runner wants to use is Firefox, so we need to switch that to be Chrome for now just to be consistent with our previous test. Your capabilities setting can get pretty complex, but for now it should look like:
 
 ```js
 capabilities: [{
@@ -164,7 +166,7 @@ We've also already talked about `baseUrl`, so we'll jump past that setting as we
 waitforTimeout: 10000,
 ```
 
-`waitforTimeout` defines how long `waitFor` commands should wait until erroring out. We haven't covered these commands yet, so let's leave this at the default value.
+`waitforTimeout` defines how long `waitFor` commands should wait until erroring out. We haven't covered these commands yet, so let's leave this at the default value. 
 
 ### Connection Retry Options
 
@@ -186,10 +188,18 @@ The `connectionRetryTimeout` and `connectionRetryCount` options are useful to ad
 // Services take over a specific job you don't want to take care of. They enhance
 // your test setup with almost no effort. Unlike plugins, they don't add new
 // commands. Instead, they hook themselves up into the test process.
-// services: [],
+services: ['selenium-standalone'],
 ```
 
-Commented out are options for WebdriverIO services. We'll cover using services later and will leave these options commented out until then.
+Here's an array of services we have choosen to run when using the test runner. These services provided added features. In this instance, we've got the 'selenium-standalone' service enabled (assuming you chose to install it). The overall option is an array, so yes, you can have multiple services running at once.
+
+Do note that not all services work together. For example, you wouldn't want to have the following services array:
+
+```js
+services: ['selenium-standalone', 'chromedriver', 'sauce'],
+```
+
+All three of those services do the same thing: host a WebDriver server for you to run your tests against. By having all three set, they'd have conflicts when starting up. Instead, you'd just choose one and go with it. 
 
 ### Framework
 

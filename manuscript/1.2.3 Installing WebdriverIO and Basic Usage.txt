@@ -1,8 +1,10 @@
+# Installing WebdriverIO and Basic Usage
+
 The time has finally come! We've laid all the groundwork to understand the nuts and bolts behind UI testing, now it's time to do some!
 
 To start off, we're going to create a new folder for all of our project to go in. Later on, we'll be incorporating this project into a fully-fledged application repo, but for now we'll create an individual WebdriverIO project.
 
-So, in a directory of your choice, make a new folder called `wdio-standalone` (We'll cover the 'standalone' name in a little bit):
+So, in a directory of your choice, make a new folder called `wdio-standalone` (we'll cover the 'standalone' name in a little bit):
 
 ```
 mkdir wdio-standalone

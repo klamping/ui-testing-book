@@ -1,0 +1,132 @@
+# Running the Example Test Runner Test
+
+Now that we've created and review our configuration file, it's time to write a test to make use of it. 
+
+Since this is the first time we're creating a test, we need to create our folders for the test files to go into.
+
+During setup, we defined out specs path as `./test/specs/\*\*/\*.js`. But we don't have a test folder, nor a specs folder inside it.
+
+Let's create those folders by running the following command from our `wdio-testrunner` project path:
+
+```sh
+mkdir -p ./test/specs
+```
+
+[TODO verify -p works in windows]
+
+That will create both folders for us. Now we can create our first test file:
+
+```sh
+touch ./test/specs/example.js
+```
+
+For Windows, that command will be [TODO verify this]:
+
+```sh
+type nul > .\test\specs\example.js
+```
+
+Open that file up in your text editor of choice and paste in this example from the official WebdriverIO website:
+
+```js
+const assert = require('assert');
+
+describe('webdriver.io page', () => {
+    it('should have the right title', () => {
+        browser.url('https://webdriver.io');
+        const title = browser.getTitle();
+        assert.equal(title, 'WebdriverIO · Next-gen WebDriver test framework for Node.js');
+    });
+});
+```
+
+Before we get into the code we just pasted, let's save the file and try running the test. 
+
+## Running via Selenium Standalone
+
+Unlike before, we don't have to do anything to run our tests through Selenium Standalone. This is because the service takes care of starting and stopping our Selenium for us.
+
+The one thing we should check on is making sure the Selenium server we started up earlier isn't still running. Check your terminal windows to make sure this isn't the case (remember you can stop the server by sending the `ctrl-c` key command).
+
+You can also go to `http://localhost:4444/wd/hub` and making sure it returns a "site can't be reached" error. 
+
+Okay, with that out of the way, let's run our tests by calling the WDIO test runner inside our terminal: 
+
+```sh
+npx wdio
+```
+
+Immediately you should see the following output:
+
+```
+2019-03-07T00:16:46.971Z DEBUG @wdio/config: @wdio/sync found, running tests synchronous
+```
+
+After a few moments, your terminal will clear and the test output will start appearing. You'll probably see a browser window pop up. Just let it sit there and do it's thing (this can make for a neat magic trick for someone unfamiliar with automation).
+
+The test will take a few seconds to run, then shut everything down. Once finished, it'll print out the final results, something like:
+
+![IMAGE](images/CE12A02D77AF5FE273461E8817F1D1FF.jpg)
+
+Hopefully you see a green checkmark. If not, jump to the debugging section for help troubleshooting the issue.
+
+And that's how you run your tests. Again, our `selenium-standalone` service took care of shutting down the server it started, so we don't have to do anything. 
+
+## Running with Chromedriver
+
+Chromedriver also comes with its own WebdriverIO service, allowing us the ability to automatically start and stop a `chromedriver` server during our test run. 
+
+Installation and usage is much like that with `selenium-standalone`, beginning with our NPM install step.
+
+From the command line, let's install two packages:
+
+```sh
+$ npm install chromedriver wdio-chromedriver-service
+```
+
+Even though we've already installed the chromedriver package globally, we're installing it locally so that it's added to our package.json file. 
+
+Information on the packages we install locally automatically get saved to a `dependency` section of our package.json file by NPM. This gives us the ability to reinstall any missing dependencies later on by running `npm install`. This is helpful if you want to load your project from scratch.
+
+With the install done, we need to do two more things. Jump back in to your `wdio.conf.js` file and skip down to the services section. It should list `selenium-standalone` as your only service. We need to replace that with `chromedriver`.
+
+As I briefly mentioned before, you don't want to have both `selenium-standalone` and `chromedriver` in your services at the same time as they would conflict with each other. So go ahead and delete `selenium-standalone` from the list (or comment it out for future reference).
+
+Then, add `chromedriver` to the list so that it looks like:
+
+```js
+services: ['chromedriver'],
+```
+
+With that done, we need to do one more thing. You may recall during our first time using Chromedriver that we had to update the `port` and `path` settings in our Webdriver session initialization.
+
+Well, we've got to do the same thing here. You can do this at the top of the file, but for the sake of simplicity, I'm going to add my `port` and `path` settings right below my services config.
+
+The port should be set to 9515 and the path set to '/'. These are the default port/path locations for chromedriver (you can override that, but I won't be covering it). 
+
+Overall that'll look like this:
+
+```js
+services: ['chromedriver'],
+port: 9515,
+path: '/',
+```
+
+Now that we've got chromedriver setup, let's run our tests again with our `wdio` command:
+
+```sh
+npx wdio
+```
+
+The output should look almost identical to before:
+
+![IMAGE](images/29F156918FA0DAE6C464B5E8D5663FEE.jpg)
+
+Whether you use Chromedriver or Selenium Standalone is entirely up to you. The benefit of chromedriver is that you don't need to have Java installed to run, but the drawback is that you can only run your tests in Chrome. 
+
+On the other hand, Selenium Standalone installs and manages all the browser drivers for you, so you're free to run most any browser installed on your computer.
+
+Personally I use either of them depending on the situation. I usually lean on Chromedriver when starting out, as it's usally quicker to run, then switch over to Selenium Standalone when I need to expand my browser coverage.
+
+Now that we've got our test running, let's take some time to review the actual code.
+
