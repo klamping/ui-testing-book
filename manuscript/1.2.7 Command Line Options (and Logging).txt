@@ -97,7 +97,7 @@ npx wdio --bail=1
 
 Of course, we could set this to any number, but 1 is what will be used most, as you want to get back to fixing your broken tests right away.
 
-## Base URL
+### Base URL
 
 Overriding the `baseUrl` can be helpful for times when you need to test the same site on a different server. Most often this occurs when you're testing a server on your local computer versus the test server. It can also be useful for one-time tests of special server spun up to run specific code.
 

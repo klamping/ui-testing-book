@@ -60,7 +60,9 @@ UI test automation is a way to convert those manual mouse clicks and keystrokes 
 
 TODO Unit vs UI/E2E vs Other
 
-## TODO How can we fit UI testing in?
+### How can we fit UI testing in?
+
+TODO 
 
 * Different types of sites for testing
   * style guides/ui libraries/demo sites
