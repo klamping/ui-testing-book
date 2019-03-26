@@ -1,4 +1,4 @@
-# Reviewing the Standard WebdriverIO Configuration File
+## 1.2.5 Reviewing the Standard WebdriverIO Configuration File
 
 We just used the WebdriverIO test runner to help us create a configuration file to hold all of our settings. Let's go ahead and take a look at that file.
 
@@ -21,7 +21,7 @@ There are some added benefits to being able to run Node.js code. For instance, y
 Let's check out all the settings defined in our file. There are actually several more options here than just what we answered during our config step and it's good to know what those are.
 
 
-### Runner
+#### Runner
 
 ```js
 // ====================
@@ -35,7 +35,7 @@ runner: 'local',
 
 The first setting is `runner`, which is based on our answer to the first question in the configuration. We're going to skip pass this option as it's not much use to us right now.
 
-### Specs and Exclude
+#### Specs and Exclude
 
 ```js
 // ==================
@@ -63,7 +63,7 @@ Both patterns are relative to the directory from which `wdio` was called.
 
 Let's move on to the capabilities section, which groups the information needed by WebdriverIO to initiate our desired WebDriver session. There are two parts to it:
 
-### Max Instances
+#### Max Instances
 
 ```js
 // First, you can define how many instances should be started at the same time. Let's
@@ -88,7 +88,7 @@ If you set `maxInstances` to 5, all five files would run at the same time, takin
 
 A word of warning. While running tests in parallel can certainly save time, it also requires you have a powerful computer to process all the commands. If you find you're CPU is maxing out when running all your tests, consider lowering this number to reduce the strain on your processor. Maxing out your CPU can definitely lead to failures in your test runner as the computer isn't able to keep up with all the requests.
 
-### Capabilities
+#### Capabilities
 
 ```js
 // If you have trouble getting all important capabilities together, check out the
@@ -123,7 +123,7 @@ capabilities: [{
 
 Note that within your capabilities you can overwrite the `spec`, `exclude`, and `maxInstances` options in order to group specific specs to a specific capability.
 
-### Log Level
+#### Log Level
 
 ```js
 // ===================
@@ -137,7 +137,7 @@ logLevel: 'info',
 
 Next in our settings file is the test configurations section. We've already covered the `logLevel` setting, so let's skip on by that.
 
-### Bail
+#### Bail
 
 ```js
 // If you only want to run your tests until a specific amount of tests have failed use
@@ -147,7 +147,7 @@ bail: 0,
 
 The `bail` setting can be useful if you only want to run your tests until a specific amount of tests have failed use. This can help save time when debugging tests.
 
-### Base URL
+#### Base URL
 
 ```js
 // Set a base URL in order to shorten url command calls. If your `url` parameter starts
@@ -159,7 +159,7 @@ baseUrl: 'https://webdriver.io',
 
 We've also already talked about `baseUrl`, so we'll jump past that setting as well.
 
-### "waitFor" Timeout
+#### "waitFor" Timeout
 
 ```js
 // Default timeout for all waitFor* commands.
@@ -168,7 +168,7 @@ waitforTimeout: 10000,
 
 `waitforTimeout` defines how long `waitFor` commands should wait until erroring out. We haven't covered these commands yet, so let's leave this at the default value. 
 
-### Connection Retry Options
+#### Connection Retry Options
 
 ```js
 // Default timeout in milliseconds for request
@@ -181,7 +181,7 @@ connectionRetryCount: 3,
 
 The `connectionRetryTimeout` and `connectionRetryCount` options are useful to adjust if you're having trouble connecting to your Selenium Grid. You should be good to leave these alone though.
 
-### Services
+#### Services
 
 ```js
 // Test runner services
@@ -201,7 +201,7 @@ services: ['selenium-standalone', 'chromedriver', 'sauce'],
 
 All three of those services do the same thing: host a WebDriver server for you to run your tests against. By having all three set, they'd have conflicts when starting up. Instead, you'd just choose one and go with it. 
 
-### Framework
+#### Framework
 
 ```js
 // Framework you want to run your specs with.
@@ -215,7 +215,7 @@ framework: 'mocha',
 
 Next is the `framework` setting set to `mocha`, which is what we provided.
 
-### Reporters
+#### Reporters
 
 ```js
 // Test reporter for stdout.
@@ -226,7 +226,7 @@ reporters: ['spec'],
 
 You'll also see the `reporter` option set to 'spec'. Since this is an array, you can pass in multiple reporters if you'd like.
 
-### Mocha Options
+#### Mocha Options
 
 ```js
 // Options to be passed to Mocha.
@@ -243,11 +243,11 @@ A `timeout` setting of 60000 is provided, which says that after 60000 millisecon
 
 There are more options you can define here for Mocha, and you can get a full list of options to set via [the Mocha website](https://mochajs.org/#command-line-usage).
 
-### Hooks
+#### Hooks
 
 Finally, there are several hooks we can use to add functionality in the middle of the test process. This opens up a fair amount of potential to really add-on to the default WebdriverIO test runner functionality, and we'll look at an example of that later on.
 
-### The End
+#### The End
 
 That's the end of our settings file. We'll be jumping back in this file often to adjust settings and add new functionality.
 

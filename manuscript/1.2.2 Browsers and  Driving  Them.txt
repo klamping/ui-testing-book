@@ -1,4 +1,4 @@
-# Browsers and "Driving" Them
+## 1.2.2 Browsers and "Driving" Them
 
 We normally use browsers by clicking with our mouse and typing with our keyboard. That works well for humans, but doesn't make sense when trying to write automated tests.
 
@@ -17,11 +17,11 @@ It's important not to confuse terms, so to be clear, the following list are all 
 - **Selenium Server**: A proxy server used to help run a variety of browser drivers.
 - **WebdriverIO**: A test framework written in node.js that provides bindings for using WebDriver-compliant tools like Selenium Server and browser drivers (e.g. ChromeDriver).
 
-## How to use a 'driver'?
+### How to use a 'driver'?
 
 There are several WebDriver clients available out there, Selenium Server being the most popular. Let's walk through getting one of these clients running so you can start writing tests.
 
-### Using a browser-specific client
+#### Using a browser-specific client
 
 All major browsers have respective 'drivers' that mostly follow the WebDriver spec (unfortunately there are still differences between them).
 
@@ -37,7 +37,7 @@ To see how your favorite browser driver stacks up in regards to WebDriver suppor
 
 There are also drivers for mobile testing (e.g. Appium), but that won't be covered in this book. 
 
-## Installing and Running Chromedriver
+### Installing and Running Chromedriver
 
 Installation instructions for these clients can be found on their respective homepage, but in many cases you can search on npmjs.org for Node.js based installation tools. 
 
@@ -61,7 +61,7 @@ chromedriver
 
 This intance will continue to run until you stop it. To do that, issue an 'exit' command by pressing the `ctrl+c` key combo.
 
-### Installing and Running the Selenium Standalone Server
+#### Installing and Running the Selenium Standalone Server
 
 _First off, if you're going to be using this method, you need to ensure you have a recent version of Java installed on your computer. Be sure to take care of that before trying the following. I'll show examples using both selenium-standalone and chromedriver, so you're not required to do this._
 

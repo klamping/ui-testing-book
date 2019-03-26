@@ -1,4 +1,4 @@
-# Why Use WebdriverIO?
+## 1.1.2 Why Use WebdriverIO?
 
 Back in the late 2000's, I had learned of a tool called Selenium that the tester's on my team were fairly interested in using.
 
@@ -10,7 +10,7 @@ But thinking about writing automated tests in it gave me pause. Java is a very v
 
 Years later a new tool came out called PhantomJS. It was based in Node.js, and promised the ability to automate browser usage. That definitely perked my interest, and I'll explain in a minute, but first...
 
-## What's a Node.js?
+### What's a Node.js?
 
 You may not be familiar with Node.js, so I'll explain it a little here (if you are familiar, feel free to skip this part).
 
@@ -28,7 +28,7 @@ From 2009 to 2019, Node.js has grown tremendously. While development of the tool
 
 And a better future it has become. Node.js has become one of the most popular programming environments out there, and it's used for everything from servers, development tools, and even desktop applications.
 
-## Back to PhantomJS
+### Back to PhantomJS
 
 PhantomJS's popularity grew as developers realized they now knew how to write code that would automate a browser. Automated testing immediately came to mind, and a sister-tool called CasperJS was created to compliment PhantomJS.
 
@@ -38,7 +38,7 @@ You could write all the test automation you wanted, but it still wouldn't catch 
 
 So Phantom's popularity as a testing tool was always limited. The benefit of automated testing in that single non-traditional browser just never seemed worth the cost. 
 
-## Enter WebdriverIO
+### Enter WebdriverIO
 
 Sometime in 2015 I found out about a tool called WebdriverCSS. It was a Visual Regression Testing tool used to compare two screenshots of a page and see if they're different. I had tried many tools like this in the past, but this one was different. 
 
@@ -56,7 +56,7 @@ There were four selling points that convinced me on WebdriverIO. But before I li
 
 And for my reasons for choosing WebdriverIO?
 
-## WebdriverIO is "Front-end Friendly"
+### WebdriverIO is "Front-end Friendly"
 
 Unlike most other Selenium tools out there, WebdriverIO is written entirely in JavaScript. Even the Selenium server installation is done through an NPM module.
 
@@ -74,7 +74,7 @@ Using WebdriverIO, I simply pass in my familiar CSS selector and it knows exactl
 
 I believe Front-end developers should write tests for their code (both unit and UI), and WebdriverIO makes it incredibly easy to do.
 
-## It Has the Power of Selenium
+### It Has the Power of Selenium
 
 I always felt held back when writing tests in PhantomJS, knowing that it could never validate functionality in popular but buggy browsers like IE.
 
@@ -82,7 +82,7 @@ But because WebdriverIO uses Selenium under the hood, I'm able to run my tests i
 
 Selenium is an incredibly robust platform and an industry leader for running browser automation. WebdriverIO stands on the shoulders of giants by piggy-backing on top of Selenium. All the great things about Selenium are available, without the overhead of writing Java based tests.
 
-## It Strives for Simplicity
+### It Strives for Simplicity
 
 The commands you use in your WebdriverIO tests are concise and common sense.
 
@@ -116,13 +116,13 @@ Most of the WebdriverIO is made up of these small commands living in their own s
 
 Too many tools out there try and re-invent the wheel. I'm glad WebdriverIO keeps it simple and uses what's already out this. This, in turn, helps me easily understand what's going on behind the scenes.
 
-## It's Easily Extendable/Scalable
+### It's Easily Extendable/Scalable
 
 As someone who has spent a considerable portion of their career working for large organizations, it's important to me that the tools I'm using are easily extendable.
 
 I'm going to have custom needs and will want to write my own functionality. WebdriverIO does a great job at this in two ways:
 
-### Custom Commands
+#### Custom Commands
 
 There are many commands available by default via WebdriverIO, but there are times when you want to write a custom command just for your application.
 
@@ -147,7 +147,7 @@ browser.url('http://www.github.com');
 const result = browser.getUrlAndTitle();
 ```
 
-### Page Objects
+#### Page Objects
 
 With the 4.x release of WebdriverIO, they introduced a new pattern for writing Page Objects. For those unfamiliar with the term, Page Objects are a way of representing interactions with a page or component. 
 
@@ -181,7 +181,7 @@ No reference to specific selectors. No knowledge of URLs. Just self-documenting 
 
 Now, Page Objects aren't a new idea that WebdriverIO introduced. But they way they've set it up to use plain JavaScript objects is brilliant. There is no external library or custom domain language to understand. It's just JavaScript and a little bit of prototypical inheritance. (We'll definitely cover Page Objects in more detail later in this book.) 
 
-## Summing It Up
+### Summing It Up
 
 I wouldn't call myself a real software tester. I'm far too clumsy to be put in charge of ensuring a bug-free launch.
 

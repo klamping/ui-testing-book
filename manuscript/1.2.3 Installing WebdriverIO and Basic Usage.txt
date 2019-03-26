@@ -1,4 +1,4 @@
-# Installing WebdriverIO and Basic Usage
+## 1.2.3 Installing WebdriverIO and Basic Usage
 
 The time has finally come! We've laid all the groundwork to understand the nuts and bolts behind UI testing, now it's time to do some!
 
@@ -73,13 +73,24 @@ const { remote } = require('webdriverio');
 })().catch((e) => console.error(e));
 ```
 
-We'll go through this code line by line in just a moment, but first, let's run it to see it in action.
+Here's a quick overview of the file:
+
+1. We load the `remote` object from the WebdriverIO package.
+2. We wrap our code in an `async` function so we can use `await` statements.
+3. We create a new session using `remote`, saving the reference to a `browser` object which we use to send commands.
+4. We send a `url` command, requesting the browser go to the WebdriverIO homepage.
+5. We then get the title of the page, storing it as a local variable.
+6. The title of the page is logged to the terminal.
+7. The session is ended, since we're done with our test.
+8. A simple catch statement is added in case anything goes wrong.
+
+Okay, that's what it does; let's run it to see it in action.
 
 To do that, we need to start a Webdriver server. This server will accept the commands sent from WebdriverIO, run them in our desired browser, then report back the results. 
 
 In "Browsers and 'Driving' Them", I detailed how to install and run Chromedriver and the selenium-standalone NPM package. Now let's put that knowledge to use.
 
-## Running Through Selenium Standalone
+### Running Through Selenium Standalone
 
 First, we'll start with selenium-standlone. If you already have your server running from before, great! You don't need to do anything else.
 
@@ -129,7 +140,7 @@ Hopefully all went well though! Congrats, you've just run your first WebdriverIO
 
 Let's try it out in Chromedriver instead.
 
-## Running in Chromedriver
+### Running in Chromedriver
 
 The basic idea is the same, although we do need to tweak our settings just a little bit.
 
@@ -199,7 +210,7 @@ With our WebdriverIO settings updated and Chromedriver ready to go, we can call 
 
 Go ahead and run `node test.js` one more time and validate it all works.
 
-## Leaving it at that
+### Leaving it at that
 
 This will be the end of our little test file. We're not going to be updating it anymore, and will in fact be leaving this whole `wdio-standalone` folder behind.
 

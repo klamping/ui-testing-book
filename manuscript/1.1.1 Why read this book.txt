@@ -1,4 +1,6 @@
-# Why read this book?
+# 1.1 Introduction
+
+## 1.1.1 Why read this book?
 
 While I'd love to start things off by diving deep into technical details, it would be good to explain a few things first.
 
@@ -16,7 +18,7 @@ Wouldn't it be ideal to have a test suite so effective that your QA team focused
 
 Unfortunately, that's not the reality. 
 
-I've seen, heard, and have been part of many teams that set out after this ideal, only to realize months later that all the effort has provided them little benefit. Yes, they have test automation in place, but it's constantly breaking and causing endless headaches. It seems they either have tests that run well but don't validate much, or tests that check for everything but are always reporting false errors.
+I've seen, heard, and have been part of many teams that set out after this ideal, only to realize months later that all the effort has provided them little benefit. Yes, they have test automation in place, but it's constantly breaking and causing endless headaches. It seems they either have tests that run well but don't validate much, or have tests that check for everything but are always reporting false errors.
 
 In 2017 I spent the year recording screencasts covering WebdriverIO, a test automation framework that we'll be learning in this book. While I covered the details of the framework quite well (or so I was told), I was left with nagging questions of "is knowing the tool valuable enough?"
 
@@ -32,7 +34,7 @@ It takes a little more work on my part, and extra effort on your's to get starte
 
 With that, let's get started.
 
-## What is User Interface (UI) Test Automation?
+### What is User Interface (UI) Test Automation?
 
 I mentioned that test automation isn't anything new, but I didn't explain what it is.
 
@@ -54,7 +56,20 @@ UI testing is the simple (hah) task of validating that the code written for the 
 
 UI test automation is a way to convert those manual mouse clicks and keystrokes into coded scripts that we can run on a regular basis.
 
-## Let's talk benefits
+### What UI Testing isn't
+
+TODO Unit vs UI/E2E vs Other
+
+## TODO How can we fit UI testing in?
+
+* Different types of sites for testing
+  * style guides/ui libraries/demo sites
+  * single-page/marketing sites
+  * Web apps
+* How those sites impact the tests you run
+* Whitebox vs Blackbox testing
+
+### Let's talk benefits
 
 I've alluded to this before, but it's good to be clear. Here are some of the many real-world benefits of automated UI testing:
 
@@ -75,7 +90,7 @@ UI automation isn't about replacing humans with machines, but rather giving us m
 
 And let's not forget, UI testing requires a fair amount of work. It's not magic (although it's okay to convince management it is). This brings me to an important consideration...
 
-## There are always drawbacks
+### There are always drawbacks
 
 How long do you think it takes to get a set of automated tests up and running? A week... maybe two?
 
@@ -114,7 +129,7 @@ Animations are a good example of that. How do you test that an animation works? 
 
 Honestly, you'd need to do a screen recording of every frame of the animation, and compare that screen recording to a previous run to see if they match. I don't know about you, but that doesn't sound easy to me.
 
-## Skipping automation is sometimes the best option
+### Skipping automation is sometimes the best option
 
 Hopefully I haven't scared you away from UI test automation entirely. I only wanted to get you thinking about the whole picture.
 
@@ -122,7 +137,7 @@ And that picture should include saying "maybe we shouldn't write test automation
 
 Let's consider a few things:
 
-### New features aren't user tested
+#### New features aren't user tested
 
 Business is booming and your team is tasked with a brand-new feature idea that management thinks the customer will love.  While it's tempting to say, "yes, and let's write tests to go side-by-side with this new feature!", it might not be the right time.
 
@@ -130,7 +145,7 @@ This brand new feature has never seen the light of day, and the second a custome
 
 There's no point in writing a test if you haven't user tested your site. So before you spend time writing assertions, ensure the assumptions about the user interactions are put to the test.
 
-### Time writing tests takes away from writing features
+#### Time writing tests takes away from writing features
 
 You're not paid to write tests. Tests only serve the application they're testing. If app is useless, tests won't help.
 
@@ -140,7 +155,7 @@ Users don't care whether you have good unit tests. There's no difference between
 
 Let yourself have untested code. Worry about that problem when it actually becomes one.
 
-### Tests are only valuable when you use them
+#### Tests are only valuable when you use them
 
 Don't write more tests when you're not using the ones you have.
 
@@ -150,13 +165,13 @@ Your tests should run on every code push. They should run before every deploy. E
 
 If that's not true, then you shouldn't be writing more tests. You should be taking advantage of the tests you have. 
 
-### Parts of the site might be better tested by people
+#### Parts of the site might be better tested by people
 
 Remember when I said tests shouldn't replace people, but rather augment their abilities. Well, in the scenario of testing the animation, we were stuck with a really complex solution. What if we just went with manual visual validation of the effect? 
 
 It's okay to have some parts of your site that are too complex for automation. Grab that low-hanging fruit and leave the stuff higher in the tree for a later time when you have a ladder. 
 
-## Are tests worth it then?
+### Are tests worth it then?
 
 I've outlined the benefits and drawbacks of test automation, including reasons to skip some of it alltogether.
 

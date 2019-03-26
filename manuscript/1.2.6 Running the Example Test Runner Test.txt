@@ -1,4 +1,4 @@
-# Running the Example Test Runner Test
+## 1.2.6 Running the Example Test Runner Test
 
 Now that we've created and review our configuration file, it's time to write a test to make use of it. 
 
@@ -40,9 +40,13 @@ describe('webdriver.io page', () => {
 });
 ```
 
-Before we get into the code we just pasted, let's save the file and try running the test. 
+There's one thing we want to change. Where it sets the `url` to go to, we want to use the `baseUrl` we defined in our configuration file.
 
-## Running via Selenium Standalone
+So go ahead and change `browser.url('https://webdriver.io');` to be just `browser.url('./');`. Now when WebdriverIO runs that command, it will see that it isn't a full website URL, and prepend our `baseUrl` from the config file.
+
+Okay, let's save the file and try running the test.
+
+### Running via Selenium Standalone
 
 Unlike before, we don't have to do anything to run our tests through Selenium Standalone. This is because the service takes care of starting and stopping our Selenium for us.
 
@@ -72,7 +76,7 @@ Hopefully you see a green checkmark. If not, jump to the debugging section for h
 
 And that's how you run your tests. Again, our `selenium-standalone` service took care of shutting down the server it started, so we don't have to do anything. 
 
-## Running with Chromedriver
+### Running with Chromedriver
 
 Chromedriver also comes with its own WebdriverIO service, allowing us the ability to automatically start and stop a `chromedriver` server during our test run. 
 
@@ -129,4 +133,96 @@ On the other hand, Selenium Standalone installs and manages all the browser driv
 Personally I use either of them depending on the situation. I usually lean on Chromedriver when starting out, as it's usally quicker to run, then switch over to Selenium Standalone when I need to expand my browser coverage.
 
 Now that we've got our test running, let's take some time to review the actual code.
+
+### Reviewing the Example Test Code
+
+Just for a quick comparison, below is the sample code for standalone mode versus running through the test runner:
+
+**Standalone:**
+```js
+const { remote } = require('webdriverio');
+
+(async () => {
+    const browser = await remote({
+        capabilities: {
+            browserName: 'chrome'
+        }
+    });
+
+    await browser.url('https://webdriver.io');
+
+    const title = await browser.getTitle();
+    console.log('Title was: ' + title);
+
+    await browser.deleteSession();
+})().catch((e) => console.error(e));
+```
+
+**Test Runner:**
+```js
+const assert = require('assert');
+
+describe('webdriver.io page', () => {
+    it('should have the right title', () => {
+        browser.url('https://webdriver.io');
+        const title = browser.getTitle();
+        assert.equal(title, 'WebdriverIO · Next-gen WebDriver test framework for Node.js');
+    });
+});
+```
+
+Overall our test runner code is much more succinct. This is due to quite a few things:
+
+* **No need for `remote` and setting up our `browser` object**: This is all done via our configuration file and the test runner
+* **No need for `async` and `await` keywords**: By running our tests in `sync` mode, we no longer need to add all that extra code.
+* **No need to delete the session**: The test runner manages both creating and ending the sessions for us, so we don't manually have to do this.
+
+Those are all the things that have been removed, but there are a couple new bits added as well.
+
+At the top of the file, you we load the 'assert' module. Then, on line 7, we use that module as follows:
+
+```js
+assert.equal(title, 'WebdriverIO · Next-gen WebDriver test framework for Node.js');
+```
+
+What is that doing? `assert` is a special Node.js core module that is used in testing to validate the values of code. Here, it's checking that the value of the title equals this text that we gave it. 
+
+We'll get in-depth with assertions later on, so don't worry too much about it right now.
+
+The other added part are those `describe` and `it` function calls. These are part of the Mocha framework, and help organize our tests into individual test cases. This is helpful for overall readability, plus we can use this to run or exclude certain cases from our test runs.
+
+- `describe` is used to group sets of tests by the feature they are testing.
+- `it` defines a specific test to run.
+ 
+There are usually multiple `it` functions nested inside each `describe`, and sometimes `describe` functions are nested inside each other for a better defined test hierarchy. 
+
+As you can see in our file, `describe` is called as a function, passing in two parameters.
+
+```js
+describe('name of test section', function () { });
+```
+
+The first parameter is a name for the feature we are testing, in this case `'name of test section'`. The second half of our `describe` call is a function which contains all of the code we want to associate with this feature. 
+
+Inside of this function we'll be adding the `it` call. Similar to `describe`, `it` is a function call that again takes two parameters:
+
+```js
+it('name of individual test', function () { });
+```
+
+- The first paramater is the name we give our test, in this case `'name of individual test'`. I like to begin my test case names with `should`, so that it reads `it('should do whatever'...`
+- The second is a function which contains our browser commands and assertions.
+
+To bring it all together, here's an example test file with just the structure in place:
+
+```js
+describe('Login Page', function () {
+  it('should allow you to log in using valid credentials', function () {
+    // valid login code here
+  })
+  it('should not allow you to log in using invalid credentials', function () {
+    // invalid login code here
+  })
+});
+```
 

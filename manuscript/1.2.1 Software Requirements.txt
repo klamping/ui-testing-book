@@ -1,4 +1,6 @@
-# Software Requirements
+# 1.2 Installation and Configuration
+
+## 1.2.1 Software Requirements
 
 While WebdriverIO is a Node.js based system, many of tools are needed to run our tests.
 
@@ -12,17 +14,17 @@ You'll want:
 
 Optionally, you may also want to install [Java 8](https://java.com/en/download/). This will allow you to run [selenium-standalone](https://github.com/vvo/selenium-standalone), which gives you the ability to test on different browsers in the same test run (e.g. both Firefox AND Chrome). 
 
-## Installing Node.js
+### Installing Node.js
 
 There are many great tutorials for how to install Node.js on a variety of systems. A quick search should bring up many results should you need additional help with this installation.
 
 Overall though, there are two common ways to install Node.js. 
 
-### Install via official site:
+#### Install via official site:
 
 Go to [nodejs.org](https://nodejs.org/) and download the release labelled "Recommended For Most Users". This will start with an even number (e.g. 10.15.1). Be aware that releases starting with odd numbers (e.g. 11.10.0) are not supported long term, so while they may have the latest features, they will stop recieving support and updates after 6 months. For more information on this, have a read through [the Node.js release plan](https://github.com/nodejs/Release#release-plan).
 
-### Install via a 'version manager'
+#### Install via a 'version manager'
 
 The main reason for using a version manager is "the future". In "the future", you're probably going to want to update your version of Node.js to a more recent release. While it's possible to manually uninstall the old version, then install the new one using the official site, it can be a little tedious to do so on a regular basis. 
 
@@ -35,7 +37,7 @@ Two popular version managers are:
 
 Installation instructions are on both of those sites, so I won't copy them over here (plus any copied instructions are likely to be out-of-date by the time you read this.)
 
-## Getting Your Terminal Ready
+### Getting Your Terminal Ready
 
 As I mentioned, you'll need to know the basics of how to use a terminal/command prompt in order to take advantage of all the WebdriverIO has to offer.
 
@@ -47,7 +49,7 @@ All major Operating Systems provide a pre-installed terminal for you to use. The
 
 In the terminal of your choice, ensure you have Node.js installed correctly by running `node -v` in it. This should output the version number of Node.js that you have installed. If you see a message like `command not found: node`, then something went wrong with your installation and you'll need to debug it.
 
-### A Note for Windows Users
+#### A Note for Windows Users
 
 The commands you use in the default Windows terminal are different from what I'll be showing in my code samples. 
 
@@ -65,6 +67,7 @@ I'll try to provide the Windows equivalent the first time I introduce a command.
 
 - [cmder](https://cmder.net/)
 - [clink](http://mridgers.github.io/clink/)
+- [ConEmu](https://conemu.github.io/)
 - [Cygwin](https://www.cygwin.com/)
 
 These terminals use bash-style commands, which is what I use in my examples.
