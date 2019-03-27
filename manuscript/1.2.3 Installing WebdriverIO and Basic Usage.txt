@@ -4,13 +4,21 @@ The time has finally come! We've laid all the groundwork to understand the nuts 
 
 To start off, we're going to create a new folder for all of our project to go in. Later on, we'll be incorporating this project into a fully-fledged application repo, but for now we'll create an individual WebdriverIO project.
 
-So, in a directory of your choice, make a new folder called `wdio-standalone` (we'll cover the 'standalone' name in a little bit):
+So, in a directory of your choice, make a new folder called `wdio-standalone`:
 
 ```
 mkdir wdio-standalone
 ```
 
-We then need to 'move' our terminal into that folder:
+Why `wdio-standalone`?
+
+Well, WebdriverIO allows you to use it through two modes. The first, which we're going through here, is called "standalone" mode. It's meant as a simple way to use WebdriverIO, and allows you to build wrappers around the tool. 
+
+"Testrunner" mode, which we'll cover in the next section, is a bit more complicated. It provides an entire set of tools and hooks for full-fledged integration testing. I mentioned that standalone mode allows you to build wrappers around it? Well, the testrunner is essentially that.
+
+Right now, just to introduce you to WebdriverIO, we're going to use the standalone runner. This is only for this exercise though, and we'll be upgrading to the testrunner soon.
+
+With all that said, let's 'move' our terminal into this `wdio-standalone` folder:
 
 ```
 cd wdio-standalone
@@ -91,6 +99,8 @@ To do that, we need to start a Webdriver server. This server will accept the com
 In "Browsers and 'Driving' Them", I detailed how to install and run Chromedriver and the selenium-standalone NPM package. Now let's put that knowledge to use.
 
 ### Running Through Selenium Standalone
+
+_Note: Selenium Standalone is **not** the same thing as WebdriverIO Standalone mode. The simply share the same name to describe their "indepedent" nature._
 
 First, we'll start with selenium-standlone. If you already have your server running from before, great! You don't need to do anything else.
 

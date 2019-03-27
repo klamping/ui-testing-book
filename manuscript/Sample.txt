@@ -1,7 +1,6 @@
 1.1.1 Why read this book.txt
 1.1.2 Why Use WebdriverIO.txt
-1.1.3 Where Does UI Testing Fit In.txt
-1.1.4 Technical Details.txt
+1.1.3 Technical Details.txt
 1.2.1 Software Requirements.txt
 1.2.2 Browsers and Driving Them.txt
 1.2.3 Installing WebdriverIO and Basic Usage.txt

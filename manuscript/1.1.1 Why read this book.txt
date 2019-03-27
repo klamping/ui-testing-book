@@ -56,21 +56,6 @@ UI testing is the simple (hah) task of validating that the code written for the 
 
 UI test automation is a way to convert those manual mouse clicks and keystrokes into coded scripts that we can run on a regular basis.
 
-### What UI Testing isn't
-
-TODO Unit vs UI/E2E vs Other
-
-### How can we fit UI testing in?
-
-TODO 
-
-* Different types of sites for testing
-  * style guides/ui libraries/demo sites
-  * single-page/marketing sites
-  * Web apps
-* How those sites impact the tests you run
-* Whitebox vs Blackbox testing
-
 ### Let's talk benefits
 
 I've alluded to this before, but it's good to be clear. Here are some of the many real-world benefits of automated UI testing:
@@ -130,6 +115,24 @@ You're going to need to work with databases, integrate with third-party services
 Animations are a good example of that. How do you test that an animation works? You can fairly easily check the properties before and after an animation, but what about everything in-between?
 
 Honestly, you'd need to do a screen recording of every frame of the animation, and compare that screen recording to a previous run to see if they match. I don't know about you, but that doesn't sound easy to me.
+
+### Simpler Sites for UI Testing
+
+If you find yourself facing a complex site that would require major work to test properly, there are other options to gain some value without too much effort.
+
+Instead of testing a fully working site, you may want to create a variation of your site that represent portions of the real thing. For example, pattern libraries are a popular option out there, especially for larger websites. 
+
+In case you're not familiar with them, pattern libraries are essentially living demos of the components that make up a website's interface. Mailchimp has a public pattern library if you'd like to see one in action: [https://ux.mailchimp.com/patterns](https://ux.mailchimp.com/patterns)
+
+For instance, a pattern library may contain standalone versions of the following:
+
+- Site layout components like the main navigation and site footer
+- Components used across multiple pages, like buttons, form inputs and tabs
+- Style guidelines for simple page elements like links, headings and lists
+
+Pattern libraries are very helpful for teams, as the document how the website should look and act. If you're tasked with adding a sortable table to your companies site, having a pattern library with a living example of one makes the job simple.
+
+They're also super useful for testers, as it gives us testable examples of individual components isolated from the complexity of the full website. 
 
 ### Skipping automation is sometimes the best option
 

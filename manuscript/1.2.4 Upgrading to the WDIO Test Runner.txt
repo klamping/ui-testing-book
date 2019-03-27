@@ -193,8 +193,7 @@ const title = browser.getTitle();
 browser.deleteSession();
 ```
 
-That's a lot cleaner and easier to scan through. Well, that's a feature the test runner gives you. It modifies the code you're running to automatically include those `await` statements, without you have to do the work yourself. 
-[TODO <https://github.com/webdriverio/webdriverio/issues/2542> sync vs async]
+That's a lot cleaner and easier to scan through. Well, that's a feature the test runner gives you. It modifies the code you're running to automatically include those `await` statements, without you have to do the work yourself.
 
 Going back to our options, if you wanted to, you could stick with the `async` style of writing all your `await` keywords yourself. But me, I'm lazy, and I'll take any chance I can to do less work. 
 
