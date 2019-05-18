@@ -6,9 +6,9 @@ While I'd love to start things off by diving deep into technical details, it wou
 
 Before investing time into a new tool, it's good to know why you'd want to learn how to use it.
 
-Test automation is certainly not a recent technique, but it has grown in popularity lately. Over the past decade, website complexity has grown substantially, requiring much more effort when it comes to testing.
+Over the past decade, website complexity has grown substantially, requiring much more effort when it comes to testing. While test automation is certainly not a recent technique, it has grown in popularity lately due to the increased complexity of the sites we build.
 
-Many organizations have full teams dedicated just to testing their site. Quality Assurance is an important role for any company that wants to take its technology seriously.
+In fact, many organizations have full teams dedicated just to testing their site. Quality Assurance is an important role for any company that wants to take its technology seriously.
 
 However, having humans manually run through test scripts is time-consuming.
 

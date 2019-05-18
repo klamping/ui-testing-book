@@ -1,0 +1,49 @@
+## Chapter Challenge Code Solutions
+
+Each chapter includes a challenge or two for you to tackle on your own. But it's nice to check your work, so here are the solutions for each challenge:
+
+### 2.1.1 Chai Assertions
+
+Using 'should' style assertions:
+
+```js
+const should = require('chai').should();
+
+describe('Main Navigation', function () {
+    it('should take you to the login page', function () {
+        // Load the page
+        browser.url('./');
+
+        // Get the title of the homepage, should be 'OWASP Juice Shop'
+        browser.getTitle().should.equal('OWASP Juice Shop')
+
+        // Click the 'About Us' navigation link
+        $('button*=About Us').click();
+
+        // Get the URL of the about page, should include 'about'
+        browser.getUrl().should.include('/about');
+    });
+});
+```
+
+Using 'assert' style assertions:
+
+```js
+const assert = require('chai').assert;
+
+describe('Main Navigation', function () {
+    it('should take you to the login page', function () {
+        // Load the page
+        browser.url('./');
+
+        // Get the title of the homepage, should be 'OWASP Juice Shop'
+        assert.equal(browser.getTitle(), 'OWASP Juice Shop')
+
+        // Click the 'About Us' navigation link
+        $('button*=About Us').click();
+
+        // Get the URL of the about page, should include 'about'
+        assert.include(browser.getUrl(), '/about');
+    });
+});
+```

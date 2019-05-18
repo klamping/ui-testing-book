@@ -195,6 +195,7 @@ Path to driver server endpoint.
 Type: String
 Default: /wd/hub
 
+[TODO https://github.com/webdriverio/webdriverio/pull/3907 fixes this]
 Due to security settings, Chromedriver won't accept requests coming from the 0.0.0.0 hostname address. We need to change that default to `localhost`.
 
 And as mentioned before, we also need to change the port and path settings.

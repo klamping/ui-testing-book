@@ -9,10 +9,14 @@ During setup, we defined out specs path as `./test/specs/\*\*/\*.js`. But we don
 Let's create those folders by running the following command from our `wdio-testrunner` project path:
 
 ```sh
-mkdir -p ./test/specs
+mkdir -p test/specs
 ```
 
-[TODO verify -p works in windows]
+On Windows that's:
+
+```
+mkdir test\specs
+```
 
 That will create both folders for us. Now we can create our first test file:
 
@@ -139,6 +143,7 @@ Now that we've got our test running, let's take some time to review the actual c
 Just for a quick comparison, below is the sample code for standalone mode versus running through the test runner:
 
 **Standalone:**
+
 ```js
 const { remote } = require('webdriverio');
 
@@ -159,6 +164,7 @@ const { remote } = require('webdriverio');
 ```
 
 **Test Runner:**
+
 ```js
 const assert = require('assert');
 
