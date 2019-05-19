@@ -1,0 +1,51 @@
+## 2.1.2 Advanced Selectors and Loading Delays
+
+Last chapter, amid the talk of actions and assertions, we touched on selectors just a little bit. We used a 'partial-text' selector to pick out a button with the text "About Us" in it. Now it's time to take a full look at all the options we have when it comes to picking elements.
+
+### Selector Mania
+
+Let's get started with the official W3C list of the supported selector types:
+
+- CSS selector
+- Link text selector
+- Partial link text selector
+- Tag name
+- XPath selector
+
+Also, I should be calling all of these "[Locator Strategies](https://w3c.github.io/webdriver/#locator-strategies)", which is how they're referenced in the W3C specification.
+
+There are actually [a few other "unofficial" strategies](https://stackoverflow.com/a/48376890/150552), but I don't think they're worth mentioning because they're pretty much obsolete these days.
+
+Normally, when using one of these strategies, you need to specify which one you want to use. In many test libraries, you'll see something akin to `element(by.partialButtonText('About Us'))`. WebdriverIO helps us out here by [inferring what type of strategy you want to use](https://github.com/webdriverio/webdriverio/blob/master/packages/webdriverio/src/utils/findStrategy.js), so you don't have to do as much typing.
+
+#### Selectors by Example
+
+To showcase the different selectors strategies, let's use the following HTML:
+
+```html
+<ul class="items" dropdown-menu id="main-menu">
+    <li class="item">
+        <a ng-click="showProjects()">
+            Projects
+        </a>
+    </li>
+    <li class="item">
+        <a ng-click="showArchive()">
+            Archive
+        </a>
+    </li>
+</ul>
+```
+
+Note: If you're unfamiliar with HTML syntax structure, I recommend having a watch through [this video tutorial teaching HTML basics](https://www.youtube.com/watch?v=UB1O30fR-EE) before moving on.
+
+The simplest type of selector in my mind would be 'tag name'. It selects any matching element with the tag name specified. So if we wanted to choose the `ul` element, in WebdriverIO we'd do `$('ul')`. If we wanted to get the first `li`, we'd do `$('li')`. But what if we wanted the second one? 
+
+There are actually several ways to achieve this, but the one we'll look at first is to select both `li`'s, then pick out the second one. 
+
+Similar to the `$` function, WebdriverIO also provides a `$$` function, which returns an array of all of the matching elements. Where `$` returns the first matching element, `$$` returns all of them.
+
+If we use `$$('li')`, we'll get an array with two elements in it. We can use JavaScript array syntax to select the second one: `$$('li')[1]`. Remember, arrays in JavaScript start at 0 (zero-indexed), so to choose the second item we use `1`. 
+
+Link text selectors and partial link text selectors are also pretty simple. To get the first link, we could do `$('=Projects')`. To get the second `li` using a partial link text selector, we can do `$('*=chive')`. 
+
