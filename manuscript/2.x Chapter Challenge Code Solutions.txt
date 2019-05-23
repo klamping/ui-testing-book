@@ -47,3 +47,26 @@ describe('Main Navigation', function () {
     });
 });
 ```
+
+### 2.1.2 Selectors
+
+**Search Input Field**
+
+The developers of the site handed us a gift with this one, placing an `id` on the input field of `searchQuery`. We can use that to write a simple CSS selector of:`$('#searchQuery')`
+
+**All 'Social' links on the 'About Us' page**
+
+Similar to the unique ID, we have a class name of `social` that we can use for this selector. We can combine it with a descendent selector using the `a` tag to target the links: `$$('.social a')`
+
+Do think about what other elements might have this `social` class name. Maybe a footer gets added to the site later that also uses this class... that would definitely break the tests. This is why I recommend unique data attributes be added if possible.
+
+**All 'Social' links on the 'About Us' page (using 'Follow us on Social Media' header text)**
+
+This last one was the trickiest by far, and requires some XPath magic. First, we need to get the heading element by the text inside it. We can do this two ways:
+
+- Using a full text match: `$('//h3/*[text()="Follow us on Social Media"]')`
+- Using a partial text match: `$('//h3/*[contains(text(), "Follow us")]')`
+
+This will actually return us the `span` inside of the `h3`. From there, we need to navigate up a couple of elements so that we can move over to the links. We can use the `ancestor` modifier to move up to the `h3` (`ancestor::h3`), then move up one more element to get to the parent (`..`). From there, we can get all the links using the `a` tag. 
+
+All together, this is what your selector may look like: `$$('//h3/*[contains(text(), "Follow us")]/ancestor::h3/../a')`

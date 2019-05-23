@@ -1,0 +1,198 @@
+## 2.1.2 Selectors of Every Size and Shape
+
+Last chapter, amid the talk of actions and assertions, we touched on selectors just a little bit. We used a 'partial-text' selector to pick out a button with the text "About Us" in it. Now it's time to take a full look at all the options we have when it comes to picking elements.
+
+### Selector Mania
+
+Let's get started with the official W3C list of the supported selector types:
+
+- CSS selector
+- Link text selector
+- Partial link text selector
+- Tag name
+- XPath selector
+
+Also, I should be calling all of these "[Locator Strategies](https://w3c.github.io/webdriver/#locator-strategies)", which is how they're referenced in the W3C specification.
+
+There are actually [a few other "unofficial" strategies](https://stackoverflow.com/a/48376890/150552), but I don't think they're worth mentioning because they're pretty much obsolete these days.
+
+Normally, when using one of these strategies, you need to specify which one you want to use. In many test libraries, you'll see something akin to `element(by.partialButtonText('About Us'))`. WebdriverIO helps us out here by [inferring what type of strategy you want to use](https://github.com/webdriverio/webdriverio/blob/master/packages/webdriverio/src/utils/findStrategy.js), so you don't have to do as much typing.
+
+#### Selectors by Example
+
+To showcase the different selectors strategies, let's use the following HTML:
+
+```html
+<ul class="items" dropdown-menu id="main-menu">
+    <li class="item">
+        <a ng-click="showProjects()">
+            Projects
+            <span class="icon"></span>
+        </a>
+    </li>
+    <li class="item">
+        <a ng-click="showArchive()">
+            Archive
+            <span class="icon"></span>
+        </a>
+    </li>
+</ul>
+```
+
+Note: If you're unfamiliar with HTML syntax structure, I recommend having a watch through [this video tutorial teaching HTML basics](https://www.youtube.com/watch?v=UB1O30fR-EE) before moving on.
+
+The simplest type of selector in my mind would be 'tag name'. It selects any matching element with the tag name specified. So if we wanted to choose the `ul` element, in WebdriverIO we'd do `$('ul')`. If we wanted to get the first `li`, we'd do `$('li')`. But what if we wanted the second one? 
+
+There are actually several ways to achieve this, but the one we'll look at first is to select both `li`'s, then pick out the second one. 
+
+Similar to the `$` function, WebdriverIO also provides a `$$` function, which returns an array of all of the matching elements. Where `$` returns the first matching element, `$$` returns all of them.
+
+If we use `$$('li')`, we'll get an array with two elements in it. We can use JavaScript array syntax to select the second one: `$$('li')[1]`. Remember, arrays in JavaScript start at 0 (zero-indexed), so to choose the second item we use `1`. 
+
+Link text selectors and partial link text selectors are also pretty simple. To get the first link, we could do `$('=Projects')`. To get the second `li` using a partial link text selector, we can do `$('*=chive')`. But if you remember well, we didn't target a link in our previous exercise... we were asking for a `button` element instead. What gives?
+
+Well, while Webdriver officially only supports 'link' based text selectors, WebdriverIO took it one step further and provides support for any type of element to be checked. It does this by converting what looks like a text selector into an XPath one (more on XPath in a second). Pretty neat.
+
+### CSS Selectors
+
+If you've done any front-end web development, you've likely worked with CSS selectors. They're the backbone not just for styles, but also JavaScript as well. 
+
+CSS selectors have quite a legacy and feature set, and an entire course could be put together covering the various forms they can take. To use a CSS selector in WebdriverIO, just pass it into the `$` or `$$` function. Here's one that grabs the `ul` by class name: `$('ul.items')`, and one that grabs the two `li`'s by class as well: `$$('li.item')`. 
+
+If you're new to CSS, I highly recommend running through a few tutorials on selectors. Here are a few recommendations:
+
+- [TutsPlus "The 30 CSS Selectors You Must Memorize"](https://code.tutsplus.com/tutorials/the-30-css-selectors-you-must-memorize--net-16048)
+- [Sauce Labs "CSS Selector Tips"](https://saucelabs.com/resources/articles/selenium-tips-css-selectors)
+- [CSS Tricks CSS Selector Almanac](https://css-tricks.com/almanac/selectors/)
+- [CSS Selector Strategies for Automated Browser Testing](https://ghostinspector.com/blog/css-selector-strategies-automated-browser-testing/)
+
+Getting to know all your options with CSS selectors is quite valuable. The majority of styles out there rely on class or ID based selectors, but it can definitely be an advantage to know about other types as well. Here are couple more to know about:
+
+#### Attribute Selectors
+
+Attributes are the properties of HTML elements (e.g. the "class" part of `<li class="item">`). These attributes can be helpful for singling out specific elements.
+
+Using [CSS Attribute Selectors](https://css-tricks.com/attribute-selectors/) ([shorter version](https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors)), we can target the `ng-click` attribute of the link, like so:
+
+```js
+$("[ng-click='showProjects()']");
+```
+
+Notice how the selector includes both the attribute and its value. You don't have to include both, but for our needs we needed to target the element with that specific `ng-click` value.
+
+We can also combine attribute selectors to be more specific with our link:
+
+```js
+$("[dropdown-menu] a[ng-click='showProjects()']");
+```
+
+That selector asks for a link with an attribute of `ng-click` and an attribute value of `showProjects()` that is the child of an element with an attribute of `dropdown-menu` (which we didn't include a value for since there was none).
+
+### nth-child Selectors
+
+Another method to find your element is to base it on the position in the HTML. [The `first-child` selector](https://developer.mozilla.org/en-US/docs/Web/CSS/:first-child) allows us to do this:
+
+```js
+$("li:first-child");
+```
+
+That will select any list item (`<li>`) that is the first child of its parent. That's a pretty broad selector though, so we should narrow this down to our dropdown using the attribute selector from before:
+
+```js
+$("[dropdown-menu] li:first-child");
+```
+
+What if we wanted to get the second child? We can use [The `nth-child` selector](https://css-tricks.com/how-nth-child-works/):
+
+```js
+$("[dropdown-menu] li:nth-child(2)");
+```
+
+`nth-child` takes a numeric value, which corresponds to the position in the HTML (it is **not** zero-indexed, so counting starts at 1).
+
+`nth-child` can get pretty complicated and is a very powerful selector. There are also related selectors like `nth-of-type` or `nth-last-child`. [nthmaster.com](http://nthmaster.com/) and [CSS-Tricks](https://css-tricks.com/examples/nth-child-tester/) go in to more detail on it. 
+
+Why use `nth-child` if you could just get all elements using `$$` and grab the one you want by index? Well, selecting multiple elements is a little slower than grabbing a single one, so using `nth-child` can help keep our tests speedy. [TODO actually verify this assumption]
+
+### XPath
+
+The final type of selector I'll mention is XPath. Traditionally XPath has been the predominant selector strategy for Selenium/Webdriver, so many folks in the testing industry are most familiar with it. 
+
+To use in WebdriverIO, you pass it in just like you would a CSS selector. So to grab that `ul` by ID: `$('//ul[@id="main-menu"]')`. And to get both `li`'s by class: `$$('//li[@class="item"]')`. 
+
+As I mentioned with CSS, if you're new to XPath, I recommend running through a few tutorials on its usage. Here are a couple recommendations:
+
+- [MDN XPath documentation](https://developer.mozilla.org/en-US/docs/Web/XPath)
+- [Scrapy XPath Tutorial](https://docs.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html)
+
+So which one should you use, XPath or CSS selectors? Truthfully, either one works. I end up using both depending on circumstance. CSS selectors are normally more brief than XPath, but sometimes they're not as powerful. Which one you use is really a matter of what you're more comfortable with. Front-end developers are likely more familiar with CSS selectors, so I lean that way, but there are some things CSS can't do, which is when I'll choose XPath.
+
+If you're looking to compare the two, [this cheatsheet put together by devhints.io is invaluable](https://devhints.io/xpath).
+
+There are two big tricks that XPath can do that CSS currently can't. The first is to select an element by its text content, which looks something like: `//a[contains(text(),"chive")]`. The other is the ability to move "up" from an element. So you can use XPath to select a parent of an element, which isn't possible yet in CSS.
+
+We can combine these two techniques to find the parent container of our 'Archive' link: `//a[contains(text(),"chive")]/ancestor::ul`. This technique can be very helpful when you're limited in customizing the HTML of a page and need to rely on what the text says. 
+
+Regardless of CSS vs. XPath, you can use the Chrome Developer tools to help [evaluate and validate XPath/CSS selectors](http://yizeng.me/2014/03/23/evaluate-and-validate-xpath-css-selectors-in-chrome-developer-tools/) you're working on. This is a useful tool for building and testing selectors.
+
+### Chaining Selectors
+
+Aside from the strategies we've touched on so far, there's one neat trick that I love to take advantage of (and no, [doctors won't hate that you know this](https://skeptoid.com/blog/2013/01/28/one-weird-trick-to-rule-them-all/)).
+
+Many times you'll have a container element that you want to use as reference for future searches. With WebdriverIO, you can select your parent container, then search from within that element.
+
+From our example, we can select the link we want using a text selector, then select the `span` inside that link using a plain old tag selector: `$('=Projects').$('span')`. It wouldn't work to do `$('=Projects span')` since WebdriverIO would think you're looking for a link with the text `projects span`.
+
+You can also search for multiple elements from a single parent. To get both `li`s from the parent `ul`, do `$('ul').$$('li')`. Of course you could just do `$$('ul li')` in this case, but I needed to show off the other way so hush.
+
+### Custom Data Attributes for Testing
+
+If you do have the ability to customize the HTML, I highly recommend adding custom HTML attributes to help identify the elements you need to select. This is a popular practice in the industry and can really help provide the specificity you need.
+
+The way it works is you add a custom attribute to your HTML components which is used solely for testing selectors. HTML5 introduced a [formal "data" attribute type](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes) that we can take advantage of in our tests. 
+
+For example, let's edit that HTML I showed earlier to use data attributes:
+
+```html
+<ul class="items" dropdown-menu id="main-menu" data-qa-id="main-menu">
+    <li class="item" data-qa-id="main-menu-item">
+        <a ng-click="showProjects()" data-qa-id="main-menu-item-link">
+            Projects
+            <span class="icon" data-qa-id="main-menu-item-icon"></span>
+        </a>
+    </li>
+    <li class="item" data-qa-id="main-menu-item">
+        <a ng-click="showArchive()" data-qa-id="main-menu-item-link">
+            Archive
+            <span class="icon" data-qa-id="main-menu-item-icon"></span>
+        </a>
+    </li>
+</ul>
+```
+
+In that example, I added a `data-qa-id` attribute to all of the elements. It wasn't necessary for some (for example, the `id` of the main menu is the same as the `data-qa-id`), but useful overall. When targeting an element, we'll now rely on our data attribute: `$('[data-qa-id="main-menu"')`.
+
+The real benefit of this is it's much less likely to be altered over the long-term life of the project. Class names may change inadvertently by a front-end dev refactoring the HTML, or an ID may be changed by a JavaScript dev disgrunted by the current name. But a custom attribute named with `qa-id` is much less likely to be changed without warning.
+
+We're going to take full advantage of this during our test writing, as the HTML currently avaiable on our test site doesn't quite allow us the specificity we'll need for long-term stability. 
+
+### Avoiding in Poorly Built Selectors
+
+We've covered a fair amount of strategies for selectors, and for good reason. Poorly choosen selectors are a prime candidate for flakey tests.
+
+Many times I see selectors that look like: `$('//*[@id="stream-item-1130810481587957760"]/div[1]/div[2]/div[1]/a/span[1]/strong')`. The problem with this type of specificity is that almost any change to the HTML will break your tests. An extra HTML element thrown in or one removed will cause chaos in your code. 
+
+Instead, adding a custom data attribute as mentioned above can really limit the effect of an HTML retructuring. Even if an element is completely restructured, so long as the data-id stays in tact it should still work. 
+
+When it comes to selecting elements, I like to follow this general guidelines:
+
+- If I can change the HTML, add a custom data attribute for testing purposes only
+- If I don't have control of the HTML, come up with selectors that are specific, but not overly tied to the HTML structure. For example, using simple parent-child relationships, `:nth-child` selectors or text based ones. It's not perfect, but it gets the job done.
+
+### Chapter Challenge:
+
+The Juice Shop website doesn't have the best of options when it comes to selectors (we'll work on that), but it's managable. Try creating selectors for the following site elements:
+
+- The Search input field in the nav bar
+- All 'Social' links on the 'About Us' page
+- All 'Social' links on the 'About Us' page (using 'Follow us on Social Media' header text). Hint: use `text()` and `ancestor`
