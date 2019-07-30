@@ -1,8 +1,8 @@
-## 2.1 Site Loading and Navigation
+# 2.1 Site Loading and Navigation
+
+## 2.1.1 A "Real-World" App
 
 Over the past few chapters, we've covered the basics of getting started with WebdriverIO. Now we're ready to fully jump in to writing tests.
-
-### 2.1.1 A "Real-World" App
 
 In my experience, the best way to learn a subject is to use real-world examples. Knowing why and when you would use specific code is just as important as knowing how to use that code. 
 
@@ -34,7 +34,7 @@ Feel free to look around there to see what the site is all about. You're also we
 
 That said, you're more than welcome to roll your own setup as you prefer. Honestly, we won't be doing much to the front-end/back-end systems, so feel free to play around with them as you see fit. 
 
-### 2.1.2 Avoiding Troubles
+## 2.1.2 Avoiding Troubles
 
 I want to jump right in to setting up our WebdriverIO configuration, but first, a warning.
 
@@ -80,7 +80,7 @@ I'll also be introducing some concepts that won't be sticking around. They'll ju
 
 For example, for our first exercise, we'll be talking about assertions. In it, I'll show four different ways to achieve the same effect. We'll only be sticking with one of them though. Hopefully it's evident at the end why we'll be foregoing the other three. If not, I've failed at my job. What's new?
 
-### 2.1.3 Let's Start
+## 2.1.3 Let's Start
 
 We've already covered installation and basic test writing, but we're going to go over it again. Hopefully a bit quicker this time.
 
@@ -124,7 +124,7 @@ In a Windows shell: `mkdir test\specs`
 
 Finally, create a new file inside that directory (you can call it `navigation.js`) and open it for editing.
 
-### 2.1.4 Writing our first real test
+## 2.1.4 Writing our first real test
 
 In our file, we'll start things off by writing the `describe` block needed for Mocha to understand we're defining a new test:
 
@@ -208,7 +208,7 @@ describe('Main Navigation', function () {
 
 Pretty exciting, I know.
 
-### Elements and Actions
+## 2.1.5 Elements and Actions
 
 Now let's try clicking something, like the `Sign In` link.
 
@@ -259,7 +259,7 @@ $('=Sign In').click()
 
 This triggers a mouse click on that element, which the website will take action on and route us to the 'Sign In' page. How can we know though? 
 
-### Finishing up
+## 2.1.6 Finishing up
 
 Well, we could log out the title of the page again, but there's a problem: The developers of the website didn't code in a title change. As with many things in testing, we need an alternate form of validation.
 
@@ -342,7 +342,7 @@ In the middle of all that output are two lines with the content we need. Let's h
 
 As you see, the page title and url are logged out. Looks like the site functions as hoped and our test passes!
 
-### Adding Assertions
+## 2.1.7 Adding Assertions
 
 So far, we validated that our test successfully ran by checking the log output after execution. This is simple enough to do while we only have a test or two, but it quickly becomes tedious as more and more tests are added.
 
@@ -419,7 +419,7 @@ If we were to run our tests again, the only difference we'd see is that it no lo
 
 Now our test fails because it didn't get what it was expecting. We no longer need to check the log messages, having added a little more automation in our tests.
 
-### Expanding Assertions
+## 2.1.8 Expanding Assertions
 
 To be honest, in the real world, you'll rarely see errors thrown like this in tests. Instead, developers and tests use Assertion Libraries to take care of this. The reason is that these libraries can make writing assertions and throwing errors a heck of a lot simpler. 
 
@@ -501,7 +501,7 @@ describe('Homepage', function () {
 
 > Code diff since last exercise: https://github.com/klamping/wdio-book-examples/commit/2fb6cb9f841a4f0e92453a70455423adebae42f6
 
-### Exceeding Assertion Expectations
+## 2.1.9 Exceeding Assertion Expectations
 
 Node's library is pretty nice, especially since we didn't have to install anything, but it does lack some imporant features.
 
@@ -529,7 +529,9 @@ Let's look at replacing the URL assertion. We could use that same `to.equal` che
 
 With our URL, we want the test to pass no matter the domain name (since we could be testing this same site on any number of different domains). Right now, with our `equals` assertion, it will only pass if we're testing the `https://demo.learnwebdriverio.com` site. But all we really care about is that the url contains '/login'.
 
-Chai has us covered. It offers [an assertion that only sees if a value includes another](https://www.chaijs.com/api/bdd/#method_include). We can write it as `expect('abc').to.include('bc')`. For our URL check, that will be: `expect(browser.getUrl()).to.include('/login');`. This type of assertion isn't available in the base NodeJS Assert library, which makes installing and loading Chai worth it already. 
+Chai has us covered. It offers [an assertion that only sees if a value includes another](https://www.chaijs.com/api/bdd/#method_include). We can write it as `expect('abc').to.include('bc')`.
+
+For our URL check, that will be: `expect(browser.getUrl()).to.include('/login');`. This type of assertion isn't available in the base NodeJS Assert library, which makes installing and loading Chai worth it already. 
 
 There are many other special assertions you can use via Chai. Check out [their API documention](https://www.chaijs.com/api/bdd/) for a full listing.
 
@@ -556,7 +558,7 @@ describe('Homepage', function () {
 })
 ```
 
-With our test updated, save the file and give the test another run. Assuming no errors, the output should look the same. IUf I fail one of the assertions, however, you may see something like:
+With our test updated, save the file and give the test another run. Assuming no errors, the output should look the same. If I fail one of the assertions, however, you may see something like:
 
 ```
  "spec" Reporter:
@@ -581,6 +583,6 @@ That finishes off our first test, providing us with the foundation to move towar
 
 Next up, we'll look in-depth at a plethora of element selectors, along with how we can wait for content to load and do other funny things.
 
-### Chapter Challenge:
+## 2.1.10 Chapter Challenge:
 
 We covered the `expect` assertion style in this chapter, but there are two others that Chai offers. Try out the `should` and `assert` styles with our tests to see how they work. See the chapter `2.x Chapter Challenge Code Solutions` for answers.

@@ -1,8 +1,8 @@
-## Chapter Challenge Code Solutions
+# 2.x Chapter Challenge Code Solutions
 
-Each chapter includes a challenge or two for you to tackle on your own. But it's nice to check your work, so here are the solutions for each challenge:
+Each chapter includes a challenge or two for you to tackle on your own. But it's nice to check your work, so the following are solutions for each challenge.
 
-### 2.1.1 Chai Assertions
+## 2.1.1 Chai Assertions
 
 Using 'should' style assertions:
 
@@ -48,7 +48,7 @@ describe('Homepage', function () {
 })
 ```
 
-### 2.1.2 Selectors
+## 2.1.2 Selectors
 
 **Page Footer Text**
 

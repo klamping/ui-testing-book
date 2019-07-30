@@ -1,8 +1,8 @@
-## 2.2 Selectors of Every Shape and Size
+# 2.2 Selectors of Every Shape and Size
+
+## 2.2.1 Selector Mania
 
 Last chapter, amid the talk of actions and assertions, we touched on selectors just a little bit. We used a 'partial-text' selector to pick out a button with the text "About Us" in it. Now it's time to take a full look at all the options we have when it comes to picking elements.
-
-### 2.2.1 Selector Mania
 
 Let's get started with the official W3C list of the supported selector types:
 
@@ -53,7 +53,7 @@ Link text selectors and partial link text selectors are also pretty simple. To g
 
 Well, while Webdriver officially only supports 'link' based text selectors, WebdriverIO took it one step further and provides support for any type of element to be checked. It does this by converting what looks like a text selector into an XPath one (more on XPath in a second). Pretty neat.
 
-### 2.2.2 CSS Selectors
+## 2.2.2 CSS Selectors
 
 If you've done any front-end web development, you've likely worked with CSS selectors. They're the backbone not just for styles, but also JavaScript as well. 
 
@@ -68,7 +68,7 @@ If you're new to CSS, I highly recommend running through a few tutorials on sele
 
 Getting to know all your options with CSS selectors is quite valuable. The majority of styles out there rely on class or ID based selectors, but it can definitely be an advantage to know about other types as well. Here are couple more to know about:
 
-#### Attribute Selectors
+### Attribute Selectors
 
 Attributes are the properties of HTML elements (e.g. the "class" part of `<li class="item">`). These attributes can be helpful for singling out specific elements.
 
@@ -114,7 +114,7 @@ $("[dropdown-menu] li:nth-child(2)");
 
 Why use `nth-child` if you could just get all elements using `$$` and grab the one you want by index? Well, selecting multiple elements is a little slower than grabbing a single one, so using `nth-child` can help keep our tests speedy. [TODO actually verify this assumption]
 
-### XPath
+## 2.2.3 XPath
 
 The final type of selector I'll mention is XPath. Traditionally XPath has been the predominant selector strategy for Selenium/Webdriver, so many folks in the testing industry are most familiar with it. 
 
@@ -135,7 +135,7 @@ We can combine these two techniques to find the parent container of our 'Archive
 
 Regardless of CSS vs. XPath, you can use the Chrome Developer tools to help [evaluate and validate XPath/CSS selectors](http://yizeng.me/2014/03/23/evaluate-and-validate-xpath-css-selectors-in-chrome-developer-tools/) you're working on. This is a useful tool for building and testing selectors.
 
-### Chaining Selectors
+## 2.2.4 Chaining Selectors
 
 Aside from the strategies we've touched on so far, there's one neat trick that I love to take advantage of (and no, [doctors won't hate that you know this](https://skeptoid.com/blog/2013/01/28/one-weird-trick-to-rule-them-all/)).
 
@@ -145,7 +145,7 @@ From our example, we can select the link we want using a text selector, then sel
 
 You can also search for multiple elements from a single parent. To get both `li`s from the parent `ul`, do `$('ul').$$('li')`. Of course you could just do `$$('ul li')` in this case, but I needed to show off the other way so hush.
 
-### Custom Data Attributes for Testing
+## 2.2.5 Custom Data Attributes for Testing
 
 If you do have the ability to customize the HTML, I highly recommend adding custom HTML attributes to help identify the elements you need to select. This is a popular practice in the industry and can really help provide the specificity you need.
 
@@ -176,7 +176,7 @@ The real benefit of this is it's much less likely to be altered over the long-te
 
 We're going to take full advantage of this during our test writing, as the HTML currently avaiable on our test site doesn't quite allow us the specificity we'll need for long-term stability. 
 
-### Avoiding Poorly Built Selectors
+## 2.2.6 Avoiding Poorly Built Selectors
 
 We've covered a fair amount of strategies for selectors, and for good reason. Poorly choosen selectors are a prime candidate for flakey tests.
 
@@ -189,7 +189,7 @@ When it comes to selecting elements, I like to follow this general guidelines:
 - If I can change the HTML, add a custom data attribute for testing purposes only (this way they don't inadvertently get changed)
 - If I don't have control of the HTML, come up with selectors that are specific, but not overly tied to the HTML structure. For example, using simple parent-child relationships, `:nth-child` selectors or text based ones. It's not perfect, but it gets the job done.
 
-### Chapter Challenge:
+## 2.2.7 Chapter Challenge:
 
 The Conduit website doesn't have the best of options when it comes to selectors (we'll work on that), but it's managable. Try creating selectors for the following site elements:
 
