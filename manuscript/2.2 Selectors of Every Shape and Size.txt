@@ -1,8 +1,8 @@
-## 2.1.2 Selectors of Every Size and Shape
+## 2.2 Selectors of Every Shape and Size
 
 Last chapter, amid the talk of actions and assertions, we touched on selectors just a little bit. We used a 'partial-text' selector to pick out a button with the text "About Us" in it. Now it's time to take a full look at all the options we have when it comes to picking elements.
 
-### Selector Mania
+### 2.2.1 Selector Mania
 
 Let's get started with the official W3C list of the supported selector types:
 
@@ -24,18 +24,18 @@ To showcase the different selectors strategies, let's use the following HTML:
 
 ```html
 <ul class="items" dropdown-menu id="main-menu">
-    <li class="item">
-        <a ng-click="showProjects()">
-            Projects
-            <span class="icon"></span>
-        </a>
-    </li>
-    <li class="item">
-        <a ng-click="showArchive()">
-            Archive
-            <span class="icon"></span>
-        </a>
-    </li>
+	<li class="item">
+		<a ng-click="showProjects()">
+			Projects
+			<span class="icon"></span>
+		</a>
+	</li>
+	<li class="item">
+		<a ng-click="showArchive()">
+			Archive
+			<span class="icon"></span>
+		</a>
+	</li>
 </ul>
 ```
 
@@ -53,7 +53,7 @@ Link text selectors and partial link text selectors are also pretty simple. To g
 
 Well, while Webdriver officially only supports 'link' based text selectors, WebdriverIO took it one step further and provides support for any type of element to be checked. It does this by converting what looks like a text selector into an XPath one (more on XPath in a second). Pretty neat.
 
-### CSS Selectors
+### 2.2.2 CSS Selectors
 
 If you've done any front-end web development, you've likely worked with CSS selectors. They're the backbone not just for styles, but also JavaScript as well. 
 
@@ -155,18 +155,18 @@ For example, let's edit that HTML I showed earlier to use data attributes:
 
 ```html
 <ul class="items" dropdown-menu id="main-menu" data-qa-id="main-menu">
-    <li class="item" data-qa-id="main-menu-item">
-        <a ng-click="showProjects()" data-qa-id="main-menu-item-link">
-            Projects
-            <span class="icon" data-qa-id="main-menu-item-icon"></span>
-        </a>
-    </li>
-    <li class="item" data-qa-id="main-menu-item">
-        <a ng-click="showArchive()" data-qa-id="main-menu-item-link">
-            Archive
-            <span class="icon" data-qa-id="main-menu-item-icon"></span>
-        </a>
-    </li>
+	<li class="item" data-qa-id="main-menu-item">
+		<a ng-click="showProjects()" data-qa-id="main-menu-item-link">
+			Projects
+			<span class="icon" data-qa-id="main-menu-item-icon"></span>
+		</a>
+	</li>
+	<li class="item" data-qa-id="main-menu-item">
+		<a ng-click="showArchive()" data-qa-id="main-menu-item-link">
+			Archive
+			<span class="icon" data-qa-id="main-menu-item-icon"></span>
+		</a>
+	</li>
 </ul>
 ```
 
@@ -176,7 +176,7 @@ The real benefit of this is it's much less likely to be altered over the long-te
 
 We're going to take full advantage of this during our test writing, as the HTML currently avaiable on our test site doesn't quite allow us the specificity we'll need for long-term stability. 
 
-### Avoiding in Poorly Built Selectors
+### Avoiding Poorly Built Selectors
 
 We've covered a fair amount of strategies for selectors, and for good reason. Poorly choosen selectors are a prime candidate for flakey tests.
 
@@ -186,13 +186,13 @@ Instead, adding a custom data attribute as mentioned above can really limit the 
 
 When it comes to selecting elements, I like to follow this general guidelines:
 
-- If I can change the HTML, add a custom data attribute for testing purposes only
+- If I can change the HTML, add a custom data attribute for testing purposes only (this way they don't inadvertently get changed)
 - If I don't have control of the HTML, come up with selectors that are specific, but not overly tied to the HTML structure. For example, using simple parent-child relationships, `:nth-child` selectors or text based ones. It's not perfect, but it gets the job done.
 
 ### Chapter Challenge:
 
-The Juice Shop website doesn't have the best of options when it comes to selectors (we'll work on that), but it's managable. Try creating selectors for the following site elements:
+The Conduit website doesn't have the best of options when it comes to selectors (we'll work on that), but it's managable. Try creating selectors for the following site elements:
 
-- The Search input field in the nav bar
-- All 'Social' links on the 'About Us' page
-- All 'Social' links on the 'About Us' page (using 'Follow us on Social Media' header text). Hint: use `text()` and `ancestor`
+- The "An interactive learning project from Thinkster. Code & design licensed under MIT." text in the page footer
+- All 'Tags' in the 'Popular Tags' sidebar
+- All 'Tags' in the 'Popular Tags' sidebar (using 'Popular Tags' header text). Hint: use `text()` and `following-sibling`

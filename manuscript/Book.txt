@@ -9,6 +9,6 @@
 1.2.6 Running the Example Test Runner Test.txt
 1.2.7 Command Line Options (and Logging).txt
 1.2.8 An Analogy  Taking a Drive with WebdriverIO.txt
-2.1.1 Site Loading and Navigation.txt
-2.1.2 Selectors of Every Size and Shape.txt
+2.1 Site Loading and Navigation.txt
+2.2 Selectors of Every Shape and Size.txt
 2.x Chapter Challenge Code Solutions.txt

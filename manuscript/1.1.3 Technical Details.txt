@@ -10,13 +10,13 @@ Because technology changes fast, it's good to cover what versions of software I 
 
 ### Git Repository
 
-To download all the code samples and find further information about the book itself, visit [the official git repo](github.com/klamping/ui-testing-book).
+To download code samples for the main part of the book, visit [the official git repo](https://github.com/klamping/wdio-book-examples).
 
 ### Where to check for updates/corrections
 
 I've written the book using the most recent version of these technologies as I could. However, with an ever changing landscape, updates will need to be made. 
 
-You can see a list of changes by visiting [the book's changelog](). 
+You can see a list of changes by visiting [the book's changelog](https://github.com/klamping/ui-testing-book/blob/master/CHANGELOG.md). 
 
 ### Where to find help
 
@@ -60,6 +60,8 @@ That said, you don't need to know how to create a Node.js server, build a websit
 
 While I won't be covering it in this book, here's a few free resources you might find helpful if you'd like to refresh your knowledge:
 
+- [HTML Crash Course For Absolute Beginners](https://www.youtube.com/watch?v=UB1O30fR-EE)
+- [CSS Crash Course For Absolute Beginners](https://www.youtube.com/watch?v=yfoY53QXEnI)
 - [JavaScript Basics Course (YouTube Playlist)](https://www.youtube.com/playlist?list=PLWKjhJtqVAbk2qRZtWSzCIN38JC_NdhW5)
 - [JavaScript Course (Codecademy)](https://www.codecademy.com/learn/learn-javascript)
 - [Must-know JavaScript Features (YouTube Playlist)](https://www.youtube.com/playlist?list=PL0zVEGEvSaeHJppaRLrqjeTPnCH6vw-sm)

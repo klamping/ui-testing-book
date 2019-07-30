@@ -8,4 +8,3 @@
 1.2.5 Reviewing the Standard WebdriverIO Configuration File.txt
 1.2.6 Running the Example Test Runner Test.txt
 1.2.7 Command Line Options (and Logging).txt
-1.2.8 An Analogy  Taking a Drive with WebdriverIO.txt

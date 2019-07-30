@@ -9,21 +9,21 @@ Using 'should' style assertions:
 ```js
 const should = require('chai').should();
 
-describe('Main Navigation', function () {
-    it('should take you to the login page', function () {
-        // Load the page
-        browser.url('./');
+describe('Homepage', function () {
+  it('should load properly', function () {
+    // load the page
+    browser.url('./');
 
-        // Get the title of the homepage, should be 'OWASP Juice Shop'
-        browser.getTitle().should.equal('OWASP Juice Shop')
+    // Get the title of the homepage, should be 'Conduit'
+    browser.getTitle().should.equal('Conduit')
 
-        // Click the 'About Us' navigation link
-        $('button*=About Us').click();
+    // Click the 'Sign in' navigation link
+    $('=Sign in').click();
 
-        // Get the URL of the about page, should include 'about'
-        browser.getUrl().should.include('/about');
-    });
-});
+    // Get the URL of the sign in page. It should include 'login'
+    browser.getUrl().should.include('/login');
+  })
+})
 ```
 
 Using 'assert' style assertions:
@@ -31,42 +31,42 @@ Using 'assert' style assertions:
 ```js
 const assert = require('chai').assert;
 
-describe('Main Navigation', function () {
-    it('should take you to the login page', function () {
-        // Load the page
-        browser.url('./');
+describe('Homepage', function () {
+  it('should load properly', function () {
+    // load the page
+    browser.url('./');
 
-        // Get the title of the homepage, should be 'OWASP Juice Shop'
-        assert.equal(browser.getTitle(), 'OWASP Juice Shop')
+    // Get the title of the homepage, should be 'Conduit'
+    assert.equal(browser.getTitle(), 'Conduit')
 
-        // Click the 'About Us' navigation link
-        $('button*=About Us').click();
+    // Click the 'Sign in' navigation link
+    $('=Sign in').click();
 
-        // Get the URL of the about page, should include 'about'
-        assert.include(browser.getUrl(), '/about');
-    });
-});
+    // Get the URL of the sign in page. It should include 'login'
+    assert.include(browser.getUrl(), '/login');
+  })
+})
 ```
 
 ### 2.1.2 Selectors
 
-**Search Input Field**
+**Page Footer Text**
 
-The developers of the site handed us a gift with this one, placing an `id` on the input field of `searchQuery`. We can use that to write a simple CSS selector of:`$('#searchQuery')`
+The developers of the site handed us a gift with this one, placing a unique `class` on the containing element called `attribution`. We can use that to write a simple CSS selector of:`$('.attribution')`
 
-**All 'Social' links on the 'About Us' page**
+**All 'Tags' in the 'Popular Tags' sidebar**
 
-Similar to the unique ID, we have a class name of `social` that we can use for this selector. We can combine it with a descendent selector using the `a` tag to target the links: `$$('.social a')`
+Similar to the previous challenge, we have a class name of `sidebar` that we can use for this selector. We can combine it with a descendent selector using the `a` tag to target the tags: `$$('.sidebar a')`
 
-Do think about what other elements might have this `social` class name. Maybe a footer gets added to the site later that also uses this class... that would definitely break the tests. This is why I recommend unique data attributes be added if possible.
+Why not use the `tag-list` class instead? Think about what other elements might have this class name... If you look closely at the main feed, you'll see each article preview also has a `tag-list` class used. If we wanted to still use it, we'd need to be more specific with our selector and limit it to the `sidebar` container: `$$('.sidebar .tag-list a')`
 
-**All 'Social' links on the 'About Us' page (using 'Follow us on Social Media' header text)**
+**All 'Tags' in the 'Popular Tags' sidebar (using 'Popular Tags' header text). Hint: use `text()` and `following-sibling`**
 
 This last one was the trickiest by far, and requires some XPath magic. First, we need to get the heading element by the text inside it. We can do this two ways:
 
-- Using a full text match: `$('//h3/*[text()="Follow us on Social Media"]')`
-- Using a partial text match: `$('//h3/*[contains(text(), "Follow us")]')`
+- Using a full text match: `$('//p[text()="Popular Tags"]')`
+- Using a partial text match: `$('//p[contains(text(), "Popular Tags")]')`
 
-This will actually return us the `span` inside of the `h3`. From there, we need to navigate up a couple of elements so that we can move over to the links. We can use the `ancestor` modifier to move up to the `h3` (`ancestor::h3`), then move up one more element to get to the parent (`..`). From there, we can get all the links using the `a` tag. 
+From there, we need to navigate over to the links. We can use the `following-sibling` modifier to move over to the `div` (`following-sibling::div`). From there, we can get all the links using the `a` tag.
 
-All together, this is what your selector may look like: `$$('//h3/*[contains(text(), "Follow us")]/ancestor::h3/../a')`
+All together, this is what your selector may look like: `$$('//p[contains(text(), "Popular Tags")]/following-sibling::div//a')`

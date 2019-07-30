@@ -1,0 +1,586 @@
+## 2.1 Site Loading and Navigation
+
+Over the past few chapters, we've covered the basics of getting started with WebdriverIO. Now we're ready to fully jump in to writing tests.
+
+### 2.1.1 A "Real-World" App
+
+In my experience, the best way to learn a subject is to use real-world examples. Knowing why and when you would use specific code is just as important as knowing how to use that code. 
+
+To be "real-world", we need a good website to test. Something more than a barebones example, which always seem "too clean". We need a website we can get our hands dirty with.
+
+After much searching and contemplation, I've found a option that seems to fit the bill. The folks at [Thinkster](https://thinkster.io/) have created "The mother of all demo apps", which they've named "[The RealWorld Project](https://realworld.io/)". 
+
+At its core, the RealWorld project is just an architecture for trying out different technologies (e.g. React and/or Express). Developers from all over the world have built out various implementations of the same structure, and made them all available for us to try out. 
+
+On [their GitHub homepage](https://github.com/gothinkster/realworld), you can see the many clones availabe from the community. They split the clones between the front-end and back-end implementations. There are over 15 front-end variants to choose from, and over 30 back-ends choices. 
+
+Here are some benefits of this:
+
+1. All the variants of implementations allow you to fit the project to your needs. There are many choices availabe to developers in the web industry today, so the framework that you're working with is going to be different from other companies out there. With this app, you're able to choose the flavor that best fits your needs.
+2. Wherever you fall in the "Battle of the JavaScript Frameworks", you have to admit that most websites are built with one of them. Having an example built that utilizes these technologies provides a more real-life type website to test.
+3. It has myriad of features that can throw you for a loop when testing. This makes it good for teaching how not to get thrown for a loop.
+4. The functionality is complex, without being overbearing. A more "pure" example wouldn't have this, which means you're more likely to be thrown for a loop when testing. And you know how I feel about that.
+
+That's enough reasons I think. 
+
+So what are we going to do?
+
+Well, I've put together an instance of the project using [the VueJS front-end](https://github.com/gothinkster/vue-realworld-example-app) and [the Node/Express back-end](https://github.com/gothinkster/node-express-realworld-example-app). We'll be using that instance to test against going forward. 
+
+You can find the demo site at:
+https://demo.learnwebdriverio.com/
+
+Feel free to look around there to see what the site is all about. You're also welcome to create an account and add some posts; it's a sandbox for anyone's use. 
+
+That said, you're more than welcome to roll your own setup as you prefer. Honestly, we won't be doing much to the front-end/back-end systems, so feel free to play around with them as you see fit. 
+
+### 2.1.2 Avoiding Troubles
+
+I want to jump right in to setting up our WebdriverIO configuration, but first, a warning.
+
+One of the biggest traps I see newcomers face is their ambition. They start off over-optimistic, and use as many tools at they can get their hands on. It's easy (and kinda fun) to come up with a list of features you want your test framework to have. These tools may look easy-to-use on the outside, but getting them all to work together is a very different story. 
+
+It's not that they can't work together; they get along just fine most of the time. But when starting out, any mistake made along the way (or difference in setup), can cause errors that are difficult to understand.
+
+Take the following error I've run into in the past:
+
+`TypeError: Cannot read property 'trim' of undefined`
+
+That's not very helpful. Here, have a hint:
+
+```
+(node:2155) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): channel closed
+(node:2155) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+```
+
+So, is that caused by WebdriverIO, the Selenium-Standalone server, CucumberJS or the Allure reporter?
+
+Maybe some more error output will help?
+
+```
+/webdriverio/build/lib/utils/BaseReporter.js:336
+    throw _iteratorError;
+    ^
+
+TypeError: Cannot read property 'trim' of undefined
+    at getTestStatus (/node_modules/wdio-allure-reporter/build/reporter.js:68:41)
+```
+
+Ah, it must be the Allure reporter, right?
+
+Well, despite Allure throwing the error, it has nothing to do with the reporter. Instead, it's caused by having a CucumberJS step definition with an incorrect number of parameters in the callback function.
+
+Now, if you're unfamiliar with Allure or Cucumber, that may not make sense, but worry not (I'm certain you were concerned). My point isn't to narrow down on a specific error, but to show an example of how introducing extra features too early can really slow you down. I have a fair amount of experience with these two tools and this bug still took me a while to figure out.
+
+I'll state this one last time just for dramatic emphasis: The biggest roadblock newcomers face is not in the fundamentals, but trying to do too much at once. 
+
+So we're going to start out simple and introduce new tools and concepts one-by-one. We'll build up until we have a full-featured framework ready to tackle any situation. As errors arise, we'll have fewer dark alleys to look down, making it easier to identify what's going wrong and get back to doing things right.
+
+I'll also be introducing some concepts that won't be sticking around. They'll just be stepping stones to help you get across the scary swamp of some terrible thing that starts with an S (I don't know, it's just for alliteration purposes).
+
+For example, for our first exercise, we'll be talking about assertions. In it, I'll show four different ways to achieve the same effect. We'll only be sticking with one of them though. Hopefully it's evident at the end why we'll be foregoing the other three. If not, I've failed at my job. What's new?
+
+### 2.1.3 Let's Start
+
+We've already covered installation and basic test writing, but we're going to go over it again. Hopefully a bit quicker this time.
+
+The first step we'll take is to create a new folder to store our up-and-coming tests. **This should not be inside the same folder you used for the 'testrunner' exercise**. So, create a new folder outside of that; you can call it `wdio-realworld` just for fun.
+
+In there, do the usual NPM setup:
+
+```
+npm init -y
+npm install @wdio/cli
+```
+
+Next, let's get that config setup through the WDIO CLI:
+
+```
+npx wdio
+```
+
+Our answers will be:
+
+```
+? Where should your tests be launched?  local - https://www.npmjs.com/package/@wdio/local-runner
+? Where is your automation backend located? On my local machine
+? Which framework do you want to use?  mocha - https://www.npmjs.com/package/@wdio/mocha-framework
+? Do you want to run WebdriverIO commands synchronous or asynchronous? sync
+? Where are your test specs located? ./test/specs/**/*.js
+? Which reporter do you want to use? (Press <space> to select, <a> to toggle all, <i> to invert selection) spec - https://www.npmjs.com/package/@wdio/spec-reporter
+? Do you want to add a service to your test setup?  selenium-standalone - https://www.npmjs.com/package/@wdio/selenium-standalone-service
+? What is the base url? https://demo.learnwebdriverio.com/
+```
+
+Almost all defaults here, except for a few items:
+
+- We'll use the `selenium-standalone` service. Feel free to use `chromedriver` if you prefer, just be sure to set up the `port` and `path` in the config file.
+- For the base url, we use my copy of the Conduit site at `https://demo.learnwebdriverio.com/`. You're welcome to use your own here if mine isn't good enough for ya.
+
+Okay, now that we have our config ready, it's time to create our test directory. Since we went with the default path, we need to create two folders, `test` and `specs` which will go inside of `test`. You can do that how you like, but here's how I do it:
+
+In a bash shell (Linux/Mac): `mkdir -p test/specs`
+In a Windows shell: `mkdir test\specs`
+
+Finally, create a new file inside that directory (you can call it `navigation.js`) and open it for editing.
+
+### 2.1.4 Writing our first real test
+
+In our file, we'll start things off by writing the `describe` block needed for Mocha to understand we're defining a new test:
+
+```js
+describe('Homepage', function () { });
+```
+
+We call `describe` like a function, passing in two parameters. The first is a name for the feature we are testing. I put that we're testing the "Homepage". This name will be used in our test reporting, which you'll see in a moment.
+
+The second half of our `describe` call is a function which contains all of the code we want to associate with this feature.
+
+Inside of this function we'll be adding the `it` call. Similar to `describe`, `it` is a function call that again takes two parameters, the first being the name of the specific test (we'll say it 'should take you to the login page'), and the second is a function which contains our actual test code:
+
+```js
+it('should load properly', function () { });
+```
+
+Just to recap and refresh on the Mocha syntax:
+
+- `describe` is used to group sets of tests by the feature they are testing.
+- `it` defines a specific test to run.
+
+And remember that `it` always goes inside of `describe`. Here's what the whole thing looks like put together:
+
+```js
+describe('Homepage', function () {
+  it('should load properly', function () {
+
+  });
+});
+```
+
+Okay, now that we have our test structure in place, it's time to add our commands. Let's get going by loading the main page of the site. You can find a full list of commands on the WebdriverIO site in [their API docs](https://webdriver.io/docs/api.html).
+
+The command we'll use is [`browser.url`](https://webdriver.io/docs/api/browser/url.html). This command tells the browser to open a URL (bet you didn't guess that). It does have a trick up it's sleeve though.
+
+Remember that `baseUrl` setting we provided? I mentioned this before, but in case you didn't catch it, `browser.url` will prepend that `baseUrl` value if you define a relative path. 
+
+For example, if I say `browser.url('./tag/wdio')`, it will load the full url of `https://demo.learnwebdriverio.com/tag/wdio`.
+
+Here are some more complex examples, assuming the `baseUrl` is set to `http://example.com/one`:
+
+```js
+browser.url('./one'); // goes to 'http://example.com/one/two'
+browser.url('/two');  // goes to 'http://example.com/two'
+browser.url('http://anotherexample.com/one'); // goes to 'http://anotherexample.com/one'
+```
+
+Essentially, the `./` at the beginning of the value is used to say "keep the entire `baseUrl`". Alternatively, using just `/` at the start means that it will use only the domain of the URL, stripping off any subfolders.
+
+Finally, you can have it ignore the `baseUrl` by passing your own domain.
+
+Alright, let's use a simple `browser.url('./')` in our test to load up the homepage of the site:
+
+```js
+describe('Homepage', function () {
+  it('should load properly', function () {
+    // load the page
+    browser.url('./');
+  });
+});
+```
+
+To ensure the page has loaded, we're going to log out the title of the page we're on using [the `browser.getTitle()` command](https://webdriver.io/docs/api/webdriver.html#gettitle). Can you guess what that does?
+
+It gets the title of the page.
+
+In our case, the title is `Conduit`, so we should see that logged out when running our test:
+
+```js
+describe('Main Navigation', function () {
+  it('should take you to the login page', function () {
+    // Load the page
+    browser.url('./');
+    
+    // Get the title of the homepage, should be 'Conduit'
+    console.log(browser.getTitle())
+  });
+});
+```
+
+Pretty exciting, I know.
+
+### Elements and Actions
+
+Now let's try clicking something, like the `Sign In` link.
+
+To do that, we're going to use [the `click` command](https://webdriver.io/docs/api/element/click.html), but it won't be `browser.click()` (which would throw an error in your face).
+
+No, in order to click an element, you need to let WebdriverIO know which element to click.
+
+If you've used jQuery, which was very popular JavaScript library from 2006 to 2016-or-so, you'd be familiar with the `$` function. If not, what it does is pick an element out of the HTML based on a "selector". Selectors are like getting someone's attention by calling their name. 
+
+Some selectors can be very specific, like getting the attention of someone named "Thisisaveryuniquenamethatnooneelsehasihope". Some are more general and might get multiple results, like yelling "John" at the store (apologies to the John's out there and the store manager for yelling in her store). We'll get into selectors more in a little bit, but know that they come in all shapes and sizes.
+
+So WebdriverIO has mimicked the functionality of jQuery and provides [its own `$` function](https://webdriver.io/docs/api/element/$.html). We're going to pretend you know what I mean and use a partial text based selector (we'll talk more about selectors soon).
+
+What element are we getting? Well, we want to click the "Sign In" link at the top of the page. Here's what that HTML looks like:
+
+```html
+<ul data-qa-id="site-nav" class="nav navbar-nav pull-xs-right">
+    <li class="nav-item">
+        <a href="/" class="nav-link">
+            Home
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="/login" class="nav-link">
+            <i class="ion-compose"></i>
+            Sign in
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="/register" class="nav-link">
+            <i class="ion-compose"></i>
+            Sign up
+        </a>
+    </li>
+</ul>
+```
+
+There are a couple of ways we can specific the 'Sign In' link, but let's go with the simplest.We're going to request an `a` element on the page that has text containing `Sign In`. We could add more to this selector, like that the link has to have a class name of `nav-link`, but this is good enough for now. As I mentioned, we'll cover this more soon. 
+
+To say we want a link that has specific text in it, we write our selector like this: `$('=the text to search by')`. For our needs, we're going to do `$('=Sign In')`. 
+
+By using that `$` function with our selector, we now have an element that we can call the `click` command on:
+
+```js
+// Click the 'Sign In' navigation link
+$('=Sign In').click()
+```
+
+This triggers a mouse click on that element, which the website will take action on and route us to the 'Sign In' page. How can we know though? 
+
+### Finishing up
+
+Well, we could log out the title of the page again, but there's a problem: The developers of the website didn't code in a title change. As with many things in testing, we need an alternate form of validation.
+
+Let's use [the `getUrl` command](https://webdriver.io/docs/api/webdriver.html#geturl) instead. I'll let you guess what this command does. 
+
+```js        
+// Get the URL of the sign in page. It should include 'login'
+console.log(browser.getUrl())
+```
+
+That's the end of the test. Here's what the whole file looks like:
+
+```js
+describe('Homepage', function () {
+  it('should load properly', function () {
+    // load the page
+    browser.url('./');
+
+    // Get the title of the homepage, should be 'Conduit'
+    console.log(browser.getTitle())
+
+    // Click the 'Sign in' navigation link
+    $('=Sign in').click();
+
+    // Get the URL of the sign in page. It should include 'login'
+    console.log(browser.getUrl())
+  })
+})
+```
+
+> Code so far: https://github.com/klamping/wdio-book-examples/tree/9881928403739b2854f11866f3e1fdacaff3d83b
+
+Make sure it's saved because it's now time to run it. Back on the command line, start your test by entering `npx wdio`. This will kick off the test runner, opening up a Firefox browser (which is the default, switch it to Chrome if desired through the `wdio.conf.js` `capabilities` setting).
+
+The test should take about half a minute to complete. Once finished, you'll see log output that looks very similar to this:
+
+```
+Execution of 1 spec files started at 2019-07-30T03:02:07.756Z
+
+2019-07-30T03:02:07.819Z INFO @wdio/cli:Launcher: Run onPrepare hook
+2019-07-30T03:02:09.559Z INFO @wdio/local-runner: Start worker 0-0 with arg:
+[0-0] RUNNING in firefox - /test/specs/navigation.js
+[0-0] 2019-07-30T03:02:09.984Z INFO @wdio/local-runner: Run worker command: run
+[0-0] 2019-07-30T03:02:10.084Z INFO webdriver: [POST] http://127.0.0.1:4444/wd/hub/session
+[0-0] 2019-07-30T03:02:10.084Z INFO webdriver: DATA { capabilities:
+   { alwaysMatch: { browserName: 'firefox' }, firstMatch: [ {} ] },
+  desiredCapabilities: { browserName: 'firefox' } }
+[0-0] 2019-07-30T03:02:14.125Z INFO webdriver: COMMAND navigateTo("https://demo.learnwebdriverio.com/")
+[0-0] 2019-07-30T03:02:14.126Z INFO webdriver: [POST] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1/url
+[0-0] 2019-07-30T03:02:14.127Z INFO webdriver: DATA { url: 'https://demo.learnwebdriverio.com/' }
+[0-0] 2019-07-30T03:02:15.677Z INFO webdriver: COMMAND getTitle()
+[0-0] 2019-07-30T03:02:15.678Z INFO webdriver: [GET] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1/title
+[0-0] 2019-07-30T03:02:15.689Z INFO webdriver: RESULT Conduit
+[0-0] Conduit
+[0-0] 2019-07-30T03:02:15.690Z INFO webdriver: COMMAND findElement("link text", "Sign in")
+[0-0] 2019-07-30T03:02:15.690Z INFO webdriver: [POST] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1/element
+[0-0] 2019-07-30T03:02:15.690Z INFO webdriver: DATA { using: 'link text', value: 'Sign in' }
+[0-0] 2019-07-30T03:02:15.831Z INFO webdriver: RESULT { 'element-6066-11e4-a52e-4f735466cecf': '430dc364-a1d9-574a-afa5-3f5bf5b84537' }
+[0-0] 2019-07-30T03:02:15.842Z INFO webdriver: COMMAND elementClick("430dc364-a1d9-574a-afa5-3f5bf5b84537")
+2019-07-30T03:02:15.843Z INFO webdriver: [POST] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1/element/430dc364-a1d9-574a-afa5-3f5bf5b84537/click
+[0-0] 2019-07-30T03:02:16.151Z INFO webdriver: COMMAND getUrl()
+[0-0] 2019-07-30T03:02:16.153Z INFO webdriver: [GET] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1/url
+[0-0] 2019-07-30T03:02:16.221Z INFO webdriver: RESULT https://demo.learnwebdriverio.com/login
+https://demo.learnwebdriverio.com/login
+[0-0] 2019-07-30T03:02:16.256Z INFO webdriver: COMMAND deleteSession()
+[0-0] 2019-07-30T03:02:16.260Z INFO webdriver: [DELETE] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1
+[0-0] PASSED in firefox - /test/specs/navigation.js
+2019-07-30T03:02:18.158Z INFO @wdio/cli:Launcher: Run onComplete hook
+2019-07-30T03:02:18.158Z INFO @wdio/selenium-standalone-service: shutting down all browsers
+```
+
+In the middle of all that output are two lines with the content we need. Let's hide all of those extra message so we get just those two `console.log`'s we used by passing in the `logLevel` setting: `npx wdio --logLevel=silent`. Now our log ouput will be a lot shorter:
+
+```
+[0-0] RUNNING in firefox - /test/specs/navigation.js
+[0-0] Conduit
+[0-0] https://demo.learnwebdriverio.com/login
+[0-0] PASSED in firefox - /test/specs/navigation.js
+```
+
+As you see, the page title and url are logged out. Looks like the site functions as hoped and our test passes!
+
+### Adding Assertions
+
+So far, we validated that our test successfully ran by checking the log output after execution. This is simple enough to do while we only have a test or two, but it quickly becomes tedious as more and more tests are added.
+
+Instead of us manually checking the values, what if we could tell the computer what to expect and have it check for us? This is what assertions do. They check a value and "assert" that it's a certain way. If the value is incorrect, an error is thrown and the test is marked as failing.
+
+Mocha watches for these assertion errors and catches them during the tests, marking the test as failed if one occurs.
+
+We can update our test to "throw" an error if the values we're looking for aren't correct.
+
+Let's take that first log message. Replacing it, we want to assert that the title is `Conduit`. A simple `if` statement will do the trick:
+
+```js
+if (browser.getTitle() !== 'Conduit') {
+   // throw an error explaining what went wrong
+   throw new Error('Title of the homepage should be "Conduit"')
+}
+```
+
+Now if the title isn't what we're looking for, it'll jump into the if statement and we can do our dirty work throwing an error. In JavaScript, we do that by saying `throw new Error('My error message')`. You can see the custom error message I include in the previous example.
+
+Let's make the update for our `getUrl` call as well:
+
+```js
+if (browser.getUrl() !== 'https://demo.learnwebdriverio.com/login') {
+    throw new Error('URL of "login" page should be correct')
+}
+```
+
+Here's the entirety of our updated test:
+
+```js
+describe('Homepage', function () {
+  it('should load properly', function () {
+    // load the page
+    browser.url('./');
+
+    // Get the title of the homepage, should be 'Conduit'
+    if (browser.getTitle() !== 'Conduit') {
+       // throw an error explaining what went wrong
+       throw new Error('Title of the homepage should be "Conduit"')
+    }
+
+    // Click the 'Sign in' navigation link
+    $('=Sign in').click();
+
+    // Get the URL of the sign in page. It should include 'login'
+    if (browser.getUrl() !== 'https://demo.learnwebdriverio.com/login') {
+      throw new Error('URL of "login" page should be correct')
+    }
+  })
+})
+```
+
+> Code diff since last exercise: https://github.com/klamping/wdio-book-examples/commit/0eb4834866d27852d6161d6c74b6fc3f171c3640
+
+If we were to run our tests again, the only difference we'd see is that it no longer logs out those two messages (assuming the site didn't break in the time between our test runs). So how do we know our `if` conditions work? Well, if we changed one of the `if` conditions to no longer match the site values (e.g. `if (browser.getTitle() !== 'The wrong title') {` and ran the test again, you'd see the following message:
+
+```
+ "spec" Reporter:
+------------------------------------------------------------------
+[firefox 17.7.0 mac #0-0] Spec: /Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js
+[firefox 17.7.0 mac #0-0] Running: firefox (v17.7.0) on mac
+[firefox 17.7.0 mac #0-0]
+[firefox 17.7.0 mac #0-0] Homepage
+[firefox 17.7.0 mac #0-0]    ✖ should load properly
+[firefox 17.7.0 mac #0-0]
+[firefox 17.7.0 mac #0-0] 1 failing (3.9s)
+[firefox 17.7.0 mac #0-0]
+[firefox 17.7.0 mac #0-0] 1) Homepage should load properly
+[firefox 17.7.0 mac #0-0] Title of the homepage should be "Conduit"
+[firefox 17.7.0 mac #0-0] Error: Title of the homepage should be "Conduit"
+[firefox 17.7.0 mac #0-0]     at Context.<anonymous> (/Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js:9:14)
+```
+
+Now our test fails because it didn't get what it was expecting. We no longer need to check the log messages, having added a little more automation in our tests.
+
+### Expanding Assertions
+
+To be honest, in the real world, you'll rarely see errors thrown like this in tests. Instead, developers and tests use Assertion Libraries to take care of this. The reason is that these libraries can make writing assertions and throwing errors a heck of a lot simpler. 
+
+One such assertion library comes built-in to the Node.js ecosystem. The [NodeJS Assert API](https://nodejs.org/api/assert.html#assert_assert) is a standard libary in Node.js, and we can use it without any extra installations.
+
+At the top of our test file, add the following line to load this API:
+
+```js
+const assert = require('assert');
+```
+
+Pay attention that this statement is outside of the `describe` block. If we were to include it inside the `describe` block, it would only be available in that section. Any other `describe` blocks would also have to include the statement. That's because variables declared inside the function block are scoped to that function. This is normal JavaScript behavior and is something to watch out for when writing tests.
+
+Next, we need to replace our `if` statement and thrown error with a call to the assert library. There are many ways to assert a value:
+
+```js
+const assert = require('assert');
+const myValue = 'a';
+
+assert(myValue); // You can check that it's a 'truthy' value
+assert.strictEqual(myValue, 'a'); // You can check that it's equal to something
+assert.notStrictEqual(myValue, 'b'); // You can check that it doesn't equal something
+```
+
+We want to validate that the page title is a specific string of text. To do this, we use `assert.strictEqual` and pass in the actual value and then the expected value. The actual value is the result of the `getTitle` call and the expected value is a simple string of text containing our page title.
+
+```js
+assert.strictEqual(browser.getTitle(), 'Conduit');
+```
+
+Now if our test fails, it will look like:
+
+```
+ "spec" Reporter:
+------------------------------------------------------------------
+[firefox 17.7.0 mac #0-0] Spec: /Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js
+[firefox 17.7.0 mac #0-0] Running: firefox (v17.7.0) on mac
+[firefox 17.7.0 mac #0-0]
+[firefox 17.7.0 mac #0-0] Homepage
+[firefox 17.7.0 mac #0-0]    ✖ should load properly
+[firefox 17.7.0 mac #0-0]
+[firefox 17.7.0 mac #0-0] 1 failing (5s)
+[firefox 17.7.0 mac #0-0]
+[firefox 17.7.0 mac #0-0] 1) Homepage should load properly
+[firefox 17.7.0 mac #0-0] Input A expected to strictly equal input B:
++ expected - actual
+
+- 'Conduit'
++ 'The wrong title'
+[firefox 17.7.0 mac #0-0] AssertionError [ERR_ASSERTION]: Input A expected to strictly equal input B:
+[firefox 17.7.0 mac #0-0] + expected - actual
+[firefox 17.7.0 mac #0-0]
+[firefox 17.7.0 mac #0-0] - 'Conduit'
+[firefox 17.7.0 mac #0-0] + 'The wrong title'
+[firefox 17.7.0 mac #0-0]     at Context.<anonymous> (/Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js:9:12)
+```
+
+Not only is the assertion a little less code to write, it's actually a more helpful message in that it provides the expected AND actual values. Assuming we've updated our second check as well, here's what our test now looks like:
+
+```js
+const assert = require('assert');
+
+describe('Homepage', function () {
+  it('should load properly', function () {
+    // load the page
+    browser.url('./');
+
+    // Get the title of the homepage, should be 'Conduit'
+    assert.strictEqual(browser.getTitle(), 'Conduit');
+
+    // Click the 'Sign in' navigation link
+    $('=Sign in').click();
+
+    // Get the URL of the sign in page. It should include 'login'
+    assert.strictEqual(browser.getUrl(), 'https://demo.learnwebdriverio.com/login');
+  })
+})
+```
+
+> Code diff since last exercise: https://github.com/klamping/wdio-book-examples/commit/2fb6cb9f841a4f0e92453a70455423adebae42f6
+
+### Exceeding Assertion Expectations
+
+Node's library is pretty nice, especially since we didn't have to install anything, but it does lack some imporant features.
+
+Take that last check as an example. In it, we're validating the entire URL. But what if we want to test a different instance of the same site (e.g. `https://my-even-better-conduit-demo.com/login`)? Our assertion would fail even though the navigation to the Login page still worked.
+
+What we need to do is check only part of that url, basically checking that the url includes `login`, but not worrying about the rest. 
+
+We can't really do that easily with Node's Assert libary, but we can load in a better one that can. [Chai](https://www.chaijs.com/) is an open-source assertion library that I've used for many years now and have found quite sufficient. 
+
+Getting set up with Chai is a fairly simple process. All we have to do is run `npm install chai`. This installs Chai from NPM and makes it available in test script.
+
+Chai offers three flavors of assertions: 'should', 'expect' and 'assert'. It offers the trio of styles because humans are fickle and have preferences that are often just a personal thing. By providing three interfaces, you're able to choose the one you're most comfortable with. Under the hood though they're just a different language for saying the same thing; what a result should or shouldn't be. I recommend trying all three flavors, just to see which fits best for you.
+
+For our usage, we'll be sticking to the 'expect' assertion format. This is the style I've found the most success with and therefore prefer (sorry, you have to deal with my preferences).
+
+We need to replace the 'assert' require statement and instead load Chai's expect functionality. So at the top of the file, replace the `const assert = require('assert');` line with `const chai = require('chai');`. Hopefully that makes sense because I don't know how to explain it any simpler than that.
+
+The `chai` constant we loaded has an `expect` property that we can use to form all of our more advanced assertions. For ease of use, let's save that to it's own constant: `const expect = chai.expect`.
+
+Now we need to update our assertions to use `expect`. Change the title assertion line from `assert.strictEqual(browser.getTitle(), 'Conduit');` to `expect(browser.getTitle()).to.equal('Conduit');`. 
+
+Can you tell why I like this format? To me, it's more sentence-like compared to the assert code: We expect the `getTitle` call to equal our value. I like my tests to read more like specifications than a standard code file.
+
+Let's look at replacing the URL assertion. We could use that same `to.equal` check, but I had mentioned that chai provided us with more advanced options. One of those options is to check that a value contains another value. So we can check that `abc` includes `bc`, which it does. 
+
+With our URL, we want the test to pass no matter the domain name (since we could be testing this same site on any number of different domains). Right now, with our `equals` assertion, it will only pass if we're testing the `https://demo.learnwebdriverio.com` site. But all we really care about is that the url contains '/login'.
+
+Chai has us covered. It offers [an assertion that only sees if a value includes another](https://www.chaijs.com/api/bdd/#method_include). We can write it as `expect('abc').to.include('bc')`. For our URL check, that will be: `expect(browser.getUrl()).to.include('/login');`. This type of assertion isn't available in the base NodeJS Assert library, which makes installing and loading Chai worth it already. 
+
+There are many other special assertions you can use via Chai. Check out [their API documention](https://www.chaijs.com/api/bdd/) for a full listing.
+
+Here's the fully updated file:
+
+```js
+const chai = require('chai');
+const expect = chai.expect
+
+describe('Homepage', function () {
+  it('should load properly', function () {
+    // load the page
+    browser.url('./');
+
+    // Get the title of the homepage, should be 'Conduit'
+    expect(browser.getTitle()).to.equal('Conduit');
+
+    // Click the 'Sign in' navigation link
+    $('=Sign in').click();
+
+    // Get the URL of the sign in page. It should include 'login'
+    expect(browser.getUrl()).to.include('/login');
+  })
+})
+```
+
+With our test updated, save the file and give the test another run. Assuming no errors, the output should look the same. IUf I fail one of the assertions, however, you may see something like:
+
+```
+ "spec" Reporter:
+------------------------------------------------------------------
+[firefox 17.7.0 mac #0-0] Spec: /Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js
+[firefox 17.7.0 mac #0-0] Running: firefox (v17.7.0) on mac
+[firefox 17.7.0 mac #0-0]
+[firefox 17.7.0 mac #0-0] Homepage
+[firefox 17.7.0 mac #0-0]    ✖ should load properly
+[firefox 17.7.0 mac #0-0]
+[firefox 17.7.0 mac #0-0] 1 failing (5.6s)
+[firefox 17.7.0 mac #0-0]
+[firefox 17.7.0 mac #0-0] 1) Homepage should load properly
+[firefox 17.7.0 mac #0-0] expected 'https://demo.learnwebdriverio.com/login' to include '/logis'
+[firefox 17.7.0 mac #0-0] AssertionError: expected 'https://demo.learnwebdriverio.com/login' to include '/logis'
+[firefox 17.7.0 mac #0-0]     at Context.<anonymous> (/Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js:16:33)
+```
+
+That finishes off our first test, providing us with the foundation to move towards more complex checks down the road. Assertions are going to be essential in our automation, so taking the time to understand how they work is well worth it.
+
+> Code diff: https://github.com/klamping/wdio-book-examples/commit/f62bbdb6cf80c34e58e023edf0c05d32e133ea90
+
+Next up, we'll look in-depth at a plethora of element selectors, along with how we can wait for content to load and do other funny things.
+
+### Chapter Challenge:
+
+We covered the `expect` assertion style in this chapter, but there are two others that Chai offers. Try out the `should` and `assert` styles with our tests to see how they work. See the chapter `2.x Chapter Challenge Code Solutions` for answers.

@@ -138,10 +138,6 @@ You should see a screen like this appear:
 
 What this configuration utility will do is ask you a series of questions in regards to how you want your tests to run. The first question asks where to launch your tests, and right now only gives you one option. We can therefore ignore it and just hit 'enter' to continue to the next question.
 
-The next question asks `Shall I install the runner plugin for you? (Y/n)`
-
-If you answer yes, it will take the step to run the `npm install` command needed to get the `@wdio/local-runner` package from NPM. That's pretty helpful, and definitely something we want to have done, so hit 'enter' again to go with the default answer of `Y` (yes).
-
 Now we have some real choices. It asks us `Where is your automation backend located?`. This is basically asking "where are you running your WebDriver server?"
 
 There are many instances where you'd want to customize this, but for us, we're going to be running it locally using either `selenium-standalone` or `chromedriver`, so we'll stick with the first choice and hit 'enter' on `❯ On my local machine`.
@@ -157,7 +153,7 @@ While the Jasmine framework is more than capable for meeting our needs, all the 
 - Mocha is the more popular framework of the two, meaning you'll run in to it more often
 - Almost all my professional experience has been through using Mocha, so I'm much more familiar with how it works and how you can take advantage of it.
 
-With that said, hit that enter button again to choose mocha, then again to install the WebdriverIO mocha adapter.
+With that said, hit that enter button again to choose mocha.
 
 You should now be prompted with the question `Do you want to run WebdriverIO commands synchronous or asynchronous?` with the choices `sync` and `async`.
 
@@ -223,25 +219,17 @@ Here are the two reporters showing the results of the same test run
 
 On top is `dot`, which is quite succinct. `spec` is much more verbose, giving us more detail into what test specific failed.
 
-I much prefer `spec` over `dot`, as I need to know these details. You'll probably want them as well, so let's select that as our reporter (press the down arrow, then space, then enter).
+I much prefer `spec` over `dot`, as I need to know these details. You'll probably want it as well, so leave it selected as the default choice.
 
-Answering 'Yes' to the reporter install question, we're now asked if we want any services set up for us. Services are useful extensions to the main WebdriverIO functionality. There are many official services, a plethora of third-party ones and you can even write your own.
+We're now asked if we want any services set up for us. Services are useful extensions to the main WebdriverIO functionality. There are many official services, a plethora of third-party ones and you can even write your own.
 
-You can find out more about each service by clicking in the link provided next to it. The one service we're interested in installing right now is the `selenium-standalone` service. Arrow down to it and click `space`.
+You can find out more about each service by clicking in the link provided next to it. The one service we're interested in installing right now is the `selenium-standalone` service. Arrow down to it and click `space`, while also unchecking `chromedriver` (which is selected by default).
 
 Note: If you'd prefer to skip the Java install associated with using `selenium-standalone`, I will talk about how to use the chromedriver service a couple sections later. Feel free to hit enter without selecting any options if that's your preference. 
 
-Assuming you decided to use the `selenium-standalone` service, it will prompt you about installing it. Hit enter again to have it installed. 
-
-Getting close to being done with the questions. Next up it asks about your desired "Level of logging verbosity".
-
-These levels correspond to common log levels in code output, and the higher on the list your choose (trace being highest), the more log output you'll get. This can be helpful for debugging later on. Silent, on the other hand, doesn't log anything when running tests, and can be useful for avoiding a lot of noise in your test run.
-
-Choose whichever you prefer. I'll use `info` for my examples.
-
 The last question asks what `baseUrl` we want. By setting this value, we can shorten our `browser.url` calls. We'll talk about it soon, but for now just type in `https://webdriver.io` and hit enter. 
 
-That finishes up all the questions. Now WebdriverI takes over and runs the NPM installs for the packages we requested, along with building out our configuration file.
+That finishes up all the questions. Now WebdriverIO takes over and runs the NPM installs for the packages we requested, along with building out our configuration file.
 
 If all went well, you should see this message:
 

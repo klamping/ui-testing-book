@@ -1,7 +1,0 @@
-## 1.2.8 An Analogy: Taking a Drive with WebdriverIO
-
-Intro to article, explain that readers can skip if they're comfortable with how everything fits
-
-TODO copy in and update:
-
-<https://dev.to/klamping/take-a-drive-with-webdriverio-and-mocha-14e>
