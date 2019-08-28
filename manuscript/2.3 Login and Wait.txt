@@ -1,6 +1,6 @@
-## 2.3 Can I Have Your Login and Registration, Please?
+# 2.3 Can I Have Your Login and Registration, Please?
 
-### 2.3.1 Is This Thing Working?
+## 2.3.1 Is This Thing Working?
 
 In our first test, we ran some basic commands to validate our Conduit site loaded correctly and that you could navigate to the "Sign In" page. While it's a good start, the test doesn't provide much value. It would be much easier to just use a Website Uptime Monitoring service if that's all you're really checking.
 
@@ -71,7 +71,7 @@ describe('Login Page', function () {
 
 With out outline made, let's turn this into real code.
 
-#### Step 1: Go to the login page
+### Step 1: Go to the login page
 
 In our navigation test, we already achieved the effect of going to the sign in page, so we could just copy that code over and re-use it for this step. But I think that's a bad idea.
 
@@ -97,7 +97,7 @@ it('should let you log in', function () {
 
 Remember that we prepend our page url with `./`, so that WebdriverIO knows to add the `baseUrl` to the start of the url. 
 
-#### Step 2: Enter a valid username into the "email" input
+### Step 2: Enter a valid username into the "email" input
 
 Now that we're on the login page, it's time to fill out our form. There are two fields to enter: email and password.
 
@@ -171,7 +171,7 @@ For our element selectors, we're using a combo of element type (`input`) with a 
 We tell WebdriverIO what value we want in that input field by passing it as the lone argument in the `setValue` command. First we pass in the email address, then we send over the password.
 
 
-#### Step 3: Clicking the 'Sign in' button
+### Step 3: Clicking the 'Sign in' button
 TODO adding that button
 
 
@@ -193,7 +193,7 @@ describe('Login Page', function () {
 });
 ```
 
-#### Running our test
+### Running our test
 
 We're still missing a piece of our test (the assertion), but it's a good idea to try out what we have so far. Writing code is always prone to errors, so running your tests as soon as reasonable is a good way to catch issues before you get too deep into an approach. 
 
@@ -209,7 +209,7 @@ Well, they certainly didn't error out, but did they really pass? The test closed
 
 Let's fix that with an assertion!
 
-#### Step 4: Asserting that we're logged in
+### Step 4: Asserting that we're logged in
 
 As always with testing, we can assert any number of details:
 
@@ -242,7 +242,7 @@ expected 'https://demo.learnwebdriverio.com/login' to not include '/login'
 
 Why is this? We entered the form, we clicked the button, it should have logged us in just fine...
 
-### 2.3.2 Slow it Down
+## 2.3.2 Slow it Down
 
 The reason it failed has to do with how the site was built. Normally a form buttom submission would trigger a standard page load, which Webdriver knows how to handle. In this case, the form submission is handled through a special VueJS route, which doesn't go through the normal browser methods. As you can guess, Webdriver isn't aware of this action and thinks everything is ready to go.
 
@@ -280,7 +280,7 @@ If you run the test again, you'll notice it's two seconds slower, but it passes 
 
 But if you have a decent provider then things seem a-okay. You feel no pain right now, and that's just not right. Let's resolve that.
 
-### 2.3.3 Network throttling
+## 2.3.3 Network throttling
 
 Yes, we're going to take a quick detour in our test writing to learn about how to slow down our internet. Why would we ever want to do that? 
 
@@ -332,7 +332,7 @@ Plus, every pause you add to your test slows it down just a little bit more. If 
 
 What we really want to do is wait just the right amount of time and not a second more. 
 
-### 2.3.4 Waiting With Waits
+## 2.3.4 Waiting With Waits
 
 The reason `browser.pause` is ineffecient is that it ignores anything the page does during that time. Until that timer has gone off, it's not listening. 
 
@@ -403,7 +403,7 @@ describe('Login Page', function () {
 
 If we run our test again, we'll notice that they now... still fail. What gives?
 
-### 2.3.5 Waiting with inverse waits (waitForExist with button not showing)
+## 2.3.5 Waiting with inverse waits (waitForExist with button not showing)
 
 If you watched the page, you may have noticed that the script did pause until the login finished. However, this apparently wasn't enough waiting with our artificially slow connection (if you comment out the `browser.setNetworkConditions` command call, the test will likely pass).
 
@@ -450,7 +450,3 @@ describe('Login Page', function () {
 Now when we run our tests, they actually pass! It took a little bit of trial and error, but eventually we got to the right solution (Side note: You should get to use this if you're going to continue down the path of testing. Nothing is as simple as it seems).
 
 We still have two more tests that we want to write for our login page, but we're going to save that for the next chapter.
-
-### Challenge:
-- Update the 'waitFor' code to instead use `waitForDisplayed`
-- Instead of waiting for the "Sign in" button to stop existing, try waiting for the "Your Feed" tab to appear.
