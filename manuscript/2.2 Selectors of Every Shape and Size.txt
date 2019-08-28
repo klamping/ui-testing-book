@@ -189,7 +189,7 @@ When it comes to selecting elements, I like to follow this general guidelines:
 - If I can change the HTML, add a custom data attribute for testing purposes only (this way they don't inadvertently get changed)
 - If I don't have control of the HTML, come up with selectors that are specific, but not overly tied to the HTML structure. For example, using simple parent-child relationships, `:nth-child` selectors or text based ones. It's not perfect, but it gets the job done.
 
-## 2.2.7 Chapter Challenge:
+## 2.2.7 Chapter Challenge
 
 The Conduit website doesn't have the best of options when it comes to selectors (we'll work on that), but it's managable. Try creating selectors for the following site elements:
 

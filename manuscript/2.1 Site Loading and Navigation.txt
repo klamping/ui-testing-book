@@ -117,6 +117,8 @@ Almost all defaults here, except for a few items:
 - We'll use the `selenium-standalone` service. Feel free to use `chromedriver` if you prefer, just be sure to set up the `port` and `path` in the config file.
 - For the base url, we use my copy of the Conduit site at `https://demo.learnwebdriverio.com/`. You're welcome to use your own here if mine isn't good enough for ya.
 
+There's one other quick item we need to change in our configuration file. Update the browser to be `chrome`, as there is a specific Chrome feature we want to take advantage of in a later chapter. Besides, you'll need to use Chrome if you're running with ChromeDriver anyway.
+
 Okay, now that we have our config ready, it's time to create our test directory. Since we went with the default path, we need to create two folders, `test` and `specs` which will go inside of `test`. You can do that how you like, but here's how I do it:
 
 In a bash shell (Linux/Mac): `mkdir -p test/specs`
@@ -292,7 +294,7 @@ describe('Homepage', function () {
 
 > Code so far: https://github.com/klamping/wdio-book-examples/tree/9881928403739b2854f11866f3e1fdacaff3d83b
 
-Make sure it's saved because it's now time to run it. Back on the command line, start your test by entering `npx wdio`. This will kick off the test runner, opening up a Firefox browser (which is the default, switch it to Chrome if desired through the `wdio.conf.js` `capabilities` setting).
+Make sure it's saved because it's now time to run it. Back on the command line, start your test by entering `npx wdio`. This will kick off the test runner, opening up a Chrome browser (Firefox is the default, but we switched it to Chrome earlier on).
 
 The test should take about half a minute to complete. Once finished, you'll see log output that looks very similar to this:
 
@@ -301,12 +303,12 @@ Execution of 1 spec files started at 2019-07-30T03:02:07.756Z
 
 2019-07-30T03:02:07.819Z INFO @wdio/cli:Launcher: Run onPrepare hook
 2019-07-30T03:02:09.559Z INFO @wdio/local-runner: Start worker 0-0 with arg:
-[0-0] RUNNING in firefox - /test/specs/navigation.js
+[0-0] RUNNING in chrome - /test/specs/navigation.js
 [0-0] 2019-07-30T03:02:09.984Z INFO @wdio/local-runner: Run worker command: run
 [0-0] 2019-07-30T03:02:10.084Z INFO webdriver: [POST] http://127.0.0.1:4444/wd/hub/session
 [0-0] 2019-07-30T03:02:10.084Z INFO webdriver: DATA { capabilities:
-   { alwaysMatch: { browserName: 'firefox' }, firstMatch: [ {} ] },
-  desiredCapabilities: { browserName: 'firefox' } }
+   { alwaysMatch: { browserName: 'chrome' }, firstMatch: [ {} ] },
+  desiredCapabilities: { browserName: 'chrome' } }
 [0-0] 2019-07-30T03:02:14.125Z INFO webdriver: COMMAND navigateTo("https://demo.learnwebdriverio.com/")
 [0-0] 2019-07-30T03:02:14.126Z INFO webdriver: [POST] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1/url
 [0-0] 2019-07-30T03:02:14.127Z INFO webdriver: DATA { url: 'https://demo.learnwebdriverio.com/' }
@@ -326,7 +328,7 @@ Execution of 1 spec files started at 2019-07-30T03:02:07.756Z
 https://demo.learnwebdriverio.com/login
 [0-0] 2019-07-30T03:02:16.256Z INFO webdriver: COMMAND deleteSession()
 [0-0] 2019-07-30T03:02:16.260Z INFO webdriver: [DELETE] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1
-[0-0] PASSED in firefox - /test/specs/navigation.js
+[0-0] PASSED in chrome - /test/specs/navigation.js
 2019-07-30T03:02:18.158Z INFO @wdio/cli:Launcher: Run onComplete hook
 2019-07-30T03:02:18.158Z INFO @wdio/selenium-standalone-service: shutting down all browsers
 ```
@@ -334,10 +336,10 @@ https://demo.learnwebdriverio.com/login
 In the middle of all that output are two lines with the content we need. Let's hide all of those extra message so we get just those two `console.log`'s we used by passing in the `logLevel` setting: `npx wdio --logLevel=silent`. Now our log ouput will be a lot shorter:
 
 ```
-[0-0] RUNNING in firefox - /test/specs/navigation.js
+[0-0] RUNNING in chrome - /test/specs/navigation.js
 [0-0] Conduit
 [0-0] https://demo.learnwebdriverio.com/login
-[0-0] PASSED in firefox - /test/specs/navigation.js
+[0-0] PASSED in chrome - /test/specs/navigation.js
 ```
 
 As you see, the page title and url are logged out. Looks like the site functions as hoped and our test passes!
@@ -403,18 +405,18 @@ If we were to run our tests again, the only difference we'd see is that it no lo
 ```
  "spec" Reporter:
 ------------------------------------------------------------------
-[firefox 17.7.0 mac #0-0] Spec: /Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js
-[firefox 17.7.0 mac #0-0] Running: firefox (v17.7.0) on mac
-[firefox 17.7.0 mac #0-0]
-[firefox 17.7.0 mac #0-0] Homepage
-[firefox 17.7.0 mac #0-0]    ✖ should load properly
-[firefox 17.7.0 mac #0-0]
-[firefox 17.7.0 mac #0-0] 1 failing (3.9s)
-[firefox 17.7.0 mac #0-0]
-[firefox 17.7.0 mac #0-0] 1) Homepage should load properly
-[firefox 17.7.0 mac #0-0] Title of the homepage should be "Conduit"
-[firefox 17.7.0 mac #0-0] Error: Title of the homepage should be "Conduit"
-[firefox 17.7.0 mac #0-0]     at Context.<anonymous> (/Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js:9:14)
+[chrome 17.7.0 mac #0-0] Spec: /Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js
+[chrome 17.7.0 mac #0-0] Running: chrome (v17.7.0) on mac
+[chrome 17.7.0 mac #0-0]
+[chrome 17.7.0 mac #0-0] Homepage
+[chrome 17.7.0 mac #0-0]    ✖ should load properly
+[chrome 17.7.0 mac #0-0]
+[chrome 17.7.0 mac #0-0] 1 failing (3.9s)
+[chrome 17.7.0 mac #0-0]
+[chrome 17.7.0 mac #0-0] 1) Homepage should load properly
+[chrome 17.7.0 mac #0-0] Title of the homepage should be "Conduit"
+[chrome 17.7.0 mac #0-0] Error: Title of the homepage should be "Conduit"
+[chrome 17.7.0 mac #0-0]     at Context.<anonymous> (/Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js:9:14)
 ```
 
 Now our test fails because it didn't get what it was expecting. We no longer need to check the log messages, having added a little more automation in our tests.
@@ -583,6 +585,6 @@ That finishes off our first test, providing us with the foundation to move towar
 
 Next up, we'll look in-depth at a plethora of element selectors, along with how we can wait for content to load and do other funny things.
 
-## 2.1.10 Chapter Challenge:
+## 2.1.10 Chapter Challenge
 
 We covered the `expect` assertion style in this chapter, but there are two others that Chai offers. Try out the `should` and `assert` styles with our tests to see how they work. See the chapter `2.x Chapter Challenge Code Solutions` for answers.
