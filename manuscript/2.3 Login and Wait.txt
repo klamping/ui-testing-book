@@ -1,4 +1,4 @@
-# 2.3 Can I Have Your Login and Registration, Please?
+# 2.3 Login and Wait
 
 ## 2.3.1 Is This Thing Working?
 
@@ -403,7 +403,7 @@ describe('Login Page', function () {
 
 If we run our test again, we'll notice that they now... still fail. What gives?
 
-## 2.3.5 Waiting with inverse waits (waitForExist with button not showing)
+## 2.3.5 Waiting with Inverse Waits
 
 If you watched the page, you may have noticed that the script did pause until the login finished. However, this apparently wasn't enough waiting with our artificially slow connection (if you comment out the `browser.setNetworkConditions` command call, the test will likely pass).
 
@@ -417,7 +417,7 @@ Let's try waiting for the "Sign In" button to stop existing, as it disappears fr
 $('button*=Sign in').waitForExist(undefined, true);
 ```
 
-`waitForExist` (and the other `waitFor*` commands, take two arguments:
+`waitForExist` (and the other `waitFor*` commands), take two arguments:
 
 1. The first is an override to the default `waitForTimeout` amount. Since we don't want to override it, we can just pass in `undefined` and WebdriverIO will stick with the default.
 2. The second is a boolean flag that will reverse how the `waitFor` command works. In this case, if that flag is `true`, it instead waits for the selector to **not** match any elements (the default value is `false`).
