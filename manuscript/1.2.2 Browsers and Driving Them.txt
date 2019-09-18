@@ -28,7 +28,7 @@ All major browsers have respective 'drivers' that mostly follow the WebDriver sp
 Here are the drivers for each major browser
 
 - [Geckodriver](https://github.com/mozilla/geckodriver) for Firefox (v48 and above)
-- [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/home) for Chromium.
+- [ChromeDriver](https://chromedriver.chromium.org/downloads) for Chromium.
 - [Edgedriver](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) for Microsoft Edge
 - [SafariDriver](https://developer.apple.com/documentation/webkit/about_webdriver_for_safari) for Safari - Implemented as a Safari browser extension.
 - [IEDriver](https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver) for Internet Explorer

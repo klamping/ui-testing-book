@@ -2,7 +2,7 @@
 
 We just used the WebdriverIO test runner to help us create a configuration file to hold all of our settings. Let's go ahead and take a look at that file.
 
-Open up the newly created `wdio.conf.js` file in your text editor of choice. They file is saved in JavaScript format, so using a text editor with JavaScript syntax highlighting is a good idea.
+Open up the newly created `wdio.conf.js` file in your text editor of choice. The file is saved in JavaScript format, so using a text editor with JavaScript syntax highlighting is a good idea.
 
 In our file, the first thing we'll check out is the `exports.config` line. If you're familiar with NodeJS, you'll recognize the use of the `exports` global variable.
 
@@ -69,9 +69,9 @@ Let's move on to the capabilities section, which groups the information needed b
 // First, you can define how many instances should be started at the same time. Let's
 // say you have 3 different capabilities (Chrome, Firefox, and Safari) and you have
 // set maxInstances to 1; wdio will spawn 3 processes. Therefore, if you have 10 spec
-// files and you set maxInstances to 10, all spec files will get tested at the same time
-// and 30 processes will get spawned. The property handles how many capabilities
-// from the same test should run tests.
+// files and you set maxInstances to 10, all spec files will get tested
+// at the same time and 30 processes will get spawned. The property handles how
+// many capabilities from the same test should run tests.
 //
 maxInstances: 10,
 ```
@@ -96,16 +96,16 @@ A word of warning. While running tests in parallel can certainly save time, it a
 // https://docs.saucelabs.com/reference/platforms-configurator
 //
 capabilities: [{
-    // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-    // grid with only 5 firefox instances available you can make sure that not more than
-    // 5 instances get started at a time.
+// maxInstances can get overwritten per capability. So if you have an in-house Selenium
+// grid with only 5 firefox instances available you can make sure that not more than
+// 5 instances get started at a time.
     maxInstances: 5,
     //
     browserName: 'firefox',
-    // If outputDir is provided WebdriverIO can capture driver session logs
-    // it is possible to configure which logTypes to include/exclude.
-    // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
-    // excludeDriverLogs: ['bugreport', 'server'],
+// If outputDir is provided WebdriverIO can capture driver session logs
+// it is possible to configure which logTypes to include/exclude.
+// excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
+// excludeDriverLogs: ['bugreport', 'server'],
 }],
 ```
 
@@ -142,8 +142,8 @@ It defaults to `info`, which is a good mix in-between the two ends of the spectr
 #### Bail
 
 ```js
-// If you only want to run your tests until a specific amount of tests have failed use
-// bail (default is 0 - don't bail, run all tests).
+// If you only want to run your tests until a specific amount of tests have failed
+// use bail (default is 0 - don't bail, run all tests).
 bail: 0,
 ```
 
@@ -152,10 +152,10 @@ The `bail` setting can be useful if you only want to run your tests until a spec
 #### Base URL
 
 ```js
-// Set a base URL in order to shorten url command calls. If your `url` parameter starts
-// with `/`, the base url gets prepended, not including the path portion of your baseUrl.
-// If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
-// gets prepended directly.
+// Set a base URL in order to shorten url command calls. If your `url` parameter
+// starts with `/`, the base url gets prepended, not including the path portion
+// of your baseUrl. If your `url` parameter starts without a scheme or `/`
+// (like `some/path`), the base url gets prepended directly.
 baseUrl: 'https://webdriver.io',
 ```
 

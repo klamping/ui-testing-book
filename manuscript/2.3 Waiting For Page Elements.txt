@@ -1,4 +1,4 @@
-# 2.3 Login and Wait
+# 2.3 Waiting For Page Elements
 
 ## 2.3.1 Is This Thing Working?
 
@@ -452,6 +452,5 @@ Now when we run our tests, they actually pass! It took a little bit of trial and
 We still have two more tests that we want to write for our login page, but we're going to save that for the next chapter.
 
 ## 2.3.6 Chapter Challenge
-
 - Update the 'waitFor' code to instead use `waitForDisplayed`
 - Instead of waiting for the "Sign in" button to stop existing, try waiting for the "Your Feed" tab to appear.

@@ -87,9 +87,9 @@ But websites are incredibly complex. The number of features we jam on to a page 
 
 Consider a "simple" homepage. Here are some things you'll want to test on it:
 
-- Does all the parts look right?
-- Does all the parts look right on a tablet?
-- Does all the parts look right on a phone?
+- Do all the parts look right?
+- Do all the parts look right on a tablet?
+- Do all the parts look right on a phone?
 - Does the site navigation work?
 - Does the "need help" chatbox pop up after five seconds?
 - Does the autocomplete in the site searchbar work?
@@ -146,9 +146,9 @@ Let's consider a few things:
 
 Business is booming and your team is tasked with a brand-new feature idea that management thinks the customer will love.  While it's tempting to say, "yes, and let's write tests to go side-by-side with this new feature!", it might not be the right time.
 
-This brand new feature has never seen the light of day, and the second a customer sees it there's going to be something they don't like about it. All those tests your spent writing can be rendered useless the moment management decides to rework the concept. 
+This brand new feature has never seen the light of day, and the second a customer sees it there's going to be something they don't like about it. If a decision is made to rework the concept based on customer feedback, all those tests you've written become useless. 
 
-There's no point in writing a test if you haven't user tested your site. So before you spend time writing assertions, ensure the assumptions about the user interactions are put to the test.
+There's no point in writing a test if you haven't user-tested your site. So before you spend time writing assertions, ensure the assumptions about the user interactions are put to the test.
 
 #### Time writing tests takes away from writing features
 

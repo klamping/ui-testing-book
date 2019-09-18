@@ -2,9 +2,7 @@
 
 ## 1.2.1 Software Requirements
 
-While WebdriverIO is a Node.js based system, many of tools are needed to run our tests.
-
-You'll want:
+While WebdriverIO is a Node.js based system, there are a few other tools needed to run the tests. You'll want:
 
 - A recent version of Node.js (8+)
 - A text-editor (I use [Sublime Text 3](https://www.sublimetext.com/3), but [Atom](https://atom.io/), [Webstorm](https://www.jetbrains.com/webstorm) and [VSCode](https://code.visualstudio.com/) are other great options)

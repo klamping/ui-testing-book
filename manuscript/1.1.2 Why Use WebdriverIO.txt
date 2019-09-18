@@ -95,7 +95,7 @@ Why? It's obvious that if I want to click something, I'm going to need to identi
 WebdriverIO simplifies the 'click' command by accepting the element selector right in to the command, then converts that in to the two Selenium actions needed. That means instead of writing this:
 
 ```js
-driver.findElement(webdriver.By.id('submit')).click();
+driver.findElement(By.id('submit')).click();
 ```
 
 I can just write this:
@@ -114,7 +114,7 @@ WebdriverIO sees you want to run a command (say "getUrl"). It takes that command
 
 Most of the WebdriverIO is made up of these small commands living in their own separate small file. This means that updates are easier, and integration into cloud Selenium services like Sauce Labs or BrowserStack are incredibly simple.
 
-Too many tools out there try and re-invent the wheel. I'm glad WebdriverIO keeps it simple and uses what's already out this. This, in turn, helps me easily understand what's going on behind the scenes.
+Too many tools out there try and re-invent the wheel. I'm glad WebdriverIO keeps it simple and uses what is already out there. This, in turn, helps me easily understand what's going on behind the scenes.
 
 ### It's Easily Extendable/Scalable
 
