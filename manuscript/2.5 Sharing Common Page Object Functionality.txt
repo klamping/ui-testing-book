@@ -24,7 +24,6 @@ While we've done similar work in the past with our Login tests, we're going to a
 
 To get things started, let's layout the basic structure for our new editor test. Create a new file in your `specs` folder named `editor.js`. In it, we'll insert our `require` statements and `describe`/`it` blocks:
 
-specs/editor.js
 ```js
 const expect = require('chai').expect;
 const Auth = require('../pageObjects/Auth.page');
@@ -110,7 +109,7 @@ In fact, this type of test has a common name: "Smoke" tests. They're called that
 While the idea may seem simple from the outside, there are a lot of questions that this type test brings up. Here are a few:
 
 A. How much of the page do we test? Testing all elements on the page is impractical, so where do we draw the line?
-B. How much maintanence does this introduce? Every element we check introduces maintanence ~if~ when that element is changed in the future. 
+B. How much maintanence does this introduce? Every element we check introduces maintanence lwhen that element is changed in the future. 
 C. Should WebdriverIO even be testing this? Are there tools better suited for this type of job?
 
 And here's my opinion:
@@ -649,6 +648,8 @@ Instead, let's try out option 3 and see if we can get some added benefit from th
 NodeJS comes several built-in utilities, some of which we've already tried out (e.g. the `Assert` module). As I mentioned, there's [a `URL` module](https://nodejs.org/dist/latest-v12.x/docs/api/url.html) we can use to define and parse URLs.
 
 URLs may seem simple, but they can be very complex. Take a look at the example structure provided by the NodeJS website:
+
+TODO Fix this formatting
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
