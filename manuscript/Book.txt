@@ -12,4 +12,5 @@
 2.2 Selectors of Every Shape and Size.txt
 2.3 Waiting For Page Elements.txt
 2.4 Custom Functions, Page Objects and Actions.txt
+2.5 Sharing Common Page Object Functionality.txt
 2.x Chapter Challenge Code Solutions.txt
