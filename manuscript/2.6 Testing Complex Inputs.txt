@@ -263,7 +263,7 @@ it('should let you publish a new post', function () {
 
 Great, things are a bit cleaner in our test, and any updates/improvements to the editor form can all be handled from inside the Editor page object.
 
-### 2.6.5 ChanceJS to create data
+## 2.6.5 ChanceJS to create data
 
 While not required, it can be useful (and a little fun) to mix in some random generation into our tests. When working with data entry, using the same data is simpler, but very restricted in scope of testing.
 
@@ -406,7 +406,7 @@ it('should let you publish a new post', function () {
 
 Now we're not dependent on some tricky logic to use the URL for validation of our post contents. Plus, it's more important for the information on the page to be correct than the URL be some specific format. I'd much rather know that our title isn't saving correctly than if our URL isn't right. 
 
-### 2.6.6 Testing Multiple Tags
+## 2.6.6 Testing Multiple Tags
 
 I talked early about how the 'tags' element reference wasn't quite usable in its current state. This is due to the fact that we can have multiple tags, but are targeting a single reference. So if we run `getText` on that element, we'd get all the tags in a single string (e.g. 'tag1 tag2'). 
 
@@ -563,7 +563,7 @@ describe('Post Editor', function () {
 });
 ```
 
-### 2.6.7 Checking alerts when leaving with unsaved changes
+## 2.6.7 Checking alerts when leaving with unsaved changes
 
 One of the most frustrating experiences on a website for a user occurs when they've spent a valuable amount of time typing up content, only to have that content viciously erased by an errant page navigation. Whether it's accidentally hitting the back button, unintentionally refreshing the page, or inadvertendly going to another site, nothing will fill your user's eyes with tears quick like them losing their work.
 
@@ -692,7 +692,7 @@ it('should warn you when trying to change URL', function () {
 
 Handling alerts isn't a regular part of testing work, but it is needed from time-to-time, so good to know about. One final note on this is that you can't use these commands to to enter "basic auth" credentials. To do that, you need to pass in the credentials via your `browser.url` call: `browser.url('http://username:password@example.com/');`.
 
-#### 2.6.8 A Not So Random Chance
+## 2.6.8 A Not So Random Chance
 
 After all this work, there's one last bit of optimization we should do to prepare ourselves for future testing. Earlier we imported the Chance library to add some randomness to our tests. But what happens when that randomness causes a failure due to some specific data. If you ran the test again, you'd use different data which may not cause the error to occur. 
 
@@ -753,7 +753,7 @@ cmd /C "set SEED=0.00726358915055525 && npx wdio --spec=editor"
 
 So long as that `SEED` value is set and stays the same, the editor test will always generate the same "random" data, making it much easier to reproduce any defects in the site. 
 
-#### 2.6.9 Global Chance via WebdriverIO Configuration Hooks
+## 2.6.9 Global Chance via WebdriverIO Configuration Hooks
 
 Okay, that's some nice functionality, but I'd hate to have to copy/paste it into every test file that I want to use Chance in. I'd rather have a Chance instantiation set up automatically for all my test files in a single location.
 
