@@ -337,7 +337,7 @@ expect(browser.getUrl()).to.include(`articles/${slug}`);
 
 Yuck. Not only do we need to run two `replace` calls, we're also introducing "logic" into our tests, and having to match code functionality between our site and our tests. All things I generally shy away from, as they can quickly introduce bugs into our tests, which is never fun. 
 
-## 2.6.7 Checking Page Data
+## 2.6.6 Checking Page Data
 
 Instead of checking the URL, let's check the content of the page to see that it matches our submitted parts.
 
@@ -406,7 +406,7 @@ it('should let you publish a new post', function () {
 
 Now we're not dependent on some tricky logic to use the URL for validation of our post contents. Plus, it's more important for the information on the page to be correct than the URL be some specific format. I'd much rather know that our title isn't saving correctly than if our URL isn't right. 
 
-## 2.6.6 Testing Multiple Tags
+## 2.6.7 Testing Multiple Tags
 
 I talked early about how the 'tags' element reference wasn't quite usable in its current state. This is due to the fact that we can have multiple tags, but are targeting a single reference. So if we run `getText` on that element, we'd get all the tags in a single string (e.g. 'tag1 tag2'). 
 
@@ -563,7 +563,7 @@ describe('Post Editor', function () {
 });
 ```
 
-## 2.6.7 Checking alerts when leaving with unsaved changes
+## 2.6.8 Checking alerts when leaving with unsaved changes
 
 One of the most frustrating experiences on a website for a user occurs when they've spent a valuable amount of time typing up content, only to have that content viciously erased by an errant page navigation. Whether it's accidentally hitting the back button, unintentionally refreshing the page, or inadvertendly going to another site, nothing will fill your user's eyes with tears quick like them losing their work.
 
@@ -692,7 +692,7 @@ it('should warn you when trying to change URL', function () {
 
 Handling alerts isn't a regular part of testing work, but it is needed from time-to-time, so good to know about. One final note on this is that you can't use these commands to to enter "basic auth" credentials. To do that, you need to pass in the credentials via your `browser.url` call: `browser.url('http://username:password@example.com/');`.
 
-## 2.6.8 A Not So Random Chance
+## 2.6.9 A Not So Random Chance
 
 After all this work, there's one last bit of optimization we should do to prepare ourselves for future testing. Earlier we imported the Chance library to add some randomness to our tests. But what happens when that randomness causes a failure due to some specific data. If you ran the test again, you'd use different data which may not cause the error to occur. 
 
@@ -753,7 +753,7 @@ cmd /C "set SEED=0.00726358915055525 && npx wdio --spec=editor"
 
 So long as that `SEED` value is set and stays the same, the editor test will always generate the same "random" data, making it much easier to reproduce any defects in the site. 
 
-## 2.6.9 Global Chance via WebdriverIO Configuration Hooks
+## 2.6.10 Global Chance via WebdriverIO Configuration Hooks
 
 Okay, that's some nice functionality, but I'd hate to have to copy/paste it into every test file that I want to use Chance in. I'd rather have a Chance instantiation set up automatically for all my test files in a single location.
 
@@ -810,28 +810,8 @@ const articleDetails = {
 
 That wraps up all our work for the Editor page. Form inputs are one of the biggest features of a website that are prone to bugs, so have good test coverage of them is crucial. 
 
-## 2.6.10 Chapter Challenge
+## 2.6.11 Chapter Challenge
 
 (TODO Vue version of the Conduit app doesn't do any form validation :o so we'll need to add that in or switch to React version which does)
 
 - Our tests don't cover validating that the error messages show on the Editor page if we fail to enter information. Write a set of tests that cover this user flow. (Hint: use `$$('.errorMessages li')` and mapping `getText` to get all error text and assert against it.
-
-
-
-
-
-FUTURE updates
-
-Now run once, using `--logLevel=silent` to be a little quieter so we can more easily see our seed data
-`npx wdio --spec=editor --logLevel=silent`
-
-- add complex 'waitUntil' to submitArticle to allow for errors
-
-Future additions to these inputs:
-4. Enterting data in dropdowns
-5. File Uploads
-
-https://github.com/nhn/toast-ui.vue-editor
-https://github.com/hinesboy/mavonEditor
-https://github.com/Vivify-Ideas/vue-simple-markdown
-https://github.com/F-loat/vue-simplemde <-- consider as it's a little more complex than maven as far as testing goes
