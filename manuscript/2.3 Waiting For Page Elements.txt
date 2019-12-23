@@ -343,13 +343,15 @@ WebdriverIO comes with four commands built around this idea. They are:
 A. waitForExist
 B. waitForEnabled
 C. waitForDisplayed
-D. waitUntil
+D. waitForClickable
+E. waitUntil
 
-The `waitFor` commands do as they say, and: 
+The `waitFor` commands do as they say, and wait for an element to: 
 
-A. Wait for an element to exist on the page
+A. Exist on the page
 B. Be enabled (for inputs that have a `disabled` HTML attribute)
 C. Be "displayed", which is a property that we'll put a definition to in a bit
+D. Be "clickable" (element exists, is visible, is within viewport (if not try to scroll to it), its center is not overlapped with another element, is not disabled)
 
 The last one, `waitUntil`, is a generic function used to define custom waits. For example, a common scenario is to wait until an element has specific text before moving on. We'll get in to real code examples in a little bit, but for now we're going to jump back to the `waitForExist` command.
 

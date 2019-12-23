@@ -69,3 +69,4 @@ While I won't be covering it in this book, here's a few free resources you might
 - [Linux Terminal (YouTube)](https://www.youtube.com/watch?v=oxuRxtrO2Ag)
 - [Windows Terminal (YouTube Playlist)](https://www.youtube.com/watch?v=MBBWVgE0ewk&list=PL6gx4Cwl9DGDV6SnbINlVUd0o2xT4JbMu)
 - [NPM Crash Course](https://www.youtube.com/watch?v=jHDhaSSKmB0)
+- [Beginner JavaScript Course (Paid)](https://beginnerjavascript.com/)
