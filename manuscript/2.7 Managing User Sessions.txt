@@ -282,9 +282,9 @@ If you're unfamiliar with JavaScript in the browser, `window` is a global object
 It can be confusing to understand where our scripts are being run, so I’m going to add two ‘log’ statements; one will run inside of our node.js instance, and the other will run inside of the browser:
 
 ```js
-console.log(‘outside the browser.’); // this is run by Node.js
+console.log('outside the browser.'); // this is run by Node.js
 browser.execute(function () {
-    console.log(‘Inside the browser.’); // this is run by the browser
+    console.log('Inside the browser.'); // this is run by the browser
     window.alert('This call is coming from inside the browser!');
 });
 ```
