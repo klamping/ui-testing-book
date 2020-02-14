@@ -14,5 +14,5 @@
 2.4 Custom Functions, Page Objects and Actions.txt
 2.5 Sharing Common Page Object Functionality.txt
 2.6 Testing Complex Inputs.txt
-2.6 Managing User Sessions.txt
+2.7 Managing User Sessions.txt
 2.x Chapter Challenge Code Solutions.txt
