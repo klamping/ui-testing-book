@@ -50,7 +50,7 @@ Well, several components:
 - The 'popular tags' section
 - The site footer
 
-While the site header should appear on every page, we haven't validated it's existence in any of our tests yet (aside from the navigation test that we just deleted 😃). And I'm going to be honest with you... I'm not a huge fan of running this sort of validation.
+While the site header should appear on every page, we haven't validated it's existence in any of our tests yet (aside from the navigation test that we just deleted). And I'm going to be honest with you... I'm not a huge fan of running this sort of validation.
 
 If the header is missing from your homepage, you're going to notice before any automation is run. It's such an important part of the site that it's likely to go missing.
 
