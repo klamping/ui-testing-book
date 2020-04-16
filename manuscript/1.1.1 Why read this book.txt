@@ -1,16 +1,16 @@
 # 1.1 Introduction
 
-## 1.1.1 Why read this book?
+## 1.1.1 Why Read This Book?
 
 While I'd love to start things off by diving deep into technical details, it would be good to explain a few things first.
 
-Before investing time into a new tool, it's good to know why you'd want to learn how to use it.
+Before investing time on a new tool, it's good to know why you'd want to learn how to use it.
 
-Over the past decade, website complexity has grown substantially, requiring much more effort when it comes to testing. While test automation is certainly not a recent technique, it has grown in popularity lately due to the increased complexity of the sites we build.
+Over the past decade, website complexity has grown substantially, requiring much more effort when it comes to testing. While test automation is certainly not a recent development, it has grown in popularity lately due to the increased complexity of the sites we build.
 
-In fact, many organizations have full teams dedicated just to testing their site. Quality Assurance is an important role for any company that wants to take its technology seriously.
+In fact, many organizations have full teams dedicated just to testing their site. Quality Assurance (QA) is an important role for any company that wants to take its technology seriously.
 
-However, having humans manually run through test scripts is time-consuming.
+However, having humans manually run through test scripts is a time-consuming task.
 
 By automating our tests, we hope to shift the workload from manual labor to speedy CPUs. Without humans and their need to sleep and eat, we can theoretically test our sites on-demand, around the clock.
 
@@ -18,9 +18,9 @@ Wouldn't it be ideal to have a test suite so effective that your QA team focused
 
 Unfortunately, that's not the reality. 
 
-I've seen, heard, and have been part of many teams that set out after this ideal, only to realize months later that all the effort has provided them little benefit. Yes, they have test automation in place, but it's constantly breaking and causing endless headaches. It seems they either have tests that run well but don't validate much, or have tests that check for everything but are always reporting false errors.
+I've seen, heard, and have been part of many teams that set out after this ideal, only to realize months later that all the effort has provided them little benefit. Yes, they have test automation in place, but it's constantly breaking and causing endless headaches. It seems they either have tests that run well but don't validate much or have tests that check for everything but report false errors.
 
-In 2017 I spent the year recording screencasts covering WebdriverIO, a test automation framework that we'll be learning in this book. While I covered the details of the framework quite well (or so I was told), I was left with nagging questions of "is knowing the tool valuable enough?"
+In 2017, I spent the year recording screencasts covering WebdriverIO, a test automation framework that we'll be learning in this book. While I covered the details of the framework quite well (or so I was told), I was left with nagging questions of "is knowing the tool valuable enough?"
 
 Is knowing how to mix colors and hold a paintbrush enough to be able to paint beautiful art?
 
@@ -28,7 +28,7 @@ Does knowing what the 'addValue' command does in WebdriverIO teach you enough to
 
 This time around, I want to focus on that second part. Yes, it's important to cover the details of commands and code. More importantly though, you need to see how you can combine all that technology to create a test suite that provides actual value.
 
-In this book, I cover not only what WebdriverIO can do, but also how you'll be using it day-to-day. I've built the examples around real-world scenarios that demonstrate how you would actually set things up. It's not just "what", but also "how to get there".
+In this book, I cover not only what WebdriverIO can do, but also how you'll be using it day-to-day. I've built the examples around real-world scenarios that demonstrate how you would actually set things up. It's not just "what," but also "how to get there."
 
 It takes a little more work on my part, and extra effort on your's to get started, but the payoff is there, I promise. 
 
@@ -38,7 +38,7 @@ With that, let's get started.
 
 I mentioned that test automation isn't anything new, but I didn't explain what it is.
 
-Truthfully, test automation is a lot of things. There are a multitude of programs and tools surrounding it, not to mention the various idealogies about automated testing in general (e.g. Test-driven Development vs Behavior-driven Development). 
+Truthfully, test automation is a lot of things. There are a multitude of programs and tools surrounding it, not to mention the various idealogies about automated testing in general (e.g., Test-driven Development vs. Behavior-driven Development). 
 
 Aside from that, there are also different types of tests. In this book, we're focusing solely on UI automation, but there's also unit, integration, performance, accessibility, usability, you-name-it testing.
 
@@ -50,44 +50,44 @@ Truthfully, we're doing tons of UI testing. Everytime someone loads up a website
 
 If you have a site in production, every user is testing your UI. Hopefully for them (and you), they're not the first ones to try it out.
 
-UI testing is constantly being done; just in a very manually intensive way. Front-end developers working on the code will spend half their day in the browser manually testing if their changes worked. If they're testing in an older browser, it will be 3/4ths their day.
+UI testing is constantly being done, just in a very labor-intensive way. Front-end developers working on the code will spend half of their day in the browser manually testing if their changes worked. If they're testing in an older browser, it will be 3/4ths of their day.
 
 UI testing is the simple (hah) task of validating that the code written for the browser, actually works in that browser, along with all the other components that went into that webpage.
 
 UI test automation is a way to convert those manual mouse clicks and keystrokes into coded scripts that we can run on a regular basis.
 
-### Let's talk benefits
+### Let's Talk Benefits
 
-I've alluded to this before, but it's good to be clear. Here are some of the many real-world benefits of automated UI testing:
+I've alluded to this before, but it's worth repeating. Here are some of the many real-world benefits of automated UI testing:
 
-- Jamie, your ace front-end developer, just finished their latest task and are itching to get it released. While they were careful to validate the new functionality works, unfortunately they forgot to test whether that new code broke the zip code widget on the contact page. Lucky for you, the UI automation test caught this, and a fix was in place before the end of the day.
-- Taylor is an awesome full-stack developer. They've got everything about their coding environment fine-tuned, so that they can focus solely on pumping out fixes and new features. Except for one thing: Taylor always forgets to check their code on slower, outdated computers. That's okay though, as our UI tests are configured to run on a variety of setups, and it just so happens that it caught that issue when running inside a Windows 8 environment.
+- Jamie, your ace front-end developer, just finished their latest task and is itching to release it. While they were careful to validate that the new functionality works, unfortunately they forgot to test whether that new code broke the zip code widget on the contact page. Lucky for you, the UI automation test caught the error, and a fix was in place before the end of the day.
+- Taylor is an awesome full-stack developer. They've got everything about their coding environment fine-tuned so that they can focus solely on pumping out fixes and new features... except for one thing: Taylor always forgets to check their code on slower, outdated computers. That's okay though, as our UI tests are configured to run on a variety of setups, and it just so happens that it caught that issue when running inside a Windows 8 environment.
 - Casey is a great product manager, but sometimes forgets to clarify the small details. This means developers can make the wrong assumption during development, which is only discovered by Casey during product demos. By adding automated tests to the mix, developers and product managers are pushed to have regular conversations on the desired behavior of certain functionality, resulting in fewer suprises later on. 
-- Avery is a superb QA tester. With great attention to detail, Avery always thinks of unique ways in which the website would be seen. Unfortunately for Avery, manually testing these edge cases takes a fair amount of time to get in place. By adding automated scripts, Avery is able to programatically generate the needed data for their tests, and allow them to run these scripts on a regular basis.
+- Avery is a superb QA tester. With great attention to detail, Avery always thinks of unique ways in which the website would be seen. Unfortunately, manually testing these edge cases takes a fair amount of time to get in place. By adding automated scripts, Avery is able to programatically generate the needed data for their tests, and allow them to run these scripts on a regular basis.
 
-These are just a few ways test automation can help. I skipped over many other benefits for the sake of time, but there's one I omitted on purpose. Many folks claim that UI tests allow you to have fewer human resources. While that's partly true, I don't think it's honest. 
+These are just a few ways test automation can help. I skipped over many other benefits for the sake of time, but there's one I omitted on purpose. Many folks claim that UI tests allow you to have fewer developers. While that's partly true, I don't think it's honest. 
 
-In all the scenarios above, adding an extra human wouldn't have necessarily helped. And that's because human's have blindspots, and many of them are the same. Teams have collective blindspots and that's difficult to get around. We naturally tend to focus on what's in front of us, forgetting about realities outside our own.
+In all the scenarios above, adding an extra human wouldn't have necessarily helped. That's because human's have blind spots, and many of them are the same. Teams have collective blindspots and that's difficult to get around. We naturally tend to focus on what's in front of us, forgetting about realities outside our own influence.
 
-To me, UI testing isn't about replacing humans, but rather augmenting their abilities. We use automation to shore up our limitations, allowing us to focus more on our strengths.
+UI testing isn't about replacing humans, but rather augmenting their abilities. We use automation to shore up our limitations, allowing us to focus more on our strengths.
 
-Your developers waste their time testing on hundreds of different devices, when they could instead let a computer do that. Your QA team wastes its time running through the same test scenario week after week, when instead they could be thinking of new and unthought of test cases.
+Developers waste their time testing on hundreds of different devices, when they could instead let a computer do that part of the work. Your QA team wastes its time running through the same test scenario week after week, when instead they could be thinking of new and undiscovered test cases.
 
-UI automation isn't about replacing humans with machines, but rather giving us more freedom to work better than machines can.
+UI automation isn't about replacing humans with machines, but rather giving us more freedom to work better than machines.
 
 And let's not forget, UI testing requires a fair amount of work. It's not magic (although it's okay to convince management it is). This brings me to an important consideration...
 
-### There are always drawbacks
+### There Are Always Drawbacks
 
 How long do you think it takes to get a set of automated tests up and running? A week... maybe two?
 
-Sure, if all you want to do is test that a page loads.
+Sure, if all you want to do is test that a page loads properly.
 
-But websites are incredibly complex. The number of features we jam on to a page grows each day.
+But websites are incredibly complex — the number of features we jam on a page grows each day.
 
 Consider a "simple" homepage. Here are some things you'll want to test on it:
 
-- Do all the parts look right?
+- Do all the parts look right on a laptop and desktop computer?
 - Do all the parts look right on a tablet?
 - Do all the parts look right on a phone?
 - Does the site navigation work?
@@ -108,11 +108,11 @@ When the glorious day comes and you're "done" writing tests, you still have to m
 
 There's one more important point to consider.
 
-While you'll breeze through some parts of test writing, expect to sink 80% of your time figuring out how to test that special 20% of your site's functionality. There are many areas of writing tests that aren't trivial. It's not as simple as calling the command to fill out a textbox and click submit. 
+While you'll breeze through some parts of test writing, expect to sink 80% of your time figuring out how to test that special 20% of your site's functionality. There are many areas of writing tests that aren't trivial. It's not as simple as calling the command to fill out a textbox and click the submit button. 
 
-You're going to need to work with databases, integrate with third-party services and see if you can get commands to work in browsers with poor automation support. You're also going to run into instances where the way the website was coded just doesn't jive with test automation. 
+You'll need to work with databases, integrate with third-party services and see if you can get commands to work in browsers with poor automation support. You're also going to run into instances where the way the website was coded just doesn't jibe with test automation. 
 
-Animations are a good example of that. How do you test that an animation works? You can fairly easily check the properties before and after an animation, but what about everything in-between?
+Animations are a good example of that. How do you test that an animation works? You can fairly easily check the properties before and after an animation, but what about everything in between those two states?
 
 Honestly, you'd need to do a screen recording of every frame of the animation, and compare that screen recording to a previous run to see if they match. I don't know about you, but that doesn't sound easy to me.
 
@@ -120,39 +120,39 @@ Honestly, you'd need to do a screen recording of every frame of the animation, a
 
 If you find yourself facing a complex site that would require major work to test properly, there are other options to gain some value without too much effort.
 
-Instead of testing a fully working site, you may want to create a variation of your site that represent portions of the real thing. For example, pattern libraries are a popular option out there, especially for larger websites. 
+Instead of testing a fully working site, you may want to create a variation of your site that represents portions of the real thing. For example, pattern libraries are a popular option out there, especially for larger websites. 
 
-In case you're not familiar with them, pattern libraries are essentially living demos of the components that make up a website's interface. Mailchimp has a public pattern library if you'd like to see one in action: [https://ux.mailchimp.com/patterns](https://ux.mailchimp.com/patterns)
+In case you're not familiar with them, pattern libraries are essentially living demos of the components that make up a website's interface. Mailchimp has a public pattern library if you'd like to see one in action ([https://ux.mailchimp.com/patterns](https://ux.mailchimp.com/patterns)).
 
 For instance, a pattern library may contain standalone versions of the following:
 
 - Site layout components like the main navigation and site footer
-- Components used across multiple pages, like buttons, form inputs and tabs
-- Style guidelines for simple page elements like links, headings and lists
+- Components used across multiple pages, like buttons, form inputs, and tabs
+- Style guidelines for simple page elements like links, headings, and lists
 
-Pattern libraries are very helpful for teams, as the document how the website should look and act. If you're tasked with adding a sortable table to your companies site, having a pattern library with a living example of one makes the job simple.
+Pattern libraries are very helpful for teams, to document how the website should look and act. If you're tasked with adding a sortable table to your companies site, having a pattern library with a living example of one makes the job simple.
 
-They're also super useful for testers, as it gives us testable examples of individual components isolated from the complexity of the full website. 
+They're also useful for testers, as it gives us testable examples of individual components isolated from the complexity of the full website. 
 
-### Skipping automation is sometimes the best option
+### Skipping Automation is Sometimes the Best Option
 
 Hopefully I haven't scared you away from UI test automation entirely. I only wanted to get you thinking about the whole picture.
 
-And that picture should include saying "maybe we shouldn't write test automation for that, at least not yet".
+And that picture should include saying, "Maybe we shouldn't write test automation for that... at least not yet."
 
-Let's consider a few things:
+Let's consider a few things...
 
-#### New features aren't user tested
+#### New Features Aren't User Tested
 
-Business is booming and your team is tasked with a brand-new feature idea that management thinks the customer will love.  While it's tempting to say, "yes, and let's write tests to go side-by-side with this new feature!", it might not be the right time.
+Business is booming and your team is tasked with a brand-new feature idea that management thinks the customer will love.  While it's tempting to say, "Yes, and let's write tests to go side-by-side with this new feature," it might not be the right time.
 
-This brand new feature has never seen the light of day, and the second a customer sees it there's going to be something they don't like about it. If a decision is made to rework the concept based on customer feedback, all those tests you've written become useless. 
+This brand-new feature has never seen the light of day, and the second a customer sees it there's going to be something they don't like about it. If a decision is made to rework the concept based on customer feedback, all those tests you've written become useless. 
 
-There's no point in writing a test if you haven't user-tested your site. So before you spend time writing assertions, ensure the assumptions about the user interactions are put to the test.
+There's no point in writing a test if you haven't user-tested your site. So before you spend time writing assertions, ensure the assumptions about the user interactions are initially put to the test.
 
-#### Time writing tests takes away from writing features
+#### Time Writing Tests Takes Away from Writing Features
 
-You're not paid to write tests. Tests only serve the application they're testing. If app is useless, tests won't help.
+You're not paid to write tests; tests only serve the application they're testing. If an app is useless, tests won't help.
 
 If you're working on a side project for a tool that no one uses, spending time writing tests takes away from time spent on more important tasks, like getting people to use your work.
 
@@ -160,33 +160,33 @@ Users don't care whether you have good unit tests. There's no difference between
 
 Let yourself have untested code. Worry about that problem when it actually becomes one.
 
-#### Tests are only valuable when you use them
+#### Tests Are Only Valuable When You Use Them
 
-Don't write more tests when you're not using the ones you have.
+Don't write more tests when you're not using the ones you already have.
 
 If you have 500 UI tests, but never put in the time to integrate them in your build and deployment process, you have 500 useless tests. Writing 500 more won't help.
 
 Your tests should run on every code push. They should run before every deploy. Every developer on the team should see that the tests passed or failed.
 
-If that's not true, then you shouldn't be writing more tests. You should be taking advantage of the tests you have. 
+If that's not true, you shouldn't be writing more tests, you should be taking advantage of the tests you already have. 
 
-#### Parts of the site might be better tested by people
+#### Parts of the Site Might be Better Tested by People
 
-Remember when I said tests shouldn't replace people, but rather augment their abilities. Well, in the scenario of testing the animation, we were stuck with a really complex solution. What if we just went with manual visual validation of the effect? 
+Remember when I said tests shouldn't replace people, but rather augment their abilities. Well, in the scenario of testing an animation, we were stuck with a really complex solution. What if we just went with manual visual validation of the effect? 
 
 It's okay to have some parts of your site that are too complex for automation. Grab that low-hanging fruit and leave the stuff higher in the tree for a later time when you have a ladder. 
 
-### Are tests worth it then?
+### Are Tests Worth It Then?
 
-I've outlined the benefits and drawbacks of test automation, including reasons to skip some of it alltogether.
+I've outlined the benefits and drawbacks of test automation, including reasons to entirely skip some of it.
 
 So how do you ensure you're getting more benefits than drawbacks? Focus on these two goals:
 
 - Ensure you're gaining value out of every test you write
 - Ensure you're selling that value to those in charge
 
-It's really easy to get caught up in automation, trying to cover every nook and cranny of the site. But if a feature of you site doesn't provide much value, then how much less value would a test for that feature be? 
+It's really easy to get caught up in automation, trying to cover every nook and cranny of the site. But if a feature of your site doesn't provide much value, how much less value would a test for that feature be? 
 
-The site login breaking... that's bad. The site about page having a typo... not such a big deal. Sure, we'd want to fix it, but it (hopefully) won't cost the company millions of dollars.
+The site login component breaking... that's bad. The site's About page having a typo... not such a big deal. Sure, we'd want to fix it, but it (hopefully) won't cost the company a lot of money.
 
 By focusing on gaining and selling that value, you can keep yourself honest in your test writing, and focus on what's important: having a site that's running smoothly and providing value to the user.

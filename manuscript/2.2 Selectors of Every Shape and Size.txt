@@ -171,7 +171,7 @@ For example, let's edit that HTML I showed earlier to use data attributes:
 </ul>
 ```
 
-In that example, I added a `data-qa-id` attribute to all of the elements. It wasn't necessary for some (for example, the `id` of the main menu is the same as the `data-qa-id`), but useful overall. When targeting an element, we'll now rely on our data attribute: `$('[data-qa-id="main-menu"')`.
+In that example, I added a `data-qa-id` attribute to all of the elements. It wasn't necessary for some (for example, the `id` of the main menu is the same as the `data-qa-id`), but useful overall. When targeting an element, we'll now rely on our data attribute: `$('[data-qa-id="main-menu"]')`.
 
 The real benefit of this is it's much less likely to be altered over the long-term life of the project. Class names may change inadvertently by a front-end dev refactoring the HTML, or an ID may be changed by a JavaScript dev disgrunted by the current name. But a custom attribute named with `qa-id` is much less likely to be changed without warning.
 
