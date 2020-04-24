@@ -16,4 +16,5 @@
 2.6 Testing Complex Inputs.txt
 2.7 Managing User Sessions.txt
 2.8 Creating Page Components.txt
+2.9 Generating Data for Testing via APIs.txt
 2.x Chapter Challenge Code Solutions.txt
