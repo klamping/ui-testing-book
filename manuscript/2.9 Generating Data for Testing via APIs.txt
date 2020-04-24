@@ -1,4 +1,4 @@
-## 2.9 Generating Data for Testing via APIs
+# 2.9 Generating Data for Testing via APIs
 
 In our last set of tests, I mentioned how difficult it can be to test the content on a page if that content isn't static. If we're testing a shared website, someone may change the content we're meaning to validate against, causing our tests to fail.
 
