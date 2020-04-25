@@ -1,92 +1,92 @@
 ## 1.1.2 Why Use WebdriverIO?
 
-Back in the late 2000's, I had learned of a tool called Selenium that the tester's on my team were fairly interested in using.
+Back in the late 2000s, I learned of a tool called Selenium that the tester's on my team were fairly interested in using.
 
 I thought it was a neat idea, but there was one big red flag to me. It required writing the tests in the Java programming language.
 
-I had taken a couple semesters of Java programming on college and actually enjoyed the object-oriented nature of the language. I had to wrap my head around some of the complexities of the language, but overall I found it a useful language to understand.
+I had taken a couple semesters of Java programming in college and actually enjoyed the object-oriented nature of the language. I had to wrap my head around some of the complexities of the language, but overall I found it a useful language to understand.
 
-But thinking about writing automated tests in it gave me pause. Java is a very verbose language require a fair amount of setup and some tedious coding. I just didn't think test automation was a good fit for it. So I dropped research into the idea in favor of other pending tasks.
+But thinking about writing automated tests in Java gave me pause. Java is a very verbose language requiring a fair amount of setup and some tedious coding. I just didn't think test automation was a good fit for it. So I stopped researching the idea in favor of other pending tasks.
 
-Years later a new tool came out called PhantomJS. It was based in Node.js, and promised the ability to automate browser usage. That definitely perked my interest, and I'll explain in a minute, but first...
+Years later, a new tool came out called PhantomJS. It was based in Node.js, and promised the ability to automate browser usage. That definitely perked my interest, and I'll explain in a minute, but first...
 
 ### What's a Node.js?
 
-You may not be familiar with Node.js, so I'll explain it a little here (if you are familiar, feel free to skip this part).
+You may not be familiar with Node.js, so I'll explain it a little here. If you are familiar, feel free to skip this part.
 
-JavaScript is the coding language of the web. Starting in the mid 1990's, an early version of JavaScript (originally called LiveScript) was included in the Netscape Navigator browser. Microsoft, eager to match and beat the features of Netscape, saw this new language and decided to add their own version (calling it JScript) to Internet Explorer. 
+JavaScript is the coding language of the web. Starting in the mid 1990's, an early version of JavaScript (originally called LiveScript) was included in the Netscape Navigator browser. Microsoft, eager to match and beat the features of Netscape, saw this new language and decided to add their own version (calling it JScript) to Internet Explorer (IE). 
 
 As the browser battle continued, JavaScript and JScript continued to grow in popularity among website authors. I recall my first use of JavaScript was to make a "mouse trail" on my very first website[1](<https://codepen.io/falldowngoboone/pen/PwzPYv>). My second use was to float an animation of Ralph Wiggum eating glue across the screen of my "from the local police blotter" page.
 
 It was dumb, but boy was it fun to play around with.
 
-Most JavaScript usage for the next decade revolved around either cheesy effects, or useful add-ons like drop-down menus and browser-based form validation. As a front-end developer, learning JavaScript was an important part of your job, although not a critical part like it is today.
+Most JavaScript usage for the next decade revolved around either cheesy browser effects, or useful add-ons like drop-down menus and browser-based form field validation. As a front-end developer, learning JavaScript was an important part of your job, although not a critical part like it is today.
 
-In 2009, Ryan Dahl thought to combine Chrome's JavaScript engine (called V8) with a few new tricks, and have it run entirely outside of the browser [2]([https://en.wikipedia.org/wiki/Node.js#History](https://en.wikipedia.org/wiki/Node.js#History)). While the initial idea was to use JavaScript and Node.js to create servers that could better handle high-traffic sites, developers across the globe saw even more power in the tool.
+In 2009, Ryan Dahl combined Chrome's JavaScript engine (called V8) with a few new tricks, and have it run entirely outside the browser [2]([https://en.wikipedia.org/wiki/Node.js#History](https://en.wikipedia.org/wiki/Node.js#History)). While the initial idea was to use JavaScript and Node.js to create servers that could better handle high-traffic sites, developers across the globe saw even more power in the tool.
 
-From 2009 to 2019, Node.js has grown tremendously. While development of the tool did stagnate around 2014, a fork of Node.js called io.js kicked those in charge back into gear, and eventually the two tools were combined to work towards a better future.
+From 2009 to 2019, Node.js has grown tremendously. While development of the tool did stagnate around 2014, a fork of Node.js called io.js kicked those in charge back into gear, and eventually the two tools were combined to create a better future.
 
-And a better future it has become. Node.js has become one of the most popular programming environments out there, and it's used for everything from servers, development tools, and even desktop applications.
+And a better future it has become. Node.js has become one of the most popular programming environments out there, and it's used for everything from servers to development tools, and even desktop applications.
 
 ### Back to PhantomJS
 
 PhantomJS's popularity grew as developers realized they now knew how to write code that would automate a browser. Automated testing immediately came to mind, and a sister-tool called CasperJS was created to compliment PhantomJS.
 
-There was only one problem. PhantomJS was a paired-down version of Chrome. Sure, it was fast and had a lot of features of a normal browser, but it wasn't the browser that site visitors would be using. 
+There was only one problem: PhantomJS was a paired-down version of Google Chrome. Sure, it was fast and had a lot of features of a normal browser, but it wasn't the browser that site visitors would be using. 
 
-You could write all the test automation you wanted, but it still wouldn't catch bugs that only occur in Internet Explorer. Remember, at this time, many websites still needed to support the bug-ridden versions of that browser (7, 8 and 9).
+You could write all the test automation you wanted, but it still wouldn't catch bugs that only occur in Internet Explorer. Remember, at that time, many websites still needed to support the bug-ridden versions of that browser (7, 8 and 9).
 
-So Phantom's popularity as a testing tool was always limited. The benefit of automated testing in that single non-traditional browser just never seemed worth the cost. 
+So PhantomJS's popularity as a testing tool was always limited. The benefit of automated testing in that single non-traditional browser just never seemed worth the cost. 
 
 ### Enter WebdriverIO
 
-Sometime in 2015 I found out about a tool called WebdriverCSS. It was a Visual Regression Testing tool used to compare two screenshots of a page and see if they're different. I had tried many tools like this in the past, but this one was different. 
+In 2015 I found out about a tool called WebdriverCSS. It was a Visual Regression Testing tool used to compare two screenshots of a page and see if they're visually different from each other. I had tried many tools like this in the past, but this one was unique. 
 
-WebdriverCSS was actually a plugin for a library called WebdriverIO. WebdriverIO came with all the great features of PhantomJS (being able to automate a browser through a Node.js script), but had the added benefit that it supported Selenium.
+WebdriverCSS was actually a plugin for a library called WebdriverIO. WebdriverIO came with all the great features of PhantomJS (being able to automate a browser through a Node.js script), but had the added benefit of supporting Selenium.
 
-Remember Selenium? That tool from the mid-2000's that I glossed over because I was a little fearful of Java?
+Remember Selenium? That tool from the mid-2000s that I glossed over because I was a little fearful of Java?
 
-WebdriverIO made Selenium approachable to me, and that was literally life-changing. I literally mean literally. Since really investing myself in WebdriverIO, my actual job duties have shifted from primarily front-end development (writing HTML and CSS) to a focus on front-end testing (writing WebdriverIO test scripts).
+WebdriverIO made Selenium approachable to me, and that was literally life-changing (yes, literally). Since investing myself in WebdriverIO, my actual job duties had shifted from primarily front-end development (writing HTML and CSS) to a focus on front-end testing (writing WebdriverIO test scripts).
 
-There were four selling points that convinced me on WebdriverIO. But before I list my reasons, how about we hear from folks other than me:
+There were four selling points that convinced me to use WebdriverIO. But before I list my reasons, how about we hear from some other folks:
 
 [TODO get list of testimonials here from https://github.com/webdriverio/webdriverio/issues/1000 and twitter]
 
 "Webdriverio is a comprehensive, well documented project with great coverage of the Selenium/Webdriver/Appium specs, as well as loads of very useful helper abstractions. @christian-bromann has been amazing to work with, providing fantastic support and encouraging a helpful community in general." - [Goerge Crawford, who is now a core contributor on the project](https://github.com/webdriverio/webdriverio/issues/1000#issuecomment-171286700)
 
-And for my reasons for choosing WebdriverIO?
+And what about my reasons for choosing WebdriverIO?
 
 ### WebdriverIO is "Front-end Friendly"
 
-Unlike most other Selenium tools out there, WebdriverIO is written entirely in JavaScript. Even the Selenium server installation is done through an NPM module.
+Unlike most other Selenium tools out there, WebdriverIO is written entirely in JavaScript. Even the Selenium server installation is done through a Node Package Manager (NPM) module.
 
 Like I said, I always thought browser automation meant figuring out how to get some complex Java app running. There was also the Selenium IDE, but writing tests through page recordings reminded me too much of WYSIWYG web editors like Microsoft FrontPage (you'll need to look that up if you weren't doing web development in the early 2000's). 
 
 Instead, WebdriverIO lets me write in a language I'm familiar with, and integrates with the same testing tools that I use for unit tests (Mocha and Chai).
 
-As a developer, the mental load to switch from writing the functionality to writing the test code is minimal (since it's all just JavaScript), and I love that.
+As a developer, the mental switch from writing the functionality to writing the test code requires minimal effort (since it's all just JavaScript), and I love that.
 
 The other great thing, and this is more to credit Selenium than WebdriverIO, is that I can use advanced CSS selectors to find elements.
 
-xPath scares me for no good reason. Something about slashes instead of spaces just chills my bones. But I don't have to learn xPath. (But we will cover xpath later on in this book)
+xPath scares me for no good reason. Something about slashes instead of spaces just chills my bones. But I don't have to learn xPath.
 
 Using WebdriverIO, I simply pass in my familiar CSS selector and it knows exactly what I'm talking about.
 
-I believe Front-end developers should write tests for their code (both unit and UI), and WebdriverIO makes it incredibly easy to do.
+I believe front-end developers should write tests for their own code (both unit and UI), and WebdriverIO makes it incredibly easy.
 
 ### It Has the Power of Selenium
 
-I always felt held back when writing tests in PhantomJS, knowing that it could never validate functionality in popular but buggy browsers like IE.
+I always felt held back when writing tests in PhantomJS, knowing that it could never validate functionality in popular, but buggy, browsers like IE.
 
 But because WebdriverIO uses Selenium under the hood, I'm able to run my tests in all sorts of browsers. 
 
-Selenium is an incredibly robust platform and an industry leader for running browser automation. WebdriverIO stands on the shoulders of giants by piggy-backing on top of Selenium. All the great things about Selenium are available, without the overhead of writing Java based tests.
+Selenium is an incredibly robust platform and an industry leader for running browser automation. WebdriverIO stands on the shoulders of giants by piggy-backing on top of Selenium. All the great things about Selenium are available, without the overhead of writing Java-based tests.
 
 ### It Strives for Simplicity
 
 The commands you use in your WebdriverIO tests are concise and common sense.
 
-What I mean is that WebdriverIO doesn't make you write code to connect two parts together that obviously are meant for each other.
+What I mean is that WebdriverIO doesn't make you write code to connect two parts together that are obviously meant for each other.
 
 For example, if I want to click a button via a normal Selenium script, I have to use two commands. One to get the element and another to click it.
 
@@ -101,26 +101,26 @@ driver.findElement(By.id('submit')).click();
 I can just write this:
 
 ```js
-$('#submit').click()
+$('#submit').click();
 ```
 
 It's so much less mind-numbing repetition when writing tests...
 
 Speaking of simple, I love how WebdriverIO integrates in to Selenium. Instead of creating its own Selenium implementation, it uses the common REST API that Selenium 2.0 provides.
 
-If you haven't worked with API endpoints before, this may not make sense. Don't worry, it's not necesarry to understand. But if you're interested, here's how it goes.
+If you haven't worked with API endpoints before, this may not make sense. Don't worry, it's not necessary to understand. But if you're interested, here's how it goes.
 
-WebdriverIO sees you want to run a command (say "getUrl"). It takes that command and converts it into a request to the Selenium server (it would look like "/session/someSessionIdHere/url"). The selenium server processes the request and returns the result to WebdriverIO, which then returns the found URL to your code.
+WebdriverIO sees that you want to run a command (say "getUrl"). It takes that command and converts it into a request to the Selenium server (it would look like "/session/someSessionIdHere/url"). The selenium server processes the request and returns the result to WebdriverIO, which then returns the found URL to your code.
 
-Most of the WebdriverIO is made up of these small commands living in their own separate small file. This means that updates are easier, and integration into cloud Selenium services like Sauce Labs or BrowserStack are incredibly simple.
+Most of WebdriverIO is made up of these small commands living in their own separate small file. This means that updates are easier, and integration into cloud Selenium services like Sauce Labs or BrowserStack are incredibly simple.
 
-Too many tools out there try and re-invent the wheel. I'm glad WebdriverIO keeps it simple and uses what is already out there. This, in turn, helps me easily understand what's going on behind the scenes.
+Too many tools out there try to reinvent the wheel. I'm glad WebdriverIO keeps it simple and uses what is already out there. This, in turn, helps me easily understand what's going on behind the scenes.
 
 ### It's Easily Extendable/Scalable
 
 As someone who has spent a considerable portion of their career working for large organizations, it's important to me that the tools I'm using are easily extendable.
 
-I'm going to have custom needs and will want to write my own functionality. WebdriverIO does a great job at this in two ways:
+I'll have custom needs and will want to write my own functionality. WebdriverIO does a great job at this in two ways:
 
 #### Custom Commands
 
@@ -153,7 +153,7 @@ With the 4.x release of WebdriverIO, they introduced a new pattern for writing P
 
 Rather than repeating the same selector across your entire test suite for a common page element, you can write a Page Object to reference that component.
 
-Then, in your tests, you just ask the Page Object for what you need and it handles it for you. This helps your tests be more maintainable and easier to read.
+Then, in your tests, request what you need from the Page Object and it handles it for you. This helps your tests be more maintainable and easier to read.
 
 **They're more maintainable** because updating selectors and actions occur in a single file.
 
@@ -161,16 +161,16 @@ When a simple HTML change to the login page breaks half your tests, you don't ha
 
 **They're easier to read** because tests become less about the specific implementation of a page and more about what the page does.
 
-For example, say we need to log in to our website for most of our tests. Without page objects, all the tests would begin with:
+For example, say we need to log in to our website for most of our tests. Without Page Objects, all the tests would begin with:
 
 ```js
-browser.url("login-page")
-browser.setValue("#username", "testuser")
-browser.setValue("#password", "hunter2")
-browser.click("#login-btn")
+browser.url('login-page');
+browser.setValue('#username', 'testuser');
+browser.setValue('#password', "hunter2');
+browser.click('#login-btn');
 ```
 
-With page objects, that can become as simple as:
+With Page Objects, that can become as simple as:
 
 ```js
 LoginPage.open();
@@ -185,4 +185,4 @@ Now, Page Objects aren't a new idea that WebdriverIO introduced. But they way th
 
 I wouldn't call myself a real software tester. I'm far too clumsy to be put in charge of ensuring a bug-free launch.
 
-Yet I can't help but love what WebdriverIO provides me, and I'm really a fan of what's going on with the project and am excited for it's future. Hopefully this book helps you feel the same way.
+Yet, I can't help but love what WebdriverIO provides me, and I'm a fan of what's going on with the project and its future. Hopefully this book helps you feel the same way.
