@@ -24,18 +24,18 @@ To showcase the different selectors strategies, let's use the following HTML:
 
 ```html
 <ul class="items" dropdown-menu id="main-menu">
-	<li class="item">
-		<a ng-click="showProjects()">
-			Projects
-			<span class="icon"></span>
-		</a>
-	</li>
-	<li class="item">
-		<a ng-click="showArchive()">
-			Archive
-			<span class="icon"></span>
-		</a>
-	</li>
+    <li class="item">
+        <a ng-click="showProjects()">
+            Projects
+            <span class="icon"></span>
+        </a>
+    </li>
+    <li class="item">
+        <a ng-click="showArchive()">
+            Archive
+            <span class="icon"></span>
+        </a>
+    </li>
 </ul>
 ```
 
@@ -75,7 +75,7 @@ Attributes are the properties of HTML elements (e.g. the "class" part of `<li cl
 Using [CSS Attribute Selectors](https://css-tricks.com/attribute-selectors/) ([shorter version](https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors)), we can target the `ng-click` attribute of the link, like so:
 
 ```js
-$("[ng-click='showProjects()']");
+$('[ng-click="showProjects()"]');
 ```
 
 Notice how the selector includes both the attribute and its value. You don't have to include both, but for our needs we needed to target the element with that specific `ng-click` value.
@@ -83,7 +83,7 @@ Notice how the selector includes both the attribute and its value. You don't hav
 We can also combine attribute selectors to be more specific with our link:
 
 ```js
-$("[dropdown-menu] a[ng-click='showProjects()']");
+$('[dropdown-menu] a[ng-click="showProjects()"]');
 ```
 
 That selector asks for a link with an attribute of `ng-click` and an attribute value of `showProjects()` that is the child of an element with an attribute of `dropdown-menu` (which we didn't include a value for since there was none).
@@ -93,26 +93,28 @@ That selector asks for a link with an attribute of `ng-click` and an attribute v
 Another method to find your element is to base it on the position in the HTML. [The `first-child` selector](https://developer.mozilla.org/en-US/docs/Web/CSS/:first-child) allows us to do this:
 
 ```js
-$("li:first-child");
+$('li:first-child');
 ```
 
 That will select any list item (`<li>`) that is the first child of its parent. That's a pretty broad selector though, so we should narrow this down to our dropdown using the attribute selector from before:
 
 ```js
-$("[dropdown-menu] li:first-child");
+$('[dropdown-menu] li:first-child');
 ```
 
 What if we wanted to get the second child? We can use [The `nth-child` selector](https://css-tricks.com/how-nth-child-works/):
 
 ```js
-$("[dropdown-menu] li:nth-child(2)");
+$('[dropdown-menu] li:nth-child(2)');
 ```
 
 `nth-child` takes a numeric value, which corresponds to the position in the HTML (it is **not** zero-indexed, so counting starts at 1).
 
 `nth-child` can get pretty complicated and is a very powerful selector. There are also related selectors like `nth-of-type` or `nth-last-child`. [nthmaster.com](http://nthmaster.com/) and [CSS-Tricks](https://css-tricks.com/examples/nth-child-tester/) go in to more detail on it. 
 
-Why use `nth-child` if you could just get all elements using `$$` and grab the one you want by index? Well, selecting multiple elements is a little slower than grabbing a single one, so using `nth-child` can help keep our tests speedy. [TODO actually verify this assumption]
+Why use `nth-child` if you could just get all elements using `$$` and grab the one you want by index? Well, selecting multiple elements is consistently slower than grabbing a single one, so using `nth-child` can help keep our tests speedy.
+
+To restate that, using `$('li:nth-child(2)')` will be faster than using `$$('li')[1]`. Should you always use `:nth-child` then? Probably not. There are definitely times when you want to get all elements, and `:nth-child` doesn't work well with nested elements. But it's a good trick to keep in mind. 
 
 ## 2.2.3 XPath
 
@@ -156,18 +158,18 @@ For example, let's edit that HTML I showed earlier to use data attributes:
 
 ```html
 <ul class="items" dropdown-menu id="main-menu" data-qa-id="main-menu">
-	<li class="item" data-qa-id="main-menu-item">
-		<a ng-click="showProjects()" data-qa-id="main-menu-item-link">
-			Projects
-			<span class="icon" data-qa-id="main-menu-item-icon"></span>
-		</a>
-	</li>
-	<li class="item" data-qa-id="main-menu-item">
-		<a ng-click="showArchive()" data-qa-id="main-menu-item-link">
-			Archive
-			<span class="icon" data-qa-id="main-menu-item-icon"></span>
-		</a>
-	</li>
+    <li class="item" data-qa-id="main-menu-item">
+        <a ng-click="showProjects()" data-qa-id="main-menu-item-link">
+            Projects
+            <span class="icon" data-qa-id="main-menu-item-icon"></span>
+        </a>
+    </li>
+    <li class="item" data-qa-id="main-menu-item">
+        <a ng-click="showArchive()" data-qa-id="main-menu-item-link">
+            Archive
+            <span class="icon" data-qa-id="main-menu-item-icon"></span>
+        </a>
+    </li>
 </ul>
 ```
 

@@ -232,7 +232,7 @@ This won't be too difficult, and we'll use our old friend `waitForExist()` to ma
 
 When the page first loads, the following loading text is shown:
 
-!["Loading Articles..." text screenshot](quiver-image-url/42289218B9E0B5919D7B05A4A6F2967B.png =265x123)
+!["Loading Articles..." text screenshot](images/42289218B9E0B5919D7B05A4A6F2967B.png =265x123)
 
 That text is removed from the page once the content is loaded, meaning we can use it's absence as an indicator that the content has completed loading.
 
@@ -574,7 +574,7 @@ Then, we'll update our test to reference the new `getDetails` function, validati
 it('should show most recent article first', function () {
     const firstArticleDetails = home.currentFeed.articles[0].getDetails();
     expect(firstArticleDetails).to.have.property('author', 'singlearticleuser');
-    expect(firstArticleDetails).to.have.property('date', 'April 16, 2020');
+    expect(firstArticleDetails).to.have.property('date', 'May 1, 2020');
     expect(firstArticleDetails).to.have.property('title', 'An Article');
     expect(firstArticleDetails).to.have.property('description', 'A Single Article');
 });
@@ -584,7 +584,12 @@ As you see, we can dynamically create multiple page components on-the-fly for ou
 
 Also, it complicates the code a bit. Anyone new to the codebase would need to look into what the 'Feed' and 'ArticlePreview' components do in order to really understand the test. As will all things in code, by trying to reduce the complexity, you end up introducing new complexities. Sometimes you just can't win :D
 
-### Exercises
+## 2.8.10 Exercises
 
 Make a 'tags' class that can be used to more easily get the tags array and contents
 Creating a set of tests for the user profile page: https://demo.learnwebdriverio.com/@demouser/
+
+
+
+
+

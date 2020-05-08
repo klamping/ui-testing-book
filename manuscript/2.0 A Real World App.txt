@@ -1,0 +1,133 @@
+# 2.0 A "Real World" App
+
+## 2.0.1 Why "Real World"?
+
+Over the past few chapters, we've covered the basics of getting started with WebdriverIO. Now we're ready to fully jump in to writing tests.
+
+In my experience, the best way to learn a subject is to use real-world examples. Knowing why and when you would use specific code is just as important as knowing how to use that code. 
+To be "real-world", we need a good website to test. Something more than a barebones example, which always seem "too clean". We need a website we can get our hands dirty with.
+
+After much searching and contemplation, I found a option that fits the bill. The folks at [Thinkster](https://thinkster.io/) have created "The mother of all demo apps", which they've named "[The RealWorld Project](https://realworld.io/)". 
+
+At its core, the RealWorld project is just an architecture for trying out different technologies (e.g. React and/or Express). Developers from all over the world have built out various implementations of the same structure, and made them all available for us to try out. 
+
+On [their GitHub homepage](https://github.com/gothinkster/realworld), you can see the many clones availabe from the community. They split the clones between the front-end and back-end implementations. There are over 15 front-end variants to choose from, and over 30 back-ends choices. 
+
+Here are some benefits of this:
+
+1. All the variants of implementations allow you to fit the project to your needs. There are many choices availabe to developers in the web industry today, so the framework that you're working with is going to be different from other companies out there. With this app, you're able to choose the flavor that best fits your needs.
+2. Wherever you fall in the "Battle of the JavaScript Frameworks", you have to admit that most websites are built with one of them. Having an example built that utilizes these technologies provides a more real-life type website to test.
+3. It has myriad of features that can throw you for a loop when testing. This makes it good for teaching how not to get thrown for a loop.
+4. The functionality is complex, without being overbearing. A more "pure" example wouldn't have this, which means you're more likely to be thrown for a loop when testing. And you know how I feel about that.
+
+That's enough reasons I think. 
+
+So how do we use this app?
+
+We've got a few options, with benefits and drawbacks of each. Let's go over those.
+
+## 2.0.2 Use the Shared Demo App
+
+I've put together an instance of the project using [the VueJS front-end](https://github.com/klamping/vue-realworld-example-app) and [the Node/Express back-end](https://github.com/klamping/node-express-realworld-example-app), with a few modifications. These modifications are necessary to complete the examples in the later chapters, so do make sure you don't use other RealWorld code repos (unless they've also been modified to fit our needs).
+
+To make things easier, I have a demo site of this code at: [https://demo.learnwebdriverio.com/](https://demo.learnwebdriverio.com/)
+
+Feel free to look around there to see what the site is all about. You're also welcome to create an account and add some posts; it's a sandbox for anyone's use. And because of that, it's not ideal for writing tests with.
+
+I'll cover this in later chapters, but there is specific data needed in order to succesfully run certain tests. Because this is a public app, anyone can change the data on this demo site, which would cause those tests to fail.
+
+My recommendation is: If you don't want to worry about settting up this app on your own right now, you should be able to complete the next few chapters without issue. However, as you get further into the exercises, you may find your tests failing because the data has been modified by someone else. That brings up the next option.
+
+## 2.0.3 Run Your Own Server Locally
+
+While we won't be modifying the front-end/back-end system code itself, there's good reason you'd want to install a local server. As I mentioned, the data on the demo app is all shared, so someone could change it in a way that breaks the test examples. If you get things set up locally, this won't be an issue.
+
+A word of caution. With either option provided below, **ensure your local server is running when you execute your tests**. Much pain has been caused by testers running their tests, seeing a lot of failures, and not realizing they didn't have their local server running at the time. Because there are a lot of examples to go through and it will likely take you days/weeks to digest the information, there is a good chance your server will be shutdown at some point and you'll need to restart it. Keep that in mind if you run across unexpected failures.
+
+With that said, while I can't walk you through your specific system, here are my general installation instructions.
+
+## 2.0.4 Using a Docker Image (Recommended)
+
+Docker is an "Open-source software for deploying containerized applications". Chances are, if you know what that means, you're already familiar with Docker.
+
+If not, maybe I can simplify that description. Docker is an application that you can install on your local computer. It allows you to download "images" of applications that can be quickly set up and started locally, without configuration or installation of other dependencies. The goal is to make it simple to run applications on your personal computer, without having to process through endless installation steps.
+
+There are many well-written guides to Docker already available, so I won't cover in detail how to get it installed and set up. I'm going to assume you're familiar enough with Docker and have it installed for the next set of tasks. If you don't want to use Docker, feel free to skip to the next section.
+
+I've done some work "containerizing" the two apps we need to run in order to have a local server available for our testing. I've also created a `docker-compose.yml` file that you can use to run your own server setup with only a few commands.
+
+First, download [the `docker-compose.yml` file](https://gist.githubusercontent.com/klamping/669d63c7f7f712b27bcfc611b22ec41c/raw/936e2b9cb3d7b668d66e6531e1674736c805da46/docker-compose.yml) (or copy it from below) to somewhere safe for it to live. It can be in its own folder, or a shared folder. Just don't forget where you put it as you'll want to access it later.
+
+Next, open a terminal, then go to the location where you stored your `docker-compose.yml` file. Finally, run `docker-compose up` (alternatively use `docker-compose up -d` to have it run in the background).
+
+Give it a few moments to load the server (you should see the logs stop loading and a "App running at" message), then visit [http://localhost:8080](http://localhost:8080) to see your local site!
+
+Here's the full docker-compose file for reference:
+
+```yml
+version: '3'
+services:
+  web:
+    container_name: realworld-web
+    restart: always
+    image: klamping/realworld-web
+    environment:
+      - APIURL=local
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api
+  api:
+    container_name: realworld-api
+    restart: always
+    image: klamping/realworld-api
+    environment:
+      - NODE_ENV=production
+      - SECRET=hunter2
+      - MONGODB_URI=mongodb://mongo:27017/conduit
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo-seed
+  mongo-seed:
+    restart: on-failure
+    network_mode: host
+    image: klamping/realworld-mongo-seed
+    depends_on:
+      - mongo
+  mongo:
+    container_name: realworld-mongo
+    image: mongo
+    ports:
+      - "27017:27017"
+```
+
+If you want to check on the status of your Docker server, run `docker ps` to get a quick status on all three containers.
+
+## 2.0.5 Self-install and Run
+
+If you prefer not to go the Docker route, you can try downloading the server source code and run it on your own. There are two code repositories you need to clone:
+
+### API Server
+
+Open a terminal and do the following:
+
+1. Run `git clone git@github.com:klamping/node-express-realworld-example-app.git`
+2. Move into the created directory and run `npm install`
+3. Install MongoDB Community Edition ([instructions](https://docs.mongodb.com/manual/installation/#tutorials)) and run it by executing `mongod`
+4. Import the test data by running: `sh mongoImport.sh`
+5. Start the API server with `npm start`
+
+### Front-end
+
+Open a terminal and do the following:
+
+1. Run `git clone git@github.com:klamping/vue-realworld-example-app.git`
+2. Move into the created directory and run `npm install`
+5. Start the Front-end server with `npm run serve`
+
+Give it a few moments to load the server (you should see the logs stop loading and a "App running at" message), then visit [http://localhost:8080](http://localhost:8080) to see your local site!
+
+## 2.0.6 A Final Reminder
+
+I mentioned this earlier, but it's worth saying again. As you continue through the examples, you may be coming back to the material after a break. If you run your tests and they're not working, double-check that your server is started. You can always do that by opening up [http://localhost:8080](http://localhost:8080) in a browser. With that said, let's jump into testing!

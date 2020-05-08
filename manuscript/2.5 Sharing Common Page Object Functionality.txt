@@ -48,7 +48,7 @@ it('should load page properly', function () {
   // Load the login page
   browser.url('./login')
   // Login with a valid user
-  auth.login('demowdio@conduit.com', 'wdiodemo');
+  auth.login('demo@learnwebdriverio.com', 'wdiodemo');
   // Load the Post Editor page
   // Assert the URL is correct
   // Assert the page fields are correct
@@ -67,7 +67,7 @@ describe('Post Editor', function () {
     // Load the login page
     browser.url('./login')
     // Login with a valid user
-    auth.login('demowdio@conduit.com', 'wdiodemo');
+    auth.login('demo@learnwebdriverio.com', 'wdiodemo');
   })
   it('should load page properly', function () {
     // Load the Post Editor page
@@ -87,7 +87,7 @@ describe('Post Editor', function () {
     // Load the login page
     browser.url('./login')
     // Login with a valid user
-    auth.login('demowdio@conduit.com', 'wdiodemo');
+    auth.login('demo@learnwebdriverio.com', 'wdiodemo');
   })
   beforeEach(function () {
     // Load the Post Editor page
@@ -159,7 +159,7 @@ const editor = new Editor();
 describe('Post Editor', function () {
     before(function () {
         browser.url('./login')
-        auth.login('demowdio@conduit.com', 'wdiodemo');
+        auth.login('demo@learnwebdriverio.com', 'wdiodemo');
     })
     beforeEach(function () {
         browser.url('./editor')
@@ -188,7 +188,7 @@ Similar to how we store our page objects in separate files, we can do the same w
 ```js
 const users = {
     user1: {
-        email: 'demowdio@conduit.com',
+        email: 'demo@learnwebdriverio.com',
         password: 'wdiodemo'
     }
 };

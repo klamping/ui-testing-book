@@ -69,7 +69,7 @@ describe('Login Page', function () {
     });
     
     it('should let you log in', function () {
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
 
         const $signIn = $('button*=Sign in');
@@ -98,7 +98,7 @@ describe('Login Page', function () {
     });
     
     it('should let you log in', function () {
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
 
         const $signIn = $('button*=Sign in');
@@ -119,7 +119,7 @@ describe('Login Page', function () {
     });
 
     it('should error with a missing password', function () {
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
 
         $('button*=Sign in').click();
         
@@ -269,7 +269,7 @@ describe('Login Page', function () {
     });
 
     it('should let you log in', function () {
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
 
         const $signIn = $('button*=Sign in');
@@ -295,7 +295,7 @@ describe('Login Page', function () {
     });
 
     it('should error with a missing password', function () {
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
 
         $('button*=Sign in').click();
 
@@ -329,7 +329,7 @@ describe('Login Page', function () {
     });
 
     it('should let you log in', function () {
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
 
         const $signIn = $('button*=Sign in');
@@ -356,7 +356,7 @@ describe('Login Page', function () {
     });
 
     it('should error with a missing password', function () {
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
 
         $('button*=Sign in').click();
 
@@ -398,7 +398,7 @@ We're using the exact code in our first test, so let's look at how that will loo
 
 ```js
 it('should let you log in', function () {
-    login('demowdio@example.com', 'wdiodemo');
+    login('demo@learnwebdriverio.com', 'wdiodemo');
 
     $('button*=Sign in').waitForExist(null, true);
 
@@ -443,7 +443,7 @@ describe('Login Form', function () {
     })
 
     it('should let you log in', function () {
-        login('demowdio@example.com', 'wdiodemo');
+        login('demo@learnwebdriverio.com', 'wdiodemo');
 
         $('button*=Sign in').waitForExist(null, true);
 
@@ -461,7 +461,7 @@ describe('Login Form', function () {
     });
 
     it('should error with a missing password', function () {
-        login('demowdio@example.com', '');
+        login('demo@learnwebdriverio.com', '');
 
         const errorMessages = $('.error-messages li');
         errorMessages.waitForExist();
@@ -624,7 +624,7 @@ describe('Login Form', function () {
     })
 
     it('should let you log in', function () {
-        login('demowdio@example.com', 'wdiodemo');
+        login('demo@learnwebdriverio.com', 'wdiodemo');
 
         auth.$signIn.waitForExist(null, true);
 
@@ -641,7 +641,7 @@ describe('Login Form', function () {
     });
 
     it('should error with a missing password', function () {
-        login('demowdio@example.com', '');
+        login('demo@learnwebdriverio.com', '');
 
         auth.$errorMessages.waitForExist();
 

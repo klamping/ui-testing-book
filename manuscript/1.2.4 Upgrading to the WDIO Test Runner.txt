@@ -84,7 +84,6 @@ In our original example, we defined a few options when initializing our Webdrive
 
 ```js
 const browser = await remote({
-    hostname: 'localhost',
     port: 9515,
     path: '/',
     capabilities: {
@@ -99,7 +98,6 @@ Well, the test runner figures you'd probably want to go the route of sharing the
 
 ```js
 exports.config = {
-    hostname: 'localhost',
     port: 9515,
     path: '/',
     capabilities: {

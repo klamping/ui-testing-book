@@ -14,13 +14,13 @@ This worked well because we knew what data to match against because we just used
 
 On the homepage, it lists out the latest articles from all users. How do we write a test that would validate it has the "latest" article shown first? Won't that content change on a regular basis as people create new articles?
 
-This is the challenge we're going to tackle in this chapter. We'll get to an answer in a little bit, but first there is some setup work to do.
+This is the challenge we're going to tackle in this chapter. We'll get to an answer in a little bit, but first there is some setup work to do. 
 
 We already have a very basic homepage test set up, which we wrote back in Chapter 2.1 (it's the `navigation.js` file). We need to get rid of it!
 
 Why? Well, the two things it validates (page title and link functionality) aren't all that useful in terms of functional testing. While it would be helpful to know that our page title is incorrect, it's likely not worth the cost of test upkeep. Every title change will require an update to our test, and if the title is wrong... well, it's not that bad of thing.
 
-For the links, that's likely better handled through a specific tool that checks for dead links, like [the W3C's link checker](https://validator.w3.org/checklink). It'll run much faster and be a lot easier to setup than writing tests for every single link on our site.
+For the links, that's likely better handled through a specific tool that checks for dead links, like [the W3C's link checker](https://validator.w3.org/checklink). It'll run much faster and be a lot easier to setup than writing tests for every single link on our site. 
 
 So, let's just delete that entire `navigation.js` file and get ready to set up a new Homepage test file with a brand new page object. We'll start with the page object, saved in a new `Home.page.js` file in our `pageObjects` folder:
 
@@ -36,7 +36,7 @@ class Home extends Generic {
 module.exports = Home;
 ```
 
-This matches the other page objects we've created in that we extend the Generic page object and define our page url, using `./` to represent a url without any suffix (so just the `baseUrl` with nothing else).
+This matches the other page objects we've created in that we extend the Generic page object and define our page url, using `./` to represent a url without any suffix (so just the `baseUrl` with nothing else). 
 
 Now let's get our test going. The first test we'll write will validate the page has loaded correctly. How do we want to do this?
 
@@ -50,13 +50,13 @@ Well, several components:
 - The 'popular tags' section
 - The site footer
 
-While the site header should appear on every page, we haven't validated it's existence in any of our tests yet (aside from the navigation test that we just deleted). And I'm going to be honest with you... I'm not a huge fan of running this sort of validation.
+While the site header should appear on every page, we haven't validated it's existence in any of our tests yet (aside from the navigation test that we just deleted 😃). And I'm going to be honest with you... I'm not a huge fan of running this sort of validation.
 
-If the header is missing from your homepage, you're going to notice before any automation is run. It's such an important part of the site that it's likely to go missing.
+If the header is missing from your homepage, you're going to notice before any automation is run. It's such an important part of the site that it's likely to go missing. 
 
-Also, the code for the header of the site likely won't change that frequently. Redesign's of main navigation are often limited due to the impact these changes have. So you're going to be writing a test that will be run hundreds, likely thousands, of times for code that is never updated.
+Also, the code for the header of the site likely won't change that frequently. Redesign's of main navigation are often limited due to the impact these changes have. So you're going to be writing a test that will be run hundreds, likely thousands, of times for code that is never updated. 
 
-Now, on the other side of the argument, header content can be much more unique than what our demo site has going on. A basic example would be the header containing some sort of "notification" functionality. You definitely should have tests that validate those notifications are working as expected.
+Now, on the other side of the argument, header content can be much more unique than what our demo site has going on. A basic example would be the header containing some sort of "notification" functionality. You definitely should have tests that validate those notifications are working as expected. 
 
 But should you write "notification" tests for every page of your site? I say that's major overkill. I would instead go with a strategy of testing the notification system on a very simple page (to avoid introducing unneeded complexity to the system), and assume it works across the site. Sure, you're risking the system being broken on a specific page (or set of pages), but you're also not wasting hours of time on redundant testing.
 
@@ -95,7 +95,7 @@ describe('Homepage', function () {
 })
 ```
 
-Now, normally, we'd add these element references to our `home` page object. But since these are elements that will be on every page, it's smarter to add them to our Generic page object.
+Now, normally, we'd add these element references to our `home` page object. But since these are elements that will be on every page, it's smarter to add them to our Generic page object. 
 
 We can do this in a manner similar to how we've adding a generic 'load' method on that same object:
 
@@ -121,7 +121,7 @@ class Generic {
 module.exports = Generic;
 ```
 
-By including these references in the Generic page object, anything that extends off of it will have those references (hence `home.$siteHeader` in the test file). This is useful for sharing common page template details across all your specific files.
+By including these references in the Generic page object, anything that extends off of it will have those references (hence `home.$siteHeader` in the test file). This is useful for sharing common page template details across all your specific files. 
 
 ## 2.7.2  Checking Those Feeds
 
@@ -180,7 +180,7 @@ describe('Homepage', function () {
 });
 ```
 
-To be fair, we could have these as two separate files instead. I'm keeping them together for simplicity sake, but feel free to separate them if you wish.
+To be fair, we could have these as two separate files instead. I'm keeping them together for simplicity sake, but feel free to separate them if you wish. 
 
 ## 2.7.3 Session Management
 
@@ -197,7 +197,7 @@ const auth = new Auth();
 
 describe('Homepage', function () {
     // ... anonymous tests hidden for brevity
-
+    
     describe('Logged In', function () {
         before(function () {
             auth.load();
@@ -226,7 +226,7 @@ Now, if you were to run this test file, everything would pass (hopefully). But t
 - Load the homepage
 - Run `Logged In - should show both feed tabs` test
 
-If we were to re-arrange our code so that the 'logged in' tests were at the top of the file, we'd end up running our 'anonymous view' tests from a 'logged in' state. That would cause our feed tab assertion to fail, is it would show both tabs instead of just the 'global' one.
+If we were to re-arrange our code so that the 'logged in' tests were at the top of the file, we'd end up running our 'anonymous view' tests from a 'logged in' state. That would cause our feed tab assertion to fail, is it would show both tabs instead of just the 'global' one. 
 
 Why is that? Well, WebdriverIO runs each test file in a separate instance. But the individual tests in each file all share that instance. So any 'session' data you set in a test will be set in all subsequent tests for that file.
 
@@ -277,35 +277,35 @@ browser.execute(function () {
 
 Wait, where did the `window` object come from? Is that part of WebdriverIO? Nope!
 
-If you're unfamiliar with JavaScript in the browser, `window` is a global object that the browser maintains. It's similiar to how WebdriverIO gives you a `browser` object to use. We're able to access it, because the function we defined in our `execute` call is run inside the browser.
+If you're unfamiliar with JavaScript in the browser, `window` is a global object that the browser maintains. It's similiar to how WebdriverIO gives you a `browser` object to use. We're able to access it, because the function we defined in our `execute` call is run inside the browser. 
 
 It can be confusing to understand where our scripts are being run, so I’m going to add two ‘log’ statements; one will run inside of our node.js instance, and the other will run inside of the browser:
 
 ```js
-console.log('outside the browser.'); // this is run by Node.js
+console.log(‘outside the browser.’); // this is run by Node.js
 browser.execute(function () {
-    console.log('Inside the browser.'); // this is run by the browser
+    console.log(‘Inside the browser.’); // this is run by the browser
     window.alert('This call is coming from inside the browser!');
 });
 ```
 
-If you were to run that script, you'd see the 'outside the browser' output, but not the second log. Where did it go?
+If you were to run that script, you'd see the 'outside the browser' output, but not the second log. Where did it go? 
 
 Well, despite both lines using similar `console.log` code, they're run in two entirely different ways. Both Node.js and browsers support a common `console` API, so the function names and formats are the same between the two. This makes it much easier for developers to switch from writing browser code to Node.js code, and vice versa.
 
-So when our second `console.log` line is run, it's logging to the browser's console, not the console we're using to run our test. That's why we don't see it anywhere.
+So when our second `console.log` line is run, it's logging to the browser's console, not the console we're using to run our test. That's why we don't see it anywhere. 
 
 Getting back to our original goal, which is to clear the browser's Local Storage data, we can do that by sending `window.localStorage.clear()` to the browser via `execute`. Here's how that looks in the context of our Home test file:
 
 ```js
 describe('Homepage', function () {
     // ... anonymous tests hidden for brevity
-
+    
     describe('Logged In', function () {
         before(function () {
             auth.load();
             auth.login(user1);
-
+    
             home.load();
         });
         // ... some tests here ...
@@ -360,7 +360,7 @@ We're going to do the following with our code:
 - The service will respond with a 'token', which is what we deleted in the previous section
 - We take that 'token' and inject it into our local storage, using the same `execute` command from before
 
-Way back at the start of this book we talked about APIs. We learned that WebdriverIO works by sending API requests to a Webdriver server and handles the responses. We're going to do a very similar thing.
+Way back at the start of this book we talked about APIs. We learned that WebdriverIO works by sending API requests to a Webdriver server and handles the responses. We're going to do a very similar thing. 
 
 If you're unfamiliar with the concept of an API, I unfortunately won't be explaining it here. The reason is that there are many well done explanations already out there, including:
 
@@ -467,7 +467,7 @@ before(function () {
 
     // 2. Instantiate a new Api instance with the url of our Api
     const api = new Api('https://conduit.productionready.io/api'); // TODO replace this hard-coded path with information on browser.options.baseUrl
-
+    
     // 3. Call the `getAuthToken` function
     const token = browser.call(() => {
         return api.getAuthToken(user1);
@@ -492,9 +492,9 @@ The next step in this is to move all of that Api/token business to a common area
 
 ## 2.7.6 Global Custom Commands
 
-Start things off in the configuration file by adding the  `const Api = require('./utils/Api');` require statement to the top of the file. This can go before or after the `Chance` code.
+Start things off in the configuration file by adding the  `const Api = require('./utils/Api');` require statement to the top of the file. This can go before or after the `Chance` code. 
 
-Then, scoot on down to our `before` hook, which if you recall from earlier, we used to store a global reference to our `chance` instance.
+Then, scoot on down to our `before` hook, which if you recall from earlier, we used to store a global reference to our `chance` instance. 
 
 After the `global.chance = new Chance(process.env.SEED + specs[0]);` line in that hook, let's store the instantiated `Api` object to the global scope:
 
@@ -504,9 +504,9 @@ global.api = new Api('https://conduit.productionready.io/api'); // TODO update t
 
 That's nice, in case we need to reference this Api instance in other tests. But it still doesn't get the token retrieval and storage functionality out of our test.
 
-What we're going to do to achieve this is use [the `browser.addCommand` command](https://webdriver.io/docs/customcommands.html). If you want to extend the browser instance with your own set of commands, this is the method to use.
+What we're going to do to achieve this is use [the `browser.addCommand` command](https://webdriver.io/docs/customcommands.html). If you want to extend the browser instance with your own set of commands, this is the method to use. 
 
-To use it, pass in the name of the command you want to define, and then a function containing the code the command should run (which can be anything).
+To use it, pass in the name of the command you want to define, and then a function containing the code the command should run (which can be anything). 
 
 We're going to define a new `loginViaApi` command with the following code:
 
@@ -546,3 +546,15 @@ To recap, using an API to login does take extra knowledge about how API's work, 
 
 - Rather than use the `addCommand` command, update the `Auth` page object to have the `loginViaApi` functionality
 - Update the `editor.js` test to use this new function (but not the `login.js` file, since we actually want to test the login page)
+
+TODO:
+Make a couple user accounts with a few posts each
+Stored user following above accounts to use for verification
+
+Learning objectives:
+- Generic page element references
+- Logging in via API and custom session definition
+- Using `browser.addCommand` to create custom commands
+
+
+

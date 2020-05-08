@@ -46,7 +46,7 @@ For example, you can download and install Chromedriver using [the NPM Chromedriv
 To install the NPM package, run 
 
 ```
-npm install -g chromedriver
+npm install chromedriver
 ```
 
 ![IMAGE](images/19777E6D3338056789E9EBC378A1D8CD.jpg)
@@ -54,7 +54,7 @@ npm install -g chromedriver
 You can then start a chromdriver instance by running:
 
 ```
-chromedriver
+npx chromedriver
 ```
 
 ![IMAGE](images/BB7464A817E912436260B942FD7FEF88.jpg)

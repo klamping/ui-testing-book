@@ -1,5 +1,10 @@
 # 2.9 Generating Data for Testing via APIs
 
+Purpose:
+- Show how data can be added on the fly to use for testing validation
+- Explain how this is used to avoid some data management conflicts
+- Explain that this doesn't solve all possible conflicts, but definitely helps
+
 In our last set of tests, I mentioned how difficult it can be to test the content on a page if that content isn't static. If we're testing a shared website, someone may change the content we're meaning to validate against, causing our tests to fail.
 
 While much of this pain can be avoided by running all tests against a local server, we still faced with some problems:
