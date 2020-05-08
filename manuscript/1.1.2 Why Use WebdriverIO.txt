@@ -48,11 +48,13 @@ Remember Selenium? That tool from the mid-2000s that I glossed over because I wa
 
 WebdriverIO made Selenium approachable to me, and that was literally life-changing (yes, literally). Since investing myself in WebdriverIO, my actual job duties had shifted from primarily front-end development (writing HTML and CSS) to a focus on front-end testing (writing WebdriverIO test scripts).
 
-There were four selling points that convinced me to use WebdriverIO. But before I list my reasons, how about we hear from some other folks:
-
-[TODO get list of testimonials here from https://github.com/webdriverio/webdriverio/issues/1000 and twitter]
+There were four selling points that convinced me to use WebdriverIO. But before I list my reasons, how about we [hear from some other folks](https://github.com/webdriverio/webdriverio/issues/1000):
 
 "Webdriverio is a comprehensive, well documented project with great coverage of the Selenium/Webdriver/Appium specs, as well as loads of very useful helper abstractions. @christian-bromann has been amazing to work with, providing fantastic support and encouraging a helpful community in general." - [Goerge Crawford, who is now a core contributor on the project](https://github.com/webdriverio/webdriverio/issues/1000#issuecomment-171286700)
+
+"The framework of choice at Oxford University Press, I have been using webdriverio since 2016 and it has made life so much easier, especially now with v5, hats off to @christian-bromann and his crew who maintain and continualy support it, keep up the good work guys." - [Larry G. - Automation Architect](https://github.com/webdriverio/webdriverio/issues/1000#issuecomment-485683249)
+
+"Give a QA Engineer a web-automation framework and he might automate some tests. Give him WebdriverIO and he will build a full-fledged, robust automation harness in a matter of days. All jokes aside, WebdriverIO was a blessing in disguise for us @Avira. I'll never look back to other JS-based automation frameworks!" [Dan Chivescu, QA Lead](https://github.com/webdriverio/webdriverio/issues/1000#issuecomment-355206891)
 
 And what about my reasons for choosing WebdriverIO?
 

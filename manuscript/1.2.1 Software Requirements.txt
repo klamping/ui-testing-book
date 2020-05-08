@@ -49,21 +49,21 @@ In the terminal of your choice, ensure you have Node.js installed correctly by r
 
 #### A Note for Windows Users
 
-The commands you use in the default Windows terminal are different from what I'll be showing in my code samples. 
+The commands you use in the default Windows terminal (cmd.exe) are different from what I'll be showing in my code samples. 
 
 Some examples:
 
-[TODO verify this]
 - Instead of using `ls` to print the contents of a directory, you need to use `dir`
 - Windows uses a back slash `\` instead of a forward slash `/` for path commands (e.g. `node_modules\.bin\` versus `node_modules/.bin/`)
-- Windows users are also required to enter .\ before every function call that involes a path (e.g. `dir .\node_modules\.bin\` instead of just `ls node_modules/.bin/`)
-- The way you define environment variables is different (we'll go into detail on this when we're at that section)
+- Windows users are also required to enter `.\` before every function call that involes a path (e.g. `dir .\node_modules\.bin\` instead of `ls node_modules/.bin/`)
+- The way you define environment variables is different (we'll go into detail on this later)
 
-For a better list of differences, [RedHat has put together a comparison chart](https://web.archive.org/web/20170715114407/https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Step_by_Step_Guide/ap-doslinux.html).
+For a more comprehensive list of differences, [RedHat has put together a comparison chart](https://web.archive.org/web/20170715114407/https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Step_by_Step_Guide/ap-doslinux.html).
 
 I'll try to provide the Windows equivalent the first time I introduce a command. However, if you'd like to stick with the commands that I use throughout the book, consider installing an alternative console. Here are some suggestions:
 
 - [cmder](https://cmder.net/)
+- [Microsoft Terminal](https://github.com/microsoft/terminal)
 - [clink](http://mridgers.github.io/clink/)
 - [ConEmu](https://conemu.github.io/)
 - [Cygwin](https://www.cygwin.com/)

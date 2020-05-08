@@ -183,7 +183,7 @@ Along with customizing the `capabilities`, there are a number of other options a
 **hostname**
 Host of your driver server.
 Type: String
-Default: 0.0.0.0
+Default: localhost
 
 **port**
 Port your driver server is on.
@@ -195,8 +195,7 @@ Path to driver server endpoint.
 Type: String
 Default: /wd/hub
 
-[TODO https://github.com/webdriverio/webdriverio/pull/3907 fixes this]
-Due to security settings, Chromedriver won't accept requests coming from the 0.0.0.0 hostname address. We need to change that default to `localhost`.
+[TODO update this when revamping to wdio v6]
 
 And as mentioned before, we also need to change the port and path settings.
 
@@ -204,7 +203,6 @@ We can do all this by customizing the object passed into the `remote` function:
 
 ```js
 const browser = await remote({
-    hostname: 'localhost',
     port: 9515,
     path: '/',
     capabilities: {

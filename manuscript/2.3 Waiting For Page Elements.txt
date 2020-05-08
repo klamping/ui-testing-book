@@ -148,7 +148,7 @@ describe('Login Page', function () {
     it('should let you log in', function () {
         browser.url('./login');
 
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
     });
 });
@@ -185,7 +185,7 @@ describe('Login Page', function () {
     it('should let you log in', function () {
         browser.url('./login');
 
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
 
         $('button*=Sign in').click();
@@ -261,7 +261,7 @@ describe('Login Page', function () {
     it('should let you log in', function () {
         browser.url('./login');
 
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
 
         $('button*=Sign in').click();
@@ -390,7 +390,7 @@ describe('Login Page', function () {
     it('should let you log in', function () {
         browser.url('./login');
 
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
 
         $('button*=Sign in').click();
@@ -435,7 +435,7 @@ describe('Login Page', function () {
     it('should let you log in', function () {
         browser.url('./login');
 
-        $('input[type="email"]').setValue('demowdio@example.com');
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
 
         const $signIn = $('button*=Sign in');

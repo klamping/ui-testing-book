@@ -22,7 +22,7 @@ You can see a list of changes by visiting [the book's changelog](https://github.
 
 I've done my best to make the material clear and understandable, but I'm sure to have fallen short in some areas. To get extra help, try one of these three options:
 
-* This course discussion board [TODO]
+* [This Book's GitHub Issues Page](https://github.com/klamping/ui-testing-book/issues)
 * **Gitter** - WebdriverIO runs an official chat room for folks seeking help with the tool itself. 
 * **My personal email** - Although I'm usually slow to respond, you can reach out to me at kevin at learnwebdriverio dot com. I'll do my best to get back to you in a timely manner. 
 

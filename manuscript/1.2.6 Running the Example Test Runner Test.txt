@@ -24,13 +24,9 @@ That will create both folders for us. Now we can create our first test file:
 touch ./test/specs/example.js
 ```
 
-For Windows, that command will be [TODO verify this]:
+On Windows, `touch` will not work, so you can instead go to the `test/specs/` folder and create a JavaScript file named 'example.js'
 
-```sh
-type nul > .\test\specs\example.js
-```
-
-Open that file up in your text editor of choice and paste in this example from the official WebdriverIO website:
+Open that file in a text editor and paste in the example from the official WebdriverIO website:
 
 ```js
 const assert = require('assert');
@@ -44,9 +40,9 @@ describe('webdriver.io page', () => {
 });
 ```
 
-There's one thing we want to change. Where it sets the `url` to go to, we want to use the `baseUrl` we defined in our configuration file.
+There is one thing we want to change. Where it sets the `url` to go to, we instead want to use the `baseUrl` we defined in our configuration file.
 
-So go ahead and change `browser.url('https://webdriver.io');` to be just `browser.url('./');`. Now when WebdriverIO runs that command, it will see that it isn't a full website URL, and prepend our `baseUrl` from the config file.
+So change `browser.url('https://webdriver.io');` to be `browser.url('./');`. Now when WebdriverIO runs that command, it will see that it isn't a full website URL, and prepend our `baseUrl` from the config file.
 
 Okay, let's save the file and try running the test.
 
