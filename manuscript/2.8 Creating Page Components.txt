@@ -232,7 +232,7 @@ This won't be too difficult, and we'll use our old friend `waitForExist()` to ma
 
 When the page first loads, the following loading text is shown:
 
-!["Loading Articles..." text screenshot](images/42289218B9E0B5919D7B05A4A6F2967B.png =265x123)
+!["Loading Articles..." text screenshot](images/42289218B9E0B5919D7B05A4A6F2967B.png)
 
 That text is removed from the page once the content is loaded, meaning we can use it's absence as an indicator that the content has completed loading.
 
@@ -587,9 +587,4 @@ Also, it complicates the code a bit. Anyone new to the codebase would need to lo
 ## 2.8.10 Exercises
 
 Make a 'tags' class that can be used to more easily get the tags array and contents
-Creating a set of tests for the user profile page: https://demo.learnwebdriverio.com/@demouser/
-
-
-
-
-
+Create a set of tests for the user profile page: https://demo.learnwebdriverio.com/@singlearticleuser/

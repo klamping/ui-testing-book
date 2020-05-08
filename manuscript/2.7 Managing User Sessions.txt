@@ -282,9 +282,9 @@ If you're unfamiliar with JavaScript in the browser, `window` is a global object
 It can be confusing to understand where our scripts are being run, so I’m going to add two ‘log’ statements; one will run inside of our node.js instance, and the other will run inside of the browser:
 
 ```js
-console.log(‘outside the browser.’); // this is run by Node.js
+console.log('outside the browser.'); // this is run by Node.js
 browser.execute(function () {
-    console.log(‘Inside the browser.’); // this is run by the browser
+    console.log('Inside the browser.'); // this is run by the browser
     window.alert('This call is coming from inside the browser!');
 });
 ```
@@ -546,15 +546,3 @@ To recap, using an API to login does take extra knowledge about how API's work, 
 
 - Rather than use the `addCommand` command, update the `Auth` page object to have the `loginViaApi` functionality
 - Update the `editor.js` test to use this new function (but not the `login.js` file, since we actually want to test the login page)
-
-TODO:
-Make a couple user accounts with a few posts each
-Stored user following above accounts to use for verification
-
-Learning objectives:
-- Generic page element references
-- Logging in via API and custom session definition
-- Using `browser.addCommand` to create custom commands
-
-
-
