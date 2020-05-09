@@ -420,7 +420,7 @@ module.exports = Api;
 ```
 
 A brief overview of the file is this:
-- It exports an "Api" class, which can be constructed with a `prefixUrl` which should match our root API endpoint ('https://conduit.productionready.io/api'). (TODO update this endpoint to a self-served one)
+- It exports an "Api" class, which can be constructed with a `prefixUrl` which should match our root API endpoint ('http://localhost:3000').
 - The class has a `getAuthToken`, which will accept user credentials and return a promise which will resolve with the token data.
 
 Here's an example of a basic Node.js script using this new file:
@@ -429,9 +429,9 @@ Here's an example of a basic Node.js script using this new file:
 const Api = require('./utils/api');
 
 (async () => {
-    const api = new Api('https://conduit.productionready.io/api');
+    const api = new Api('http://localhost:3000/api/');
     const token = await api.getAuthToken({
-        email: 'demowdio@conduit.com',
+        email: 'demowdio@learnwebdriverio.com',
         password: 'wdiodemo'
     });
     console.log(token);
@@ -452,7 +452,7 @@ before(function () {
 Instead, we need to:
 
 1. Require our Api file
-2. Instantiate a new Api instance with the url of our Api: `const api = new Api('https://conduit.productionready.io/api');`
+2. Instantiate a new Api instance with the url of our Api: `const api = new Api('http://localhost:3000/api/');`
 3. Call the `getAuthToken` function via `browser.call` (since that function is promise-based and we need to wait for it to complete)
 4. Load the page in an unauthorized state (we can't set `localStorage` until after we have the page loaded)
 5. Set the token via `browser.execute` and [the `window.localStorage.setItem` function](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem)
@@ -466,7 +466,7 @@ before(function () {
     const Api = require('../../utils/Api');
 
     // 2. Instantiate a new Api instance with the url of our Api
-    const api = new Api('https://conduit.productionready.io/api'); // TODO replace this hard-coded path with information on browser.options.baseUrl
+    const api = new Api('http://localhost:3000/api/');
     
     // 3. Call the `getAuthToken` function
     const token = browser.call(() => {
@@ -499,7 +499,7 @@ Then, scoot on down to our `before` hook, which if you recall from earlier, we u
 After the `global.chance = new Chance(process.env.SEED + specs[0]);` line in that hook, let's store the instantiated `Api` object to the global scope:
 
 ```js
-global.api = new Api('https://conduit.productionready.io/api'); // TODO update this URL to use `baseUrl`
+global.api = new Api('http://localhost:3000/api/');
 ```
 
 That's nice, in case we need to reference this Api instance in other tests. But it still doesn't get the token retrieval and storage functionality out of our test.

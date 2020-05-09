@@ -168,7 +168,7 @@ For example, say we need to log in to our website for most of our tests. Without
 ```js
 browser.url('login-page');
 browser.setValue('#username', 'testuser');
-browser.setValue('#password', "hunter2');
+browser.setValue('#password', 'hunter2');
 browser.click('#login-btn');
 ```
 
