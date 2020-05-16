@@ -74,13 +74,13 @@ Our answers will be:
 ? Where are your test specs located? ./test/specs/**/*.js
 ? Which reporter do you want to use? (Press <space> to select, <a> to toggle all, <i> to invert selection) spec - https://www.npmjs.com/package/@wdio/spec-reporter
 ? Do you want to add a service to your test setup?  selenium-standalone - https://www.npmjs.com/package/@wdio/selenium-standalone-service
-? What is the base url? https://demo.learnwebdriverio.com/
+? What is the base url? https://localhost:8080/
 ```
 
 Almost all defaults here, except for a few items:
 
 - We'll use the `selenium-standalone` service. Feel free to use `chromedriver` if you prefer, just be sure to set up the `port` and `path` in the config file.
-- For the base url, we use my copy of the Conduit site at `https://demo.learnwebdriverio.com/`. You're welcome to use your own here if mine isn't good enough for ya.
+- For the base url, we use my copy of the Conduit site at `https://localhost:8080/`. You're welcome to use your own here if mine isn't good enough for ya.
 
 There's one other quick item we need to change in our configuration file. Update the browser to be `chrome`, as there is a specific Chrome feature we want to take advantage of in a later chapter. Besides, you'll need to use Chrome if you're running with ChromeDriver anyway.
 
@@ -130,7 +130,7 @@ The command we'll use is [`browser.url`](https://webdriver.io/docs/api/browser/u
 
 Remember that `baseUrl` setting we provided? I mentioned this before, but in case you didn't catch it, `browser.url` will prepend that `baseUrl` value if you define a relative path. 
 
-For example, if I say `browser.url('./tag/wdio')`, it will load the full url of `https://demo.learnwebdriverio.com/tag/wdio`.
+For example, if I say `browser.url('./tag/wdio')`, it will load the full url of `https://localhost:8080/tag/wdio`.
 
 Here are some more complex examples, assuming the `baseUrl` is set to `http://example.com/one`:
 
@@ -274,9 +274,9 @@ Execution of 1 spec files started at 2019-07-30T03:02:07.756Z
 [0-0] 2019-07-30T03:02:10.084Z INFO webdriver: DATA { capabilities:
    { alwaysMatch: { browserName: 'chrome' }, firstMatch: [ {} ] },
   desiredCapabilities: { browserName: 'chrome' } }
-[0-0] 2019-07-30T03:02:14.125Z INFO webdriver: COMMAND navigateTo("https://demo.learnwebdriverio.com/")
+[0-0] 2019-07-30T03:02:14.125Z INFO webdriver: COMMAND navigateTo("https://localhost:8080/")
 [0-0] 2019-07-30T03:02:14.126Z INFO webdriver: [POST] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1/url
-[0-0] 2019-07-30T03:02:14.127Z INFO webdriver: DATA { url: 'https://demo.learnwebdriverio.com/' }
+[0-0] 2019-07-30T03:02:14.127Z INFO webdriver: DATA { url: 'https://localhost:8080/' }
 [0-0] 2019-07-30T03:02:15.677Z INFO webdriver: COMMAND getTitle()
 [0-0] 2019-07-30T03:02:15.678Z INFO webdriver: [GET] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1/title
 [0-0] 2019-07-30T03:02:15.689Z INFO webdriver: RESULT Conduit
@@ -289,8 +289,8 @@ Execution of 1 spec files started at 2019-07-30T03:02:07.756Z
 2019-07-30T03:02:15.843Z INFO webdriver: [POST] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1/element/430dc364-a1d9-574a-afa5-3f5bf5b84537/click
 [0-0] 2019-07-30T03:02:16.151Z INFO webdriver: COMMAND getUrl()
 [0-0] 2019-07-30T03:02:16.153Z INFO webdriver: [GET] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1/url
-[0-0] 2019-07-30T03:02:16.221Z INFO webdriver: RESULT https://demo.learnwebdriverio.com/login
-https://demo.learnwebdriverio.com/login
+[0-0] 2019-07-30T03:02:16.221Z INFO webdriver: RESULT https://localhost:8080/login
+https://localhost:8080/login
 [0-0] 2019-07-30T03:02:16.256Z INFO webdriver: COMMAND deleteSession()
 [0-0] 2019-07-30T03:02:16.260Z INFO webdriver: [DELETE] http://127.0.0.1:4444/wd/hub/session/e96e989e-4a25-2e49-a79e-19982422f2b1
 [0-0] PASSED in chrome - /test/specs/navigation.js
@@ -303,7 +303,7 @@ In the middle of all that output are two lines with the content we need. Let's h
 ```
 [0-0] RUNNING in chrome - /test/specs/navigation.js
 [0-0] Conduit
-[0-0] https://demo.learnwebdriverio.com/login
+[0-0] https://localhost:8080/login
 [0-0] PASSED in chrome - /test/specs/navigation.js
 ```
 
@@ -333,7 +333,7 @@ Now if the title isn't what we're looking for, it'll jump into the if statement 
 Let's make the update for our `getUrl` call as well:
 
 ```js
-if (browser.getUrl() !== 'https://demo.learnwebdriverio.com/login') {
+if (browser.getUrl() !== 'https://localhost:8080/login') {
     throw new Error('URL of "login" page should be correct')
 }
 ```
@@ -356,7 +356,7 @@ describe('Homepage', function () {
     $('=Sign in').click();
 
     // Get the URL of the sign in page. It should include 'login'
-    if (browser.getUrl() !== 'https://demo.learnwebdriverio.com/login') {
+    if (browser.getUrl() !== 'https://localhost:8080/login') {
       throw new Error('URL of "login" page should be correct')
     }
   })
@@ -419,6 +419,7 @@ assert.strictEqual(browser.getTitle(), 'Conduit');
 
 Now if our test fails, it will look like:
 
+{lang=text}
 ```
  "spec" Reporter:
 ------------------------------------------------------------------
@@ -461,7 +462,7 @@ describe('Homepage', function () {
     $('=Sign in').click();
 
     // Get the URL of the sign in page. It should include 'login'
-    assert.strictEqual(browser.getUrl(), 'https://demo.learnwebdriverio.com/login');
+    assert.strictEqual(browser.getUrl(), 'https://localhost:8080/login');
   })
 })
 ```
@@ -496,7 +497,7 @@ Can you tell why I like this format? To me, it's more sentence-like compared to 
 
 Let's look at replacing the URL assertion. We could use that same `to.equal` check, but I had mentioned that chai provided us with more advanced options. One of those options is to check that a value contains another value. So we can check that `abc` includes `bc`, which it does. 
 
-With our URL, we want the test to pass no matter the domain name (since we could be testing this same site on any number of different domains). Right now, with our `equals` assertion, it will only pass if we're testing the `https://demo.learnwebdriverio.com` site. But all we really care about is that the url contains '/login'.
+With our URL, we want the test to pass no matter the domain name (since we could be testing this same site on any number of different domains). Right now, with our `equals` assertion, it will only pass if we're testing the `https://localhost:8080` site. But all we really care about is that the url contains '/login'.
 
 Chai has us covered. It offers [an assertion that only sees if a value includes another](https://www.chaijs.com/api/bdd/#method_include). We can write it as `expect('abc').to.include('bc')`.
 
@@ -506,7 +507,8 @@ There are many other special assertions you can use via Chai. Check out [their A
 
 Here's the fully updated file:
 
-```js
+{lang=js}
+```
 const chai = require('chai');
 const expect = chai.expect
 
@@ -529,7 +531,7 @@ describe('Homepage', function () {
 
 With our test updated, save the file and give the test another run. Assuming no errors, the output should look the same. If I fail one of the assertions, however, you may see something like:
 
-```
+```text
  "spec" Reporter:
 ------------------------------------------------------------------
 [firefox 17.7.0 mac #0-0] Spec: /Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js
@@ -541,8 +543,8 @@ With our test updated, save the file and give the test another run. Assuming no 
 [firefox 17.7.0 mac #0-0] 1 failing (5.6s)
 [firefox 17.7.0 mac #0-0]
 [firefox 17.7.0 mac #0-0] 1) Homepage should load properly
-[firefox 17.7.0 mac #0-0] expected 'https://demo.learnwebdriverio.com/login' to include '/logis'
-[firefox 17.7.0 mac #0-0] AssertionError: expected 'https://demo.learnwebdriverio.com/login' to include '/logis'
+[firefox 17.7.0 mac #0-0] expected 'https://localhost:8080/login' to include '/logis'
+[firefox 17.7.0 mac #0-0] AssertionError: expected 'https://localhost:8080/login' to include '/logis'
 [firefox 17.7.0 mac #0-0]     at Context.<anonymous> (/Users/klamping/Sites/wdio-book-examples/test/specs/navigation.js:16:33)
 ```
 
