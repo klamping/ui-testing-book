@@ -24,19 +24,19 @@ While we've done similar work in the past with our Login tests, we're going to a
 
 To get things started, let's layout the basic structure for our new editor test. Create a new file in your `specs` folder named `editor.js`. In it, we'll insert our `require` statements and `describe`/`it` blocks:
 
+{title="test/specs/editor.js"}
 ```js
-const expect = require('chai').expect;
 const Auth = require('../pageObjects/Auth.page');
 
 const auth = new Auth();
 
 describe('Post Editor', function () {
     it('should load page properly', function () {
-      // Load the login page
-      // Login with a valid user
-      // Load the Post Editor page
-      // Assert the URL is correct
-      // Assert the page fields are correct
+        // Load the login page
+        // Login with a valid user
+        // Load the Post Editor page
+        // Assert the URL is correct
+        // Assert the page fields are correct
     })
 })
 ```
@@ -45,13 +45,13 @@ This structure is very similar to what we've seen with our Login page, which mea
 
 ```js
 it('should load page properly', function () {
-  // Load the login page
-  browser.url('./login')
-  // Login with a valid user
-  auth.login('demo@learnwebdriverio.com', 'wdiodemo');
-  // Load the Post Editor page
-  // Assert the URL is correct
-  // Assert the page fields are correct
+    // Load the login page
+    browser.url('./login')
+    // Login with a valid user
+    auth.login('demo@learnwebdriverio.com', 'wdiodemo');
+    // Load the Post Editor page
+    // Assert the URL is correct
+    // Assert the page fields are correct
 })
 ```
 
@@ -63,17 +63,17 @@ Using the same code as our login page, we can add in a `before` hook that will l
 
 ```js
 describe('Post Editor', function () {
-  before(function () {
-    // Load the login page
-    browser.url('./login')
-    // Login with a valid user
-    auth.login('demo@learnwebdriverio.com', 'wdiodemo');
-  })
-  it('should load page properly', function () {
-    // Load the Post Editor page
-    // Assert the URL is correct
-    // Assert the page fields are correct
-  })
+    before(function () {
+        // Load the login page
+        browser.url('./login')
+        // Login with a valid user
+        auth.login('demo@learnwebdriverio.com', 'wdiodemo');
+    })
+    it('should load page properly', function () {
+        // Load the Post Editor page
+        // Assert the URL is correct
+        // Assert the page fields are correct
+    })
 })
 ```
 
@@ -83,20 +83,20 @@ Here's what the code looks like with both a `before` and a `beforeEach` hook:
 
 ```js
 describe('Post Editor', function () {
-  before(function () {
-    // Load the login page
-    browser.url('./login')
-    // Login with a valid user
-    auth.login('demo@learnwebdriverio.com', 'wdiodemo');
-  })
-  beforeEach(function () {
-    // Load the Post Editor page
-    browser.url('./editor')
-  })
-  it('should load page properly', function () {
-    // Assert the URL is correct
-    // Assert the page fields are correct
-  })
+    before(function () {
+        // Load the login page
+        browser.url('./login')
+        // Login with a valid user
+        auth.login('demo@learnwebdriverio.com', 'wdiodemo');
+    })
+    beforeEach(function () {
+        // Load the Post Editor page
+        browser.url('./editor')
+    })
+    it('should load page properly', function () {
+        // Assert the URL is correct
+        // Assert the page fields are correct
+    })
 })
 ```
 
@@ -109,7 +109,7 @@ In fact, this type of test has a common name: "Smoke" tests. They're called that
 While the idea may seem simple from the outside, there are a lot of questions that this type test brings up. Here are a few:
 
 A. How much of the page do we test? Testing all elements on the page is impractical, so where do we draw the line?
-B. How much maintanence does this introduce? Every element we check introduces maintanence lwhen that element is changed in the future. 
+B. How much maintenance does this introduce? Every element we check introduces maintenance when that element is changed in the future. 
 C. Should WebdriverIO even be testing this? Are there tools better suited for this type of job?
 
 And here's my opinion:
@@ -132,8 +132,9 @@ Our test is going to check the URL, then check for the existance of the followin
 
 As we've already covered creating page objects, I'm going to show just the code needed to move forward:
 
-Create new Editor.page.js file inside of the `pageObjects` folder:
+Create new `Editor.page.js` file inside of the `pageObjects` folder:
 
+{title="test/pageObjects/Editor.page.js"}
 ```js
 class Editor {
     get $title () { return $('[data-qa-id="editor-title"]'); }
@@ -148,8 +149,8 @@ module.exports = Editor;
 
 Then back in our test:
 
+{title="test/specs/editor.js"}
 ```js
-const expect = require('chai').expect;
 const Auth = require('../pageObjects/Auth.page');
 const Editor = require('../pageObjects/Editor.page');
 
@@ -158,24 +159,24 @@ const editor = new Editor();
 
 describe('Post Editor', function () {
     before(function () {
-        browser.url('./login')
+        browser.url('./login');
         auth.login('demo@learnwebdriverio.com', 'wdiodemo');
-    })
+    });
     beforeEach(function () {
-        browser.url('./editor')
-    })
+        browser.url('./editor');
+    });
     it('should load page properly', function () {
-        expect(browser.getUrl()).to.include('editor');
-        expect(editor.$title.isExisting(), 'Title').to.be.true;
-        expect(editor.$description.isExisting(), 'Description').to.be.true;
-        expect(editor.$body.isExisting(), 'Body').to.be.true;
-        expect(editor.$tags.isExisting(), 'Tags').to.be.true;
-        expect(editor.$publish.isExisting(), 'Publish').to.be.true;
-    })
-})
+        expect(browser).toHaveUrl('editor', { containing: true });
+        expect(editor.$title).toBeExisting();
+        expect(editor.$description).toBeExisting();
+        expect(editor.$body).toBeExisting();
+        expect(editor.$tags).toBeExisting();
+        expect(editor.$publish).toBeExisting();
+    });
+});
 ```
 
-To recap, we create a new Editor class with our element references, then require that file inside our test and use those element references to check for their existance. 
+To recap, we create a new Editor class with our element references, then require that file inside our test and use those element references to check for their existence. 
 
 You can give your tests a quick run with `npx wdio --spec=editor` and validate that it passes. 
 
@@ -212,7 +213,7 @@ There are other types of test fixtures out there, and we'll cover instances of '
 
 Let's create a `fixtures` folder to live next to our `specs` and `pageObjects` folder. After creating it, you should have a folder structure like this:
 
-```
+```text
 ./
 ./wdio.conf.js
 ./test/fixtures/
@@ -231,7 +232,6 @@ To use our `user1` constant, we update our `auth.login` code to pass in the prop
 Here's what the fully updated file looks like:
 
 ```js
-const expect = require('chai').expect;
 const Auth = require('../pageObjects/Auth.page');
 const Editor = require('../pageObjects/Editor.page');
 const { user1 } = require('../fixtures/users');
@@ -248,12 +248,12 @@ describe('Post Editor', function () {
         browser.url('./editor')
     })
     it('should load page properly', function () {
-        expect(browser.getUrl()).to.include('editor');
-        expect(editor.$title.isExisting(), 'Title').to.be.true;
-        expect(editor.$description.isExisting(), 'Description').to.be.true;
-        expect(editor.$body.isExisting(), 'Body').to.be.true;
-        expect(editor.$tags.isExisting(), 'Tags').to.be.true;
-        expect(editor.$publish.isExisting(), 'Publish').to.be.true;
+        expect(browser).toHaveUrl('editor', { containing: true });
+        expect(editor.$title).toBeExisting();
+        expect(editor.$description).toBeExisting();
+        expect(editor.$body).toBeExisting();
+        expect(editor.$tags).toBeExisting();
+        expect(editor.$publish).toBeExisting();
     })
 })
 ```
@@ -297,7 +297,6 @@ Since we need to pass in missing details, sending over the full object won't wor
 For the first test in the `login.js` file, we can switch over to using the `user1` like we've done in our `editor.js` file. For the other two, we need to define a new object to pass over, using the relevant `user1` property, plus a blank property:
 
 ```js
-const expect = require('chai').expect;
 const Auth = require('../pageObjects/Auth.page');
 const { user1 } = require('../fixtures/users');
 
@@ -311,8 +310,7 @@ describe('Login Form', function () {
     it('should let you log in', function () {
         auth.login(user1);
 
-        // Get the URL of the page, which should no longer include 'login'
-        expect(browser.getUrl()).to.not.include('/login');
+        expect(auth.$errorMessages).not.toBeExisting();
     });
 
     it('should error with a missing username', function () {
@@ -321,7 +319,7 @@ describe('Login Form', function () {
             password: user1.password
         });
 
-        expect(auth.$errorMessages.getText()).to.equal(`email can't be blank`);
+        expect(auth.$errorMessages).toHaveText(`email can't be blank`);
     });
 
     it('should error with a missing password', function () {
@@ -330,7 +328,7 @@ describe('Login Form', function () {
             password: ''
         });
 
-        expect(auth.$errorMessages.getText()).to.equal(`password can't be blank`);
+        expect(auth.$errorMessages).toHaveText(`password can't be blank`);
     });
 });
 ```
@@ -341,7 +339,7 @@ Now we've got all our files updated to a new way of thinking and can get back to
 
 Just kidding! If you haven't figured it out by now, I really dislike implementation details (e.g. element selectors) in my tests. And right now, there are too many URLs just floating around everywhere!
 
-For one, we're repeating the `browser.url('./login')` command in both our login and editor tests. While it's not a huge problem right now, it will grow everytime we add a new test. Soon enough, we'll have this URL scattered throughout our tests, and any update to the path will require fixing every file we have. That just won't do.
+For one, we're repeating the `browser.url('./login')` command in both our login and editor tests. While it's not a huge problem right now, it will grow every time we add a new test. Soon enough, we'll have this URL scattered throughout our tests, and any update to the path will require fixing every file we have. That just won't do.
 
 Just like we added element selector information to our page object, we can also add the page url to it. But we won't do it through a 'getter'; instead we'll create a `load` function that we'll call to run our `browser.url` command:
 
@@ -416,9 +414,9 @@ I could get that value passed in via my constructor function:
 
 ```js
 class Generic {
-  constructor (information) {
-    console.log(information);
-  }
+    constructor (information) {
+        console.log(information);
+    }
 }
 ```
 
@@ -428,9 +426,9 @@ With that knowledge, we can pass in the URL:
 
 ```js
 class Generic {
-  constructor (path) {
-    console.log(path); // will log out './login', which is passed in below
-  }
+    constructor (path) {
+        console.log(path); // will log out './login', which is passed in below
+    }
 }
 
 const genericPage = new Generic('./login');
@@ -440,13 +438,13 @@ This path value can be stored to the class's `this` value and then used in the `
 
 ```js
 class Generic {
-  constructor (path) {
-    this.path = path;
-  }
-  
-  load() {
-    browser.url(this.path); // navigates to './login', which is passed in below
-  }
+    constructor (path) {
+        this.path = path;
+    }
+    
+    load() {
+        browser.url(this.path); // navigates to './login', which is passed in below
+    }
 }
 
 const genericPage = new Generic('./login');
@@ -460,13 +458,13 @@ We can define a class to 'extend' another class, similar to the phone analogy be
 
 ```js
 class Generic {
-  constructor (path) {
-    this.path = path;
-  }
-  
-  load() {
-    browser.url(this.path); // navigates to './login', which is passed in below
-  }
+    constructor (path) {
+        this.path = path;
+    }
+    
+    load() {
+        browser.url(this.path); // navigates to './login', which is passed in below
+    }
 }
 
 class Auth extends Generic {
@@ -480,7 +478,7 @@ Now our Auth class has that `load` function built in, so our `beforeEach` hook n
 
 ```js
 beforeEach(function () {
-  auth.load();
+    auth.load();
 })
 ```
 
@@ -490,11 +488,11 @@ Well, in the same way we defined a constructor function in our Generic page, we 
 
 ```js
 class Auth extends Generic {
-  constructor () {
-    this.path = './login';
-  }
-  
-  // element references and login function left out for brevity
+    constructor () {
+        this.path = './login';
+    }
+    
+    // element references and login function left out for brevity
 }
 ```
 
@@ -506,10 +504,10 @@ Well, there's one more trick up the Class sleeve. From within our Auth class con
 
 ```js
 class Auth extends Generic {
-  constructor () {
-    super('./login');
-  }
-  // element references and login function left out for brevity
+    constructor () {
+        super('./login');
+    }
+    // element references and login function left out for brevity
 }
 ```
 
@@ -517,10 +515,10 @@ With this code, when Auth is instantiated, its `constructor` function will be ca
 
 ```js
 class Editor extends Generic {
-  constructor () {
-    super('./editor');
-  }
-  // element references left out for brevity
+    constructor () {
+        super('./editor');
+    }
+    // element references left out for brevity
 }
 ```
 
@@ -578,7 +576,7 @@ class Auth extends Generic {
             const errorExists = this.$errorMessages.isExisting();
 
             return !signInExists || errorExists;
-        }, null, 'The sign in button is not gone and an error never appeared');
+        }, { timoutMsg: 'The "Sign in" button still exists and an error never appeared' });
     }
 }
 
@@ -610,28 +608,22 @@ With those adjustments made, we can run our tests again, which now use `auth.loa
 If you had a close eye on the editor test, you may have noticed this line:
 
 ```js
-expect(browser.getUrl()).to.include('editor');
+expect(browser).toHaveUrl('editor', { containing: true });
 ```
 
-There's a similar line going on with one of our login tests:
+If we've defined that path value in our `Editor` page object, why aren't we using it in our tests? Let's get to fixing that!
+
+Similar to how we can access element references in our tests (e.g., `editor.$title`), we can also access properties defined to the `this` value. That means we can access that `path` property via `editor.path`. So we could update our test to be:
 
 ```js
-expect(browser.getUrl()).to.not.include('/login');
+expect(browser).toHaveUrl(editor.path, { containing: true });
 ```
 
-If we've defined those path values in our page objects, why aren't we using them in our tests? Let's get to fixing that!
+But there's a problem with that. If we were to run the test, it would fail with the error message: `expected 'https://localhost:8080/editor' to include './editor'`
 
-Similar to how we can access element references in our tests (e.g. `editor.$title`), we can also access properties defined to the `this` value. That means we can access that `path` property via `editor.path`. So we could update our test to be:
+The reason for this is that `path` is set to `./editor` and not just `editor`. Why the extra `.`? Well if you remember back to Chapter 2.1, we needed to set our path to be relative to the `baseUrl`. Using the `.` does just that. 
 
-```js
-expect(browser.getUrl()).to.include(editor.path);
-```
-
-But there's a problem with that. If we were to run the test, it would fail with the error message: `expected 'https://demo.learnwebdriverio.com/editor' to include './editor'`
-
-The reason for this is that `path` is set to `./editor` and not just `/editor`. Why the extra `.`? Well if you remember back to Chapter 2.1, we needed to set our path to be relative to the `baseUrl`. Using the `.` does just that. 
-
-That means we can't change our `path` property definition, because it would break our tests if we have a baseUrl with a built-in path. That leaves us with a few options:
+That means we can't change our `path` property definition, because it would break our tests if we have a `baseUrl` with a built-in path. That leaves us with a few options:
 
 1. Manually trim off the `.` from the start of the path: `editor.path.substr(1);`
 2. Create a second property that doesn't have a the `.`: `this.path = '/editor';`
@@ -647,30 +639,9 @@ Instead, let's try out option 3 and see if we can get some added benefit from th
 
 NodeJS comes several built-in utilities, some of which we've already tried out (e.g. the `Assert` module). As I mentioned, there's [a `URL` module](https://nodejs.org/dist/latest-v12.x/docs/api/url.html) we can use to define and parse URLs.
 
-URLs may seem simple, but they can be very complex. Take a look at the example structure provided by the NodeJS website:
+URLs may seem simple, but they can be very complex. Take a look at the example structure provided by [the NodeJS website](https://nodejs.org/api/url.html#url_url_strings_and_url_objects):
 
-TODO Fix this formatting
-
-```
-┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                              href                                              │
-├──────────┬──┬─────────────────────┬────────────────────────┬───────────────────────────┬───────┤
-│ protocol │  │        auth         │          host          │           path            │ hash  │
-│          │  │                     ├─────────────────┬──────┼──────────┬────────────────┤       │
-│          │  │                     │    hostname     │ port │ pathname │     search     │       │
-│          │  │                     │                 │      │          ├─┬──────────────┤       │
-│          │  │                     │                 │      │          │ │    query     │       │
-"  https:   //    user   :   pass   @ sub.example.com : 8080   /p/a/t/h  ?  query=string   #hash "
-│          │  │          │          │    hostname     │ port │          │                │       │
-│          │  │          │          ├─────────────────┴──────┤          │                │       │
-│ protocol │  │ username │ password │          host          │          │                │       │
-├──────────┴──┼──────────┴──────────┼────────────────────────┤          │                │       │
-│   origin    │                     │         origin         │ pathname │     search     │ hash  │
-├─────────────┴─────────────────────┴────────────────────────┴──────────┴────────────────┴───────┤
-│                                              href                                              │
-└────────────────────────────────────────────────────────────────────────────────────────────────┘
-(all spaces in the "" line should be ignored — they are purely for formatting)
-```
+![Structuring Diagram of a URL](images/97F462D98A477B95358595C05E7918A5.jpg)
 
 All of that can go into a URL, and trying to break a URL string into those separate parts is complicated. But this is where the URL module helps out. We can pass in that very long, complex URL string to the module, and it will return to us a `URL Object` that has all of those properties defined for us to use. 
 
@@ -702,7 +673,7 @@ We want to store the URL object in our Generic page as `this.url`. This is almos
 
 To get the `baseUrl` from inside of our page object, we can reference `browser.options`. This is a store of most of the options we defined inside our `wdio.conf.js` file, including our `baseUrl` property. It's really handy to know about for specific circumstances, so commit it to memory.
 
-Putting this alltogether, our Generic page object now looks like:
+Pulling this all together, our Generic page object now looks like:
 
 ```js
 const { URL } = require('url');
@@ -729,12 +700,12 @@ Note that we added the `require` statement to the top of the file, and our `load
 
 Okay, now that we've got our page objects updated, let's put this to use in our test. Our assertion is checking that the URL is correct for the page we want to be on. It was doing a partial check before, validating that the path exists inside the returned url. But now that we can build out the full url, why not do a strict match to really make sure we're on the same page. 
 
-The url object that we've constructed contains an `href` property that will return the entire URL. We can compare that against what's returned from the browser to complete our assertion: `expect(browser.getUrl()).to.equal(editor.url.href);`
+The url object that we've constructed contains an `href` property that will return the entire URL. We can compare that against what's returned from the browser to complete our assertion: `expect(browser).toHaveUrl(editor.url.href);`
 
-Notice that we're using `to.equal` now versus `to.contain` from before. Again, this is due to our ability to combine the `path` and `baseUrl` values to make a fully qualified URL. Here's what the fully updated `editor.js` file now looks like:
+Notice that we're omitting the `{ containing: true }` option from before. Again, this is due to our ability to combine the `path` and `baseUrl` values to make a fully qualified URL. Here's what the fully updated `editor.js` file now looks like:
 
+{title="test/specs/editor.js"}
 ```js
-const expect = require('chai').expect;
 const Auth = require('../pageObjects/Auth.page');
 const Editor = require('../pageObjects/Editor.page');
 const { user1 } = require('../fixtures/users');
@@ -751,30 +722,19 @@ describe('Post Editor', function () {
         editor.load();
     });
     it('should load page properly', function () {
-        expect(browser.getUrl()).to.equal(editor.url.href);
-        expect(editor.$title.isExisting(), 'Title').to.be.true;
-        expect(editor.$description.isExisting(), 'Description').to.be.true;
-        expect(editor.$body.isExisting(), 'Body').to.be.true;
-        expect(editor.$tags.isExisting(), 'Tags').to.be.true;
-        expect(editor.$publish.isExisting(), 'Publish').to.be.true;
+        expect(browser).toHaveUrl(editor.url.href);
+        expect(editor.$title).toBeExisting();
+        expect(editor.$description).toBeExisting();
+        expect(editor.$body).toBeExisting();
+        expect(editor.$tags).toBeExisting();
+        expect(editor.$publish).toBeExisting();
     });
-});
-```
-
-Likewise, we can update our valid login test in `login.js`  to use this `url` property:
-
-```js
-it('should let you log in', function () {
-    auth.login(user1);
-
-    // Get the URL of the page, which should no longer include 'login'
-    expect(browser.getUrl()).to.not.equal(auth.url.href);
 });
 ```
 
 Well, that sure was a lot to go through for a simple test. It's worth it though. By extending more generic classes, we can continue to grow our automation test suite without running into issues with code duplication, which can create maintenance nightmares in the long run.
 
-One final note: you can have classes that extend classes that extend classes. Right now, we have a Generic class, but we could also have a SlightlyLessGeneric class that's extended by specific page types. We'll take a look at that in a few chapters, but next up is learning how to test complex inputs.
+One final note: you can have JavaScript classes that extend classes that extend classes. Right now, we have a Generic class, but we could also have a SlightlyLessGeneric class that's extended by specific page types. We'll take a look at that in a few chapters, but next up is learning how to test complex inputs.
 
 ## 2.5.13 Chapter Challenge
 

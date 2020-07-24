@@ -19,11 +19,11 @@ There are is a tags field we can fill out as well, but we'll save that for later
 Using our `editor` page object, we can set all three values calling the `setValue` command we used before:
 
 ```js
-  it('should let you publish a new post', function () {
-      editor.$title.setValue('Test Title');
-      editor.$description.setValue('Test Description');
-      editor.$body.setValue('Test Body');
-  })
+    it('should let you publish a new post', function () {
+        editor.$title.setValue('Test Title');
+        editor.$description.setValue('Test Description');
+        editor.$body.setValue('Test Body');
+    })
 ```
 
 Except we can't. While the `setValue` command works for the first two fields, the 'Body' field throws an error: `invalid element state: Element must be user-editable in order to clear it.`
@@ -36,22 +36,22 @@ And because it's a third-party component, we're unable to access the HTML for th
 
 ```html
 <mavon-editor
-  :toolbars="{
-    bold: true,
-    italic: true,
-    header: true,
-    underline: true,
-    strikethrough: true
-  }"
-  v-model="article.body"
-  placeholder="Write your article (in markdown)"
-  data-qa-id="editor-body"
+    :toolbars="{
+        bold: true,
+        italic: true,
+        header: true,
+        underline: true,
+        strikethrough: true
+    }"
+    v-model="article.body"
+    placeholder="Write your article (in markdown)"
+    data-qa-id="editor-body"
 />
 ```
 
 Again, the `<textarea>` is hidden behind the `mavon-editor` component, denying us the ability to modify it. Thankfully, the solution is pretty simple. In our `$body` element reference, change our selector to point specifically to the textarea inside the element with the proper `data-qa-id`:
 
-```
+```js
 get $body () { return $('[data-qa-id="editor-body"] textarea'); }
 ```
 
@@ -97,20 +97,14 @@ Tackling the clicking of the button is a simple command:
 editor.$publish.click();
 ```
 
-Asserting the article was submitted correctly is a whole different story, altogether (Airplane! fans respond: "it's a whole different story").
+Asserting the article was submitted correctly is a whole different story, all together (_Airplane!_ fans respond: "it's a whole different story").
 
 There are many levels of validation we can take; one being to validate the generated URL matches the title of our post. So if the title we set was `Test Title`, then we'd expect the url to contain `articles/test-title` (as it would be converted to a url-friendly format).
-
-Before we add our assertion though, we need to wait for the asyncronous 'publish' action to complete. We can do that by waiting for the Article page to load, via the `article-page` class that's used on the container element of said page:
-
-```js
-$('.article-page').waitForExist();
-```
 
 Next, we'll run our assertion that the URL is correct:
 
 ```js
-expect(browser.getUrl()).to.include('articles/test-title');
+expect(browser).toHaveUrl('articles/test-title', { containing: true });
 ```
 
 This is similar to the assertion we used in our Login test.
@@ -138,10 +132,8 @@ it('should let you publish a new post', function () {
 
     editor.$publish.click();
 
-    $('.article-page').waitForExist()
-
     // expect to be on new article page
-    expect(browser.getUrl()).to.include('articles/test-title');
+    expect(browser).toHaveUrl('articles/test-title', { containing: true });
 
     // to avoid making a ton of articles, let's just click the delete button to clean ourselves up
     // We'll talk about a better way to clean later on
@@ -250,10 +242,8 @@ it('should let you publish a new post', function () {
         tags: ['Tag1']
     })
 
-    $('.article-page').waitForExist()
-
     // expect to be on new article page
-    expect(browser.getUrl()).to.include('articles/test-title');
+    expect(browser).toHaveUrl('articles/test-title', { containing: true });
 
     // to avoid making a ton of articles, let's just click the delete button to clean ourselves up
     // We'll talk about a better way to clean later on
@@ -269,7 +259,7 @@ While not required, it can be useful (and a little fun) to mix in some random ge
 
 In our previous test, we're only validating those four pieces of data. It would be more useful to validate random strings with each test run, possibly revealing a bug in the system for when the article is titled "[sfdeljknesv](https://twitter.com/sempf/status/514473420277694465)".
 
-One quick way to introduce some randomization to your tests is to use [the `Date.now()` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now) available natively in NodeJS. This function returns the current number of milliseconds elapsed since January 1, 1970. Everytime you run your test, you'll get a larger number, as more milliseconds have elapsed since that last run.
+One quick way to introduce some randomization to your tests is to use [the `Date.now()` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now) available natively in NodeJS. This function returns the current number of milliseconds elapsed since January 1, 1970. Every time you run your test, you'll get a larger number, as more milliseconds have elapsed since that last run.
 
 While that's helpful, it's really only testing a simple numerical input. The numbers may change, but the data format doesn't. What we need is a full-features utility that allows us to request random types of data. That's where a tool like [ChanceJS](https://chancejs.com/) can help out.
 
@@ -285,7 +275,6 @@ To use Chance, we need to do several of things.
 Assuming you've done the first step, the next two we'll add to the top of our test file:
 
 ```js
-const expect = require('chai').expect;
 const Auth = require('../pageObjects/Auth.page');
 const Editor = require('../pageObjects/Editor.page');
 const { user1 } = require('../fixtures/users');
@@ -332,7 +321,7 @@ Then in our URL assertion, reference the `title` property stored in our `article
 const slug = articleDetails.title.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'');
 
 // expect to be on new article page
-expect(browser.getUrl()).to.include(`articles/${slug}`);
+expect(browser).toHaveUrl(`articles/${slug}`, { containing: true });
 ```
 
 Yuck. Not only do we need to run two `replace` calls, we're also introducing "logic" into our tests, and having to match code functionality between our site and our tests. All things I generally shy away from, as they can quickly introduce bugs into our tests, which is never fun. 
@@ -341,8 +330,9 @@ Yuck. Not only do we need to run two `replace` calls, we're also introducing "lo
 
 Instead of checking the URL, let's check the content of the page to see that it matches our submitted parts.
 
-Let's create a new 'Article' page object, with our article element references plus a 'waitForLoad' function. We won't have a 'constructor' function because we don't have a set URL and can't easily auto-generate one.
+Let's create a new 'Article' page object with our article element references. We won't have a 'constructor' function because we don't have a set URL and can't easily auto-generate one.
 
+{title="test/pageObjects/Article.page.js"}
 ```js
 const Generic = require('./Generic.page');
 
@@ -353,23 +343,19 @@ class Article extends Generic {
     get $tags () { return $('[data-qa-id="article-tags"]'); }
     get $edit () { return $('[data-qa-id="article-edit"]'); }
     get $delete () { return $('[data-qa-id="article-delete"]'); }
-
-    waitForLoad() {
-        this.$container.waitForExist();
-    }
 }
 
 module.exports = Article;
 ```
 
-We honestly don't need to extend the Generic page object, as we're not using any of it's functionality. But I'm going to keep it just for consistency sake.
+We honestly don't need to extend the Generic page object, as we're not using any of its functionality. But I'm going to keep it just for consistency sake.
 
 We'll have to look at that 'tags' element reference in a bit, because it's actually multiple tags and not a single string. When we go to test that, we'll want to handle a single tag or multiple, but for now let's ignore that little detail.
 
-Save that file in your `pageObjects` folder as `Article.page.js` and load it into your editor test file the same as the Editor page object:
+Save that file in your `pageObjects` folder as `Article.page.js` and load it into your `editor` test file the same as the Editor page object:
 
+{title="test/specs/editor.js"}
 ```js
-const expect = require('chai').expect;
 const Auth = require('../pageObjects/Auth.page');
 const Editor = require('../pageObjects/Editor.page');
 const Article = require('../pageObjects/Article.page');
@@ -393,10 +379,8 @@ it('should let you publish a new post', function () {
 
     editor.submitArticle(articleDetails);
 
-    article.waitForLoad();
-
-    expect(article.$title.getText(), 'Title').to.equal(articleDetails.title);
-    expect(article.$body.getText(), 'Body').to.equal(articleDetails.body);
+    expect(article.$title).toHaveText(articleDetails.title);
+    expect(article.$body).toHaveText(articleDetails.body);
 
     // to avoid making a ton of articles, let's just click the delete button to clean ourselves up
     // We'll talk about a better way to clean later on
@@ -410,9 +394,9 @@ Now we're not dependent on some tricky logic to use the URL for validation of ou
 
 I talked early about how the 'tags' element reference wasn't quite usable in its current state. This is due to the fact that we can have multiple tags, but are targeting a single reference. So if we run `getText` on that element, we'd get all the tags in a single string (e.g. 'tag1 tag2'). 
 
-Instead, let's update our selector to target each tag individually, that way we can run the `getText` function on each separate tag, and save them all as an array for later comparison. 
+Instead, let's update our selector to target each tag individually, that way we can run the `getText` function on each separate tag, and save them all as an array for later comparison.
 
-(On a side note, you can still do the assertion using this combined string. It would look something like: `expect(article.$tags.getText()).to.equal(articleDetails.tags.join(' '));`).
+(On a side note, you can still do the assertion using this combined string. It would look something like: `expect(article.$tags).toHaveText(articleDetails.tags.join(' '));`).
 
 So first thing is to add a new element reference, which looks like:
 
@@ -445,7 +429,7 @@ myAwesomeNumbers.forEach(awesomeNumber => {
 
 This would log out the following three lines:
 
-```
+```text
 6
 8
 14
@@ -475,13 +459,12 @@ Now tags will be an array of whatever text is there (e.g. ['tag1', 'tag2']), whi
 const tags = article.$$tags.map($tag => {
   return $tag.getText();
 });
-expect(tags, 'Tags').to.deep.equal(articleDetails.tags);
+expect(tags).toEqual(articleDetails.tags);
 ```
-
-(Note we have to use `deep.equal` here, because of how Chai assertions handle arrays: https://stackoverflow.com/questions/17526805/chai-test-array-equality-doesnt-work-as-expected)
 
 Since this tags text information is likely to be used in other tests, let's move the mapping function to our `Article` page object. We'll store it as `tags`, but you could use `tagsText` if you prefer to be explicit about its contents. Here's what our fully updated Article looks like:
 
+{title="test/pageObjects/Article.page.js"}
 ```js
 const Generic = require('./Generic.page');
 
@@ -495,10 +478,6 @@ class Article extends Generic {
     get $delete () { return $('[data-qa-id="article-delete"]'); }
 
     get tags () { return this.$$tags.map($tag => $tag.getText()); }
-
-    waitForLoad() {
-        this.$container.waitForExist();
-    }
 }
 
 module.exports = Article;
@@ -506,8 +485,8 @@ module.exports = Article;
 
 And here's how the entire Editor test looks with all our changes:
 
+{title="test/specs/editor.js"}
 ```js
-const expect = require('chai').expect;
 const Auth = require('../pageObjects/Auth.page');
 const Editor = require('../pageObjects/Editor.page');
 const Article = require('../pageObjects/Article.page');
@@ -532,12 +511,12 @@ describe('Post Editor', function () {
         editor.load();
     });
     it('should load page properly', function () {
-        expect(browser.getUrl()).to.equal(editor.url.href);
-        expect(editor.$title.isExisting(), 'Title').to.be.true;
-        expect(editor.$description.isExisting(), 'Description').to.be.true;
-        expect(editor.$body.isExisting(), 'Body').to.be.true;
-        expect(editor.$tags.isExisting(), 'Tags').to.be.true;
-        expect(editor.$publish.isExisting(), 'Publish').to.be.true;
+        expect(browser).toHaveUrl(editor.url.href);
+        expect(editor.$title).toExist();
+        expect(editor.$description).toExist();
+        expect(editor.$body).toExist();
+        expect(editor.$tags).toExist();
+        expect(editor.$publish).toExist();
     });
     
     it('should let you publish a new post', function () {
@@ -550,11 +529,9 @@ describe('Post Editor', function () {
 
         editor.submitArticle(articleDetails);
 
-        article.waitForLoad();
-
-        expect(article.$title.getText(), 'Title').to.equal(articleDetails.title);
-        expect(article.$body.getText(), 'Body').to.equal(articleDetails.body);
-        expect(article.tags, 'Tags').to.deep.equal(articleDetails.tags);
+        expect(article.$title).toHaveText(articleDetails.title);
+        expect(article.$body).toHaveText(articleDetails.body);
+        expect(article.tags).toEqual(articleDetails.tags);
 
         // to avoid making a ton of articles, let's just click the delete button to clean ourselves up
         // We'll talk about a better way to clean later on
@@ -569,7 +546,7 @@ One of the most frustrating experiences on a website for a user occurs when they
 
 To avoid this tragic outcome, website owners now implement "alerts" that pop-up when you try leaving certain pages. These alerts will inquire about your intentions and whether they were purposeful or not:
 
-![IMAGE](images/5CC24D75786F70E70F86E0CF010CCC94.jpg)
+![Screenshot of Alert box appearing upon page navigation](images/5CC24D75786F70E70F86E0CF010CCC94.jpg)
 
 It's a minor annoyance for those content to destroy whatever content they've created, but a lifesaver for clumsier folks like me. What we're going to do is write a few tests checking that these alerts appear on our editor page.
 
@@ -632,15 +609,15 @@ Pretty basic; now let's figure out how to check for the alert. There are four "a
 
 For this test, we're just going to try accepting the alert. If you were to read the documentation for that command, you would see that it throws an error if the alert doesn't exist: "The Accept Alert command accepts a simple dialog if present, otherwise error."
 
-We can use that error to validate that the alert is shown (if no error is thrown when calling `acceptAlert`, then an alert was shown and accepted). Normally, code throwing errors would trigger a complete failure condition and halt any other execution. But Chai (and other assertion libraries) come with the ability to handle errors thrown in a gracious manner.
+We can use that error to validate that the alert is shown (if no error is thrown when calling `acceptAlert`, then an alert was shown and accepted). Normally, code throwing errors would trigger a complete failure condition and halt any other execution. But `expect-webdriverio` (and other assertion libraries) comes with the ability to handle errors thrown in a gracious manner.
 
-There is [a `throw` method](https://www.chaijs.com/api/bdd/#method_throw) available in Chai that works like this: You call `expect()` and pass in a function to run which may or may not throw an error. You finish your assertion with `to.throw()` or `to.not.throw`, depending on what you expect. When the time comes, Chai runs this function (handling any thrown errors with grace) and asserts your expected outcome. All-in-all, it looks like this:
+There is [a `toThrow` method](https://jestjs.io/docs/en/using-matchers#exceptions) available in ExpectJS that works like this: You call `expect()` and pass in a function to run which may or may not throw an error. You finish your assertion with `toThrow()` or `not.toThrow`, depending on what you expect. When the time comes, ExpectJS (which is what `expect-webdriverio` is built off of) runs this function (handling any thrown errors with grace) and asserts your expected outcome. All-in-all, it looks like this:
 
 ```js
-expect(() => browser.acceptAlert()).to.not.throw();
+expect(() => browser.acceptAlert()).not.toThrow();
 ```
 
-Remember, we can't do: `expect(browser.acceptAlert()).to.not.throw();` because if `browser.acceptAlert()` did throw an error, it would already happen before Chai is ready to handle it. That's why we need to wrap our command in a function.
+Remember, we can't do: `expect(browser.acceptAlert()).not.toThrow();` because if `browser.acceptAlert()` did throw an error, it would happen before ExpectJS is ready to handle it. That's why we need to wrap our command in a function.
 
 Here's what our entire test looks like:
 
@@ -655,7 +632,7 @@ describe('"Unsaved Changes" alerts', function () {
       browser.refresh();
 
       // validate alert is showing
-      expect(() => browser.acceptAlert()).to.not.throw();
+      expect(() => browser.acceptAlert()).not.toThrow();
     });
 });
 ```
@@ -670,11 +647,11 @@ So, we'll trigger our link navigation through a simple click `$('=Home').click()
 
 Then we'll get the alert text: `const alertText = browser.getAlertText();`
 
-With that text, we can run our assertion: `expect(alertText).to.contain('Do you really want to leave? You have unsaved changes!');`
+With that text, we can run our assertion: `expect(alertText).toEqual('Do you really want to leave? You have unsaved changes!');`
 
 And as a final clean-up step, we'll accept the alert: `browser.acceptAlert();`
 
-Alltogether, it looks like:
+All together, it looks like:
 
 ```js
 it('should warn you when trying to change URL', function () {
@@ -683,14 +660,16 @@ it('should warn you when trying to change URL', function () {
 
     const alertText = browser.getAlertText();
 
-    expect(alertText).to.contain('Do you really want to leave? You have unsaved changes!');
+    expect(alertText).toEqual('Do you really want to leave? You have unsaved changes!');
 
     // accept the alert to avoid it from preventing further tests from executing
     browser.acceptAlert();
 });
 ```
 
-Handling alerts isn't a regular part of testing work, but it is needed from time-to-time, so good to know about. One final note on this is that you can't use these commands to to enter "basic auth" credentials. To do that, you need to pass in the credentials via your `browser.url` call: `browser.url('http://username:password@example.com/');`.
+Handling alerts isn't a common part of testing work in my experience, but it is needed from time-to-time, so good to know about.
+
+One final note on this is that you can't use these commands to to enter "basic auth" credentials. To do that, you need to pass in the credentials via your `browser.url` call: `browser.url('http://username:password@example.com/');`.
 
 ## 2.6.9 A Not So Random Chance
 
@@ -759,7 +738,7 @@ Okay, that's some nice functionality, but I'd hate to have to copy/paste it into
 
 This is where WebdriverIO configuration hooks can help out. These are defined at the bottom of our `wdio.conf.js` file and can be used to step in to the test process in order to enhance it and/or build services around it.
 
-We already touched on this with our `setNetworkConditions` call in the `before` hook. The `before` hook function gets called right before test execution begins (hence the name). This is right about the time we want to define our Chance instance. But if we used our normal `const chance = new Chance(process.env.SEED);` code, that `chance` constant would only be available inside the `before` function and not in our tests.
+We already touched on this with our `browser.throttle` call in the `before` hook. The `before` hook function gets called right before test execution begins (hence the name). This is right about the time we want to define our Chance instance. But if we used our normal `const chance = new Chance(process.env.SEED);` code, that `chance` constant would only be available inside the `before` function and not in our tests.
 
 It turns out [there's a `global` object in NodeJS](https://nodejs.org/api/globals.html#globals_global) that you can add properties to which will be stored for any other file run in that same Node process. Adding a property to it is the same as any other object: `global.someVar = 'some value';`.
 
@@ -767,9 +746,11 @@ In this case, we'll set `global.chance` to our seeded Chance instance:
 
 ```js
 before: function (capabilities, specs) {
-    // browser.setNetworkConditions({
+    // browser.throttle({
     //     latency: 1000,
-    //     throughput: 450*1024
+    //     offline: false,
+    //     downloadThroughput: 1000000,
+    //     uploadThroughput: 1000000
     // });
     
     // store Chance globally so all tests can use it with the specific seed
@@ -808,10 +789,16 @@ const articleDetails = {
 };
 ```
 
-That wraps up all our work for the Editor page. Form inputs are one of the biggest features of a website that are prone to bugs, so have good test coverage of them is crucial. 
+That wraps up all our work for the Editor page. Form inputs are one of the biggest features of a website that are prone to bugs, so having good test coverage for them is crucial. 
 
 ## 2.6.11 Chapter Challenge
 
-(TODO Vue version of the Conduit app doesn't do any form validation :o so we'll need to add that in or switch to React version which does)
+We have a test for how to create an article, but what about editing one? Write a new set of tests to validate you can edit an article, ensure that:
 
-- Our tests don't cover validating that the error messages show on the Editor page if we fail to enter information. Write a set of tests that cover this user flow. (Hint: use `$$('.errorMessages li')` and mapping `getText` to get all error text and assert against it.
+- The fields populate with the existing article contents
+- The article page shows the updated contents after saving the edits
+
+Hint: You can use the same `Editor.page.js` file as it's actually the exact same page as the "New Article" one (just prefilled with the contents of the article to edit). 
+
+%% (TODO Vue version of the Conduit app doesn't do any form validation :o so we'll need to add that in or switch to React version which does)
+%% - Our tests don't cover validating that the error messages show on the Editor page if we fail to enter information. Write a set of tests that cover this user flow. (Hint: use `$$('.errorMessages li')` and mapping `getText` to get all error text and assert against it.

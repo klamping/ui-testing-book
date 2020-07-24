@@ -6,7 +6,7 @@ To start off, we're going to create a new folder for all of our project to go in
 
 So, in a directory of your choice, make a new folder called `wdio-standalone`:
 
-```
+```sh
 mkdir wdio-standalone
 ```
 
@@ -20,7 +20,7 @@ Right now, just to introduce you to WebdriverIO, we're going to use the standalo
 
 With all that said, let's 'move' our terminal into this `wdio-standalone` folder:
 
-```
+```sh
 cd wdio-standalone
 ```
 
@@ -30,7 +30,7 @@ Inside our new folder, we're going to initialize it as an NPM project. This will
 
 To do that, run:
 
-```
+```sh
 npm init -y
 ```
 
@@ -38,7 +38,7 @@ The `-y` will answer 'yes' to all the prompts, giving us a standard NPM project.
 
 With that out of the way, let's install WebdriverIO:
 
-```
+```sh
 npm install webdriverio
 ```
 
@@ -48,13 +48,13 @@ What it does give us is a Node.js module that we can use inside of a Node.js fil
 
 First, we'll create a new file called 'test.js`:
 
-```
+```sh
 touch test.js
 ```
  
 On Windows, that command is:
 
-```
+```text
 type nul > test.js
 ```
 
@@ -62,6 +62,7 @@ Now we have a file to add our first test to. Go ahead and open that file up in t
 
 Next, we'll copy the example given on the official WebdriverIO website. Throw the following code into your `test.js` file:
 
+{title="test.js"}
 ```js
 const { remote } = require('webdriverio');
 
@@ -94,75 +95,52 @@ Here's a quick overview of the file:
 
 Okay, that's what it does; let's run it to see it in action.
 
-To do that, we need to start a Webdriver server. This server will accept the commands sent from WebdriverIO, run them in our desired browser, then report back the results. 
+To do that, we need to have a browser available to running. This can be through the built-in support from a Chrome install, through a specific browser driver, or through Selenium server. 
 
-In "Browsers and 'Driving' Them", I detailed how to install and run Chromedriver and the selenium-standalone NPM package. Now let's put that knowledge to use.
+In "Browsers and 'Driving' Them", I detailed Chrome DevTools, along with how to install and run Chromedriver and the selenium-standalone NPM package. Now let's put that knowledge to use.
 
-### Running Through Selenium Standalone
+### Running Through Chrome DevTools
 
-_Note: Selenium Standalone is **not** the same thing as WebdriverIO Standalone mode. The simply share the same name to describe their "indepedent" nature._
-
-First, we'll start with selenium-standlone. If you already have your server running from before, great! You don't need to do anything else.
-
-But if not, open up a new terminal window and run `selenium-standalone start`. 
-
-Aside from seeing the server running in your terminal, you can check that you have a Selenium instance up and running by visiting the following url in your browser: [http://localhost:4444/wd/hub](http://localhost:4444/wd/hub)
-
-You should see a website looking a lot like this:
-
-![IMAGE](images/36DFFD8164ACC4192A2D97CB974C62FC.jpg)
-
-If you get a 404 error, something went wrong starting your server, and you'll need further debugging to resolve it.
-
-Now that we have a selenium server running, we can run our test.
-
-We do that by telling Node.js to execute our test file. That command looks like:
+So long as you have Chrome (or a Blink-based browser installed), there's really nothing you need to do here for installation/start-up. All you need to do is run your test file through the node CLI. We do that by telling Node.js to execute our test file. That command looks like:
 
 ```sh
 node test.js
 ```
 
-If all was set up correctly, you should see a chrome window quickly pop-up, load the WebdriverIO homepage, then disappear.
-
-In your terminal, you'll see something like the following output:
+After a second, you should see a Chrome browser pop up for a moment, and some similar output in your terminal:
 
 ```sh
-2019-02-20T03:10:41.594Z DEBUG wdio-config: @wdio/sync not found, running tests asynchronous
-2019-02-20T03:10:41.873Z INFO webdriver: [POST] http://0.0.0.0:4444/wd/hub/session
-2019-02-20T03:10:41.873Z INFO webdriver: DATA { capabilities: { alwaysMatch: { browserName: 'chrome' }, firstMatch: [ {} ] },
-  desiredCapabilities: { browserName: 'chrome' } }
-2019-02-20T03:10:45.136Z INFO webdriver: COMMAND navigateTo("https://webdriver.io")
-2019-02-20T03:10:45.136Z INFO webdriver: [POST] http://0.0.0.0:4444/wd/hub/session/e3ed3a80bff9fc7a021d6c09cedbbcf3/url
-2019-02-20T03:10:45.137Z INFO webdriver: DATA { url: 'https://webdriver.io' }
-2019-02-20T03:10:47.180Z INFO webdriver: COMMAND getTitle()
-2019-02-20T03:10:47.181Z INFO webdriver: [GET] http://0.0.0.0:4444/wd/hub/session/e3ed3a80bff9fc7a021d6c09cedbbcf3/title
-2019-02-20T03:10:47.189Z INFO webdriver: RESULT WebdriverIO · Next-gen WebDriver test framework for Node.js
-Title was: WebdriverIO · Next-gen WebDriver test framework for Node.js
-2019-02-20T03:10:47.189Z INFO webdriver: COMMAND deleteSession()
-2019-02-20T03:10:47.189Z INFO webdriver: [DELETE] http://0.0.0.0:4444/wd/hub/session/e3ed3a80bff9fc7a021d6c09cedbbcf3
+2020-07-24T21:03:30.968Z INFO webdriverio: Initiate new session using the devtools protocol
+2020-07-24T21:03:30.974Z INFO devtools: Launch Google Chrome with flags: --disable-extensions --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-sync --metrics-recording-only --disable-default-apps --mute-audio --no-first-run --disable-hang-monitor --disable-prompt-on-repost --disable-client-side-phishing-detection --password-store=basic --use-mock-keychain --disable-component-extensions-with-background-pages --disable-breakpad --disable-dev-shm-usage --disable-ipc-flooding-protection --disable-renderer-backgrounding --enable-features=NetworkService,NetworkServiceInProcess --disable-features=site-per-process,TranslateUI,BlinkGenPropertyTrees --window-position=0,0 --window-size=1200,900
+2020-07-24T21:03:31.535Z INFO devtools: Connect Puppeteer with browser on port 50210
+2020-07-24T21:03:32.772Z INFO devtools: COMMAND navigateTo("https://webdriver.io/")
+2020-07-24T21:03:35.366Z INFO devtools: RESULT null
+2020-07-24T21:03:35.373Z INFO devtools: COMMAND getTitle()
+2020-07-24T21:03:35.377Z INFO devtools: RESULT WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+Title was: WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+2020-07-24T21:03:35.380Z INFO devtools: COMMAND deleteSession()
+2020-07-24T21:03:35.382Z INFO devtools: RESULT null
 ```
 
-![IMAGE](images/AA4D4E0244560ACB403160A59B041A44.jpg)
+Congrats, you've just run your first WebdriverIO test!
 
-If you instead see an error that includes `Request failed due to Error: connect ECONNREFUSED 0.0.0.0:4444`, this means your Selenium server wasn't running. Start it back up and try again. 
+Notice that the first line says "Initiate new session using the devtools protocol". That will change depending on which protocol you use. 
 
-Hopefully all went well though! Congrats, you've just run your first WebdriverIO test!
+If you choose to go with the DevTools protocol, support for the various commands does differ from WebDriver. While in general everything is supported the same, there are still differences which can cause hiccups along the way. The book is written with support for the WebDriver protocol, so if you choose to stick with the DevTools protocol, expect some differences.
 
-Let's try it out in Chromedriver instead.
-
+Now let's look at running via Chromedriver.
+    
 ### Running in Chromedriver
 
 The basic idea is the same, although we do need to tweak our settings just a little bit.
 
-See, when you start Selenium, it runs on port `4444` of your local machine. It also waits for requests to come through the `/wd/hub` URL endpoint (hence http://localhost:4444/wd/hub being mentioned before). 
+This is a little technical, but by default, a Chromedriver server uses port `9515` to listens for commands (e.g., http://localhost:9515)
 
-Because Selenium is quite popular out there, WebdriverIO uses its settings in it's defaults.
+But by default, WebdriverIO expects the WebDriver server to be running on port `4444`.
 
-Chromedriver, on the other hand, uses port `9515` and listens for commands to come through the root of the URL (so just http://localhost:9515)
+So, we can either override the WebdriverIO defaults, or tell our Chromedriver server to use port `4444`.
 
-So, we can either override the WebdriverIO defaults, or set Chromedriver up to mimic a Selenium server.
-
-It's most useful in the example to see how to overwrite the WebdriverIO defaults, so let's do that.
+It's most useful in the example to see how to overwrite the WebdriverIO defaults, so let's do that. If you are interested, you can do the latter by running `chromedriver --port=4444` when starting the Chromedriver server.
 
 Back in your `test.js` file, take a look at lines 4-8:
 
@@ -176,7 +154,7 @@ const browser = await remote({
 
 What we're doing here is creating a new `remote` WebDriver session and telling it that we want to open up the 'chrome' browser. We'll get in to capabilities at a later point, so don't worry too much about it right now.
 
-What we do want to worry about is how to customize that 'remote' session to use post 9515 instead of the default 4444 (plus a couple other changes).
+What we will worry about is how to customize that 'remote' session to use post 9515 instead of the default 4444.
 
 Along with customizing the `capabilities`, there are a number of other options available to us. [The official documentation](https://webdriver.io/docs/options.html#webdriver-options) gives the entire list, but there are three we're going to change:
 
@@ -195,32 +173,105 @@ Path to driver server endpoint.
 Type: String
 Default: /wd/hub
 
-[TODO update this when revamping to wdio v6]
+We're only going to be looking at the `port` option right now, but I wanted to mention all three as they're related and important to know about (which we'll see when we get to the Selenium Standalone instructions.)
 
-And as mentioned before, we also need to change the port and path settings.
-
-We can do all this by customizing the object passed into the `remote` function:
+So to use a custom port, we pass it in as an option to the `remote` function:
 
 ```js
 const browser = await remote({
     port: 9515,
-    path: '/',
     capabilities: {
         browserName: 'chrome'
     }
 });
 ```
 
-Now WebdriverIO will know the correct location to look for the WebDriver server, along with the custom hostname to use.
+Note that it's a number, not a string (i.e., `9515` versus `'9515'`). If you try using a string, you will get an error of `Error: Expected option "port" to be type of number but was string`. 
 
 If you still have your Chromedriver instance running from before, leave it up and running (you can check http://localhost:9515/ to see if it gives you a response). If not, start an instance in a separate terminal window. 
 
 With our WebdriverIO settings updated and Chromedriver ready to go, we can call our test script again.
 
-Go ahead and run `node test.js` one more time and validate it all works.
+Go ahead and run `node test.js` one more time and validate it all works. The output should be similar to before:
+
+```sh
+2020-07-18T15:29:43.175Z INFO webdriverio: Initiate new session using the webdriver protocol
+2020-07-18T15:29:43.183Z INFO webdriver: [POST] http://localhost:9515/session
+2020-07-18T15:29:43.183Z INFO webdriver: DATA { capabilities:
+   { alwaysMatch: { browserName: 'chrome' }, firstMatch: [ {} ] },
+  desiredCapabilities: { browserName: 'chrome' } }
+2020-07-18T15:29:46.174Z INFO webdriver: COMMAND navigateTo("https://webdriver.io/")
+2020-07-18T15:29:46.175Z INFO webdriver: [POST] http://localhost:9515/session/8c1bfcbb0617b87676343fe9c658fc93/url
+2020-07-18T15:29:46.175Z INFO webdriver: DATA { url: 'https://webdriver.io/' }
+2020-07-18T15:29:48.210Z INFO webdriver: COMMAND getTitle()
+2020-07-18T15:29:48.210Z INFO webdriver: [GET] http://localhost:9515/session/8c1bfcbb0617b87676343fe9c658fc93/title
+2020-07-18T15:29:48.524Z INFO webdriver: RESULT WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+Title was: WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+2020-07-18T15:29:48.525Z INFO webdriver: COMMAND deleteSession()
+2020-07-18T15:29:48.525Z INFO webdriver: [DELETE] http://localhost:9515/session/8c1bfcbb0617b87676343fe9c658fc93
+```
+
+While there are a few differences from before, the important one is the first line. See how it says it's using the WebDriver protocol? That's how we can know things are working as we want. 
+
+### Running Through Selenium Standalone
+
+_Note: Selenium Standalone is **not** the same thing as WebdriverIO Standalone mode. The simply share the same name to describe their "indepedent" nature._
+
+If you already have your Selenium server running from before, great! If not, open up a new terminal window and run `selenium-standalone start`. 
+
+Aside from seeing the server running in your terminal, you can check that you have a Selenium instance up and running by visiting the following url in your browser: [http://localhost:4444/wd/hub](http://localhost:4444/wd/hub)
+
+You should see a website looking a lot like this:
+
+![Preview of Selenium Standalone 'hub' page](images/36DFFD8164ACC4192A2D97CB974C62FC.jpg)
+
+If you get a 404 error, something went wrong starting your server, and you'll need further debugging to resolve it.
+
+The next thing we need to do is configure WebdriverIO to use the Selenium server. 
+
+Unlike Chromedriver, when you start Selenium, it runs on port `4444` by default. That means we can comment out or remove the `port` option we had for our Chromedriver usage.
+
+That said, Selenium waits for requests to come through the `/wd/hub` URL endpoint/path (hence `http://localhost:4444/wd/hub` being mentioned before). But if you recall from our options, WebdriverIO doesn't have that at it's default `path` option (which is just `/`).
+
+To use Selenium, we'll need to update that path setting to match where Selenium defaults to:
+
+```js
+const browser = await remote({
+    path: '/wd/hub',
+    capabilities: {
+        browserName: 'chrome'
+    }
+});
+```
+
+Running our test once more with `node test.js`, you should see similar output:
+
+```sh
+2020-07-18T15:33:51.348Z INFO webdriverio: Initiate new session using the webdriver protocol
+2020-07-18T15:33:51.356Z INFO webdriver: [POST] http://localhost:4444/wd/hub/session
+2020-07-18T15:33:51.356Z INFO webdriver: DATA { capabilities:
+   { alwaysMatch: { browserName: 'chrome' }, firstMatch: [ {} ] },
+  desiredCapabilities: { browserName: 'chrome' } }
+2020-07-18T15:33:54.807Z INFO webdriver: COMMAND navigateTo("https://webdriver.io/")
+2020-07-18T15:33:54.808Z INFO webdriver: [POST] http://localhost:4444/wd/hub/session/8e71129f6b0b4cb3cd09bd17b06bd6ca/url
+2020-07-18T15:33:54.808Z INFO webdriver: DATA { url: 'https://webdriver.io/' }
+2020-07-18T15:33:57.275Z INFO webdriver: COMMAND getTitle()
+2020-07-18T15:33:57.275Z INFO webdriver: [GET] http://localhost:4444/wd/hub/session/8e71129f6b0b4cb3cd09bd17b06bd6ca/title
+2020-07-18T15:33:57.288Z INFO webdriver: RESULT WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+Title was: WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+2020-07-18T15:33:57.289Z INFO webdriver: COMMAND deleteSession()
+2020-07-18T15:33:57.289Z INFO webdriver: [DELETE] http://localhost:4444/wd/hub/session/8e71129f6b0b4cb3cd09bd17b06bd6ca
+```
+
+Again, line one shows that we're using the WebDriver protocol. And notice on line two that it posts to `http://localhost:4444/wd/hub/session`, using the path we provided.
+
+If you instead of all that output you see an error that includes `RequestError: connect ECONNREFUSED 127.0.0.1:4444`, this means your Selenium server wasn't running. Start it back up and try again. 
 
 ### Leaving it at that
 
 This will be the end of our little test file. We're not going to be updating it anymore, and will in fact be leaving this whole `wdio-standalone` folder behind.
 
 Why? Because we're moving on to a much better way of using WebdriverIO through its test runner. That's coming up next.
+
+
+

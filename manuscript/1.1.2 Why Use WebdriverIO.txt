@@ -60,15 +60,15 @@ And what about my reasons for choosing WebdriverIO?
 
 ### WebdriverIO is "Front-end Friendly"
 
-Unlike most other Selenium tools out there, WebdriverIO is written entirely in JavaScript. Even the Selenium server installation is done through a Node Package Manager (NPM) module.
+Unlike most other Selenium tools out there, WebdriverIO is written entirely in JavaScript. It's also not restricted to just Selenium, as support for the Chrome Devtools protocol (which we'll talk about later) was [added in Version 5.13 of WebdriverIO](https://webdriver.io/blog/2019/09/16/devtools.html). This means you can use WebdriverIO without installing Java or running Selenium. 
 
 Like I said, I always thought browser automation meant figuring out how to get some complex Java app running. There was also the Selenium IDE, but writing tests through page recordings reminded me too much of WYSIWYG web editors like Microsoft FrontPage (you'll need to look that up if you weren't doing web development in the early 2000's). 
 
-Instead, WebdriverIO lets me write in a language I'm familiar with, and integrates with the same testing tools that I use for unit tests (Mocha and Chai).
+Instead, WebdriverIO lets me write in a language I'm familiar with, and integrates with the same testing tools that I use for unit tests (e.g., Mocha).
 
 As a developer, the mental switch from writing the functionality to writing the test code requires minimal effort (since it's all just JavaScript), and I love that.
 
-The other great thing, and this is more to credit Selenium than WebdriverIO, is that I can use advanced CSS selectors to find elements.
+The other great thing, and this is more to credit Webdriver than WebdriverIO (there is a difference and we'll talk about it), is that I can use advanced CSS selectors to find elements.
 
 xPath scares me for no good reason. Something about slashes instead of spaces just chills my bones. But I don't have to learn xPath.
 
@@ -80,7 +80,7 @@ I believe front-end developers should write tests for their own code (both unit 
 
 I always felt held back when writing tests in PhantomJS, knowing that it could never validate functionality in popular, but buggy, browsers like IE.
 
-But because WebdriverIO uses Selenium under the hood, I'm able to run my tests in all sorts of browsers. 
+But because WebdriverIO has built-in support for Selenium, I'm able to run my tests in all sorts of browsers. 
 
 Selenium is an incredibly robust platform and an industry leader for running browser automation. WebdriverIO stands on the shoulders of giants by piggy-backing on top of Selenium. All the great things about Selenium are available, without the overhead of writing Java-based tests.
 
@@ -112,7 +112,7 @@ Speaking of simple, I love how WebdriverIO integrates in to Selenium. Instead of
 
 If you haven't worked with API endpoints before, this may not make sense. Don't worry, it's not necessary to understand. But if you're interested, here's how it goes.
 
-WebdriverIO sees that you want to run a command (say "getUrl"). It takes that command and converts it into a request to the Selenium server (it would look like "/session/someSessionIdHere/url"). The selenium server processes the request and returns the result to WebdriverIO, which then returns the found URL to your code.
+WebdriverIO sees that you want to run a command (say "getUrl"). It takes that command and converts it into a request to the Selenium server (it would look like "/session/someSessionIdHere/url"). The Selenium server processes the request and returns the result to WebdriverIO, which then returns the found URL to your code.
 
 Most of WebdriverIO is made up of these small commands living in their own separate small file. This means that updates are easier, and integration into cloud Selenium services like Sauce Labs or BrowserStack are incredibly simple.
 
@@ -134,11 +134,11 @@ Here's an example from their docs:
 
 ```js
 browser.addCommand("getUrlAndTitle", function () {
- // `this` refers to the `browser` scope
- return {
-   url: this.getUrl(),
-   title: this.getTitle()
- };
+    // `this` refers to the `browser` scope
+    return {
+        url: this.getUrl(),
+        title: this.getTitle()
+    };
 });
 ```
 

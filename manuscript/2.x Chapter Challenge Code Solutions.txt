@@ -2,53 +2,11 @@
 
 Each chapter includes a challenge or two for you to tackle on your own. But it's nice to check your work, so the following are solutions for each challenge.
 
-## 2.1.1 Chai Assertions
+## 2.1 Assertions
 
-Using 'should' style assertions:
+TODO
 
-```js
-const should = require('chai').should();
-
-describe('Homepage', function () {
-  it('should load properly', function () {
-    // load the page
-    browser.url('./');
-
-    // Get the title of the homepage, should be 'Conduit'
-    browser.getTitle().should.equal('Conduit')
-
-    // Click the 'Sign in' navigation link
-    $('=Sign in').click();
-
-    // Get the URL of the sign in page. It should include 'login'
-    browser.getUrl().should.include('/login');
-  })
-})
-```
-
-Using 'assert' style assertions:
-
-```js
-const assert = require('chai').assert;
-
-describe('Homepage', function () {
-  it('should load properly', function () {
-    // load the page
-    browser.url('./');
-
-    // Get the title of the homepage, should be 'Conduit'
-    assert.equal(browser.getTitle(), 'Conduit')
-
-    // Click the 'Sign in' navigation link
-    $('=Sign in').click();
-
-    // Get the URL of the sign in page. It should include 'login'
-    assert.include(browser.getUrl(), '/login');
-  })
-})
-```
-
-## 2.1.2 Selectors
+## 2.2 Selectors
 
 **Page Footer Text**
 
@@ -70,3 +28,715 @@ This last one was the trickiest by far, and requires some XPath magic. First, we
 From there, we need to navigate over to the links. We can use the `following-sibling` modifier to move over to the `div` (`following-sibling::div`). From there, we can get all the links using the `a` tag.
 
 All together, this is what your selector may look like: `$$('//p[contains(text(), "Popular Tags")]/following-sibling::div//a')`
+
+## 2.3 Waiting Another Way
+
+**Update the 'waitFor' code to instead use `waitForDisplayed`**
+
+This is a pretty simple change, just replacing `Exist` with `Displayed` in your command name: `$signIn.waitForDisplayed({ reverse: true });`. Everything else stays the same.
+
+**Instead of waiting for the "Sign in" button to stop existing, try waiting for the "Your Feed" tab to appear.**
+
+We can use a simple text selector to target the "Your Feed" tab/link, then use the `waitForDisplayed` command to wait for it to appear: `$('=Your Feed').waitForDisplayed();`.
+
+The full file would look like:
+
+{title="test/specs/login.js"}
+```js
+describe('Login Page', function() {
+    it('should let you log in', function() {
+        browser.url('./login');
+
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+        $('input[type="password"]').setValue('wdiodemo');
+
+        $('button*=Sign in').click();
+
+        $('=Your Feed').waitForDisplayed();
+
+        expect($('.error-messages li')).not.toBeExisting();
+    });
+});
+```
+
+## 2.4 Registration Tests
+
+**Write a set of tests for the register account page**
+
+This is a pretty lengthy exercise, so I'm not going to detail the steps involved (that's what the chapter was for). Here is one possible solution though:
+
+{title="test/pageObjects/Register.page.js"}
+```js
+const Generic = require('./Generic.page');
+
+class Register extends Generic {
+    constructor () {
+        super('./register')
+    }
+
+    get $username () { return $('input[name="email"]'); }
+    get $email () { return $('input[name="email"]'); }
+    get $password () { return $('input[type="password"]'); }
+    get $register () { return $('button*=Sign in'); }
+    get $errorMessages () { return $('.error-messages li'); }
+
+    submit ({ username, email, password }) {
+        this.$username.setValue(username);
+        this.$email.setValue(email);
+        this.$password.setValue(password);
+
+        this.$register.click();
+
+        // wait until either the register button is gone or an error has appeared
+        browser.waitUntil(() => {
+            const buttonExists = this.$signUpButton.isExisting();
+            const errorExists = this.$errorMessages.isExisting();
+
+            return !buttonExists || errorExists;
+        }, {
+            timeoutMsg: 'The "Sign Up" button is not gone and an error never appeared'
+        });
+    }
+}
+
+module.exports = Register;
+```
+
+
+{title="test/specs/register.js"}
+```js
+const Register = require('../pageObjects/Register.page');
+
+const register = new Register();
+
+const username = 'newuser';
+const email = 'newuser@learnwebdriverio.com';
+const password = 'hunter2';
+
+describe('Register Page', function() {
+    beforeEach(function () {
+        register.load();
+    })
+
+    it('should let you register', function () {
+        // use a timestamp to generate "unique" username/email every test run
+        const uniqueUsername = username + Date.now();
+
+        register.submitForm({
+            username: uniqueUsername,
+            email: uniqueUsername + '@learnwebdriverio.com',
+            password
+        });
+
+        // Get the URL of the page, which should no longer include 'register'
+        expect(browser).not.toHaveUrl(register.url.href);
+    });
+
+    it('should error with a missing username', function () {
+        register.submitForm({
+            username: '',
+            email,
+            password
+        });
+
+        expect(register.$errorMessages).toHaveText(`username can't be blank`);
+    });
+
+    it('should error with an already registered username', function () {
+        register.submitForm({
+            username: 'demouser',
+            email,
+            password
+        });
+
+        expect(register.$errorMessages).toHaveText(`username is already taken.`);
+    });
+
+    it('should error with a missing email', function () {
+        register.submitForm({
+            username,
+            email: '',
+            password
+        });
+
+        expect(register.$errorMessages).toHaveText(`email can't be blank`);
+    });
+
+    it('should error with an already registered email', function () {
+        register.submitForm({
+            username,
+            email: 'demo@learnwebdriverio.com',
+            password
+        });
+
+        expect(register.$errorMessages).toHaveText(`email is already taken.`);
+    });
+
+    it('should error with an invalid email', function () {
+        register.submitForm({
+            username,
+            email: 'invalid',
+            password
+        });
+
+        expect(register.$errorMessages).toHaveText(`email is invalid`);
+    });
+
+    // uh-oh, this test fails because there's a bug on the register page!
+    it.skip('should error with a missing password', function () {
+        register.submitForm({
+            username,
+            email,
+            password: ''
+        });
+
+        expect(register.$errorMessages).toHaveText(`password can't be blank`);
+    });
+});
+```
+
+## 2.5 More Sharing
+
+**Move the Auth's `load` function call to be inside the `login` function.**
+
+Since we need to have the Login page opened in order to login, we can ensure we're there by calling the `login.open()` function in our login function. You can also remove it from the `editor.js` test file too!
+
+First, we'll delete the `beforeEach` function from our `login.js` test file (since it won't be needed anymore). Then, update the login function in our page object to have `this.load()` at the start. Note that we don't use `login.load`, since we're inside the login page element.
+
+Your updated function will look like:
+
+{title="test/pageObjects/Auth.page.js"}
+```js
+login ({ email, password }) {
+    this.load();
+
+    this.$email.setValue(email);
+    this.$password.setValue(password);
+
+    this.$signIn.click();
+
+    // wait until either the sign in button is gone or an error has appeared
+    browser.waitUntil(() => {
+        const signInExists = this.$signIn.isExisting();
+        const errorExists = this.$errorMessages.isExisting();
+
+        return !signInExists || errorExists;
+    }, { timoutMsg: 'The "Sign in" button still exists and an error never appeared' });
+}
+```
+
+**Add element references to the Generic page for common items like the site navigation and page footer**
+
+You can add element references in the exact same way as other page objects:
+
+{title="test/pageObjects/Generic.page.js"}
+```js
+const { URL } = require('url');
+
+class Generic {
+    constructor (path) {
+        this.path = path;
+
+        // store the url by combining specific page path with WDIO base url
+        // using the NodeJS URL utility
+        this.url = new URL(path, browser.options.baseUrl);
+    }
+    load() {
+        browser.url(this.path);
+    }
+    get $siteHeader () { return $('[data-qa-id="site-header"]'); }
+    get $siteNav () { return $('[data-qa-id="site-nav"]'); }
+    get $siteFooter () { return $('[data-qa-id="site-footer"]'); }
+}
+
+module.exports = Generic;
+```
+
+Then, in any Page Object based off of the Generic one, reference it as if it were already there: `editor.$siteNav.isExisting();`
+
+## 2.6 Validating 'Edit Article' Functionality
+
+First, we need an article to edit. The pre-existing "Demo Article" is a good option, although it would be useful to create a unique article just for testing purposes. Which one you choose is up to you, but I went ahead and went with creating a new one. 
+
+I also went with setting up and entirely new test file. You could try and include these tests in your `editor.js` file, but for simplicity sake I used a separate one. 
+
+Also, to keep things simpler, I skipped making an edits to the tags. While I could have deleting the existing tags and added new ones, that code was a little more complicated than what we've covered so far, so I left it off.
+
+We need to add two new references in our `Editor.page.js` file, for the "Tags List" items that are created when adding tags. That code is:
+
+{title="test/pageObjects/Editor.page.js"}
+```
+get $$tagsListItems () { return $$('.tag-list .tag-pill'); }
+get tagsListItems () { return this.$$tagsListItems.map($tag => $tag.getText()); }
+```
+
+Then, for the full set of tests, I created a new file called `articleEdit.js` and added the following code to it:
+
+{title="test/specs/articleEdit.js"}
+```js
+const Auth = require('../pageObjects/Auth.page');
+const Editor = require('../pageObjects/Editor.page');
+const Article = require('../pageObjects/Article.page');
+const { user1 } = require('../fixtures/users');
+
+const auth = new Auth();
+const editor = new Editor();
+const article = new Article();
+
+describe('Existing Article Editor', function () {
+    let articleDetails;
+
+    before(function () {
+        auth.login(user1);
+
+        // create an article for editing
+        editor.load();
+
+        articleDetails = {
+            title: global.chance.sentence({ words: 1 }),
+            description: global.chance.sentence({ words: 2 }),
+            body: global.chance.paragraph({ sentences: 1 }),
+            tags: [global.chance.word(), global.chance.word()]
+        };
+
+        editor.submitArticle(articleDetails);
+        article.waitForLoad();
+
+        article.$edit.click();
+        editor.$title.waitForDisplayed();
+    });
+
+    it('should populate fields with article details', function () {
+        expect(browser).toHaveUrl('editor', { containing: true });
+        expect(editor.$title).toHaveValue(articleDetails.title);
+        expect(editor.$description).toHaveValue(articleDetails.description);
+        expect(editor.$body).toHaveValue(articleDetails.body);
+        expect(editor.tagsListItems).toEqual(articleDetails.tags);
+    });
+
+    it('should update article after editing', function () {
+        const updatedDetails = {
+            title: global.chance.sentence({ words: 1 }),
+            description: global.chance.sentence({ words: 2 }),
+            body: global.chance.paragraph({ sentences: 1 }),
+            tags: [] // don't add any new tags
+        };
+
+        editor.submitArticle(updatedDetails);
+
+        article.waitForLoad();
+
+        expect(article.$title).toHaveText(updatedDetails.title);
+        expect(article.$body).toHaveText(updatedDetails.body);
+
+        // tags should be same since we didn't change them
+        expect(article.tags).toEqual(articleDetails.tags);
+    });
+});
+```
+
+To be honest, this isn't the prettiest of code samples, but it gets the job done!
+
+## 2.7 Move 'loginViaApi' Command to the Auth Page Object
+
+There are two steps to this change:
+
+1. Move the function from the `wdio.conf.js` file `before` hook to a new function inside the Auth.page.js file:
+
+{title="test/pageObjects/Auth.page.js"}
+```js
+class Auth extends Generic {
+    // ... other Auth page object stuff goes here
+
+    loginViaApi (user) {
+        const token = browser.call(() => {
+            return global.api.getAuthToken(user);
+        });
+
+        // load the base page so we can set the token
+        browser.url('./');
+
+        // inject the auth token
+        browser.execute((browserToken) => {
+            window.localStorage.setItem('id_token', browserToken);
+        }, token);
+    }
+}
+```
+
+2. Update references in the test to switch `browser.loginViaApi` to `Auth.loginViaApi`.
+
+Personally, I prefer the custom command style, but I did want to demonstrate another way you can make this happen. 
+
+## 2.8 Validating the "Popular Tags" Block
+
+**Use the API to get the tags to be shown on the 'Popular Tags' section on the homepage.**
+
+In your `Api.js` file, add a new function to make the API call. You don't need to worry about the auth token, as it's not required.
+
+{title="utils/Api.js"}
+```js
+async getTags() {
+    const tagsResponse = await this.client.get(`tags`);
+    // return just the array, not the full response
+    return tagsResponse.tags;
+}
+```
+
+Next, add the 'popularTags' parts to your Home page object:
+
+{title="test/pageObjects/Home.page.js"}
+```js
+get $$popularTags () { return $$('//p[text()="Popular Tags"]/following-sibling::div/a') }
+get popularTags () { return this.$$popularTags.map(getTrimmedText) }
+```
+
+The selector is a bit complex, due to the lack of a `data-qa` attribute on either the container or the tags themselves. So, we rely on some xPath to grab that "Popular Tags" heading, then get the tags from that point.
+
+With that, add a test that asserts those tags are properly shown. In your `home.js` test file, in the `Anonymous` section, add the following:
+
+{title="test/specs/home.js"}
+```js
+it('should show "Popular Tags"', function () {
+    // get the tags that should exist from the API
+    const apiTags = browser.call(() => {
+        return global.api.getTags();
+    });
+
+    expect(home.popularTags).toEqual(apiTags);
+});
+```
+
+Note that this test does have the chance it will fail, if the tags haven't loaded on the page yet. I'm not as concerned here, because we already have a wait for the articles to load, plus we have our own delay in waiting for the API to respond with the expected tags.
+
+It's also difficult to add a proper wait here, since there is no "loading" indicator in that popular tags box. Sometimes you just can't be perfect :)
+
+## 2.9 Public User Profile Page Tests
+
+Create a set of tests for the user profile page (e.g., https://demo.learnwebdriverio.com/@singlearticleuser/). These tests should be responsible for creating a unique profile with a article that shows on the "My Article" feed.
+
+The test should validate that:
+- Username is shown at top of the page
+- You can follow/unfollow the user
+- Two tabs are shown: 'My Articles' and 'Favorited Articles'
+  - The content for those tabs is correct
+  - It's up to you whether you want to write the API code to have a "favorited" article
+
+Create a new Profile page object:
+
+{title="test/pageObjects/Profile.page.js"}
+```js
+const Generic = require('./Generic.page');
+const Feeds = require('./components/Feeds');
+
+class Profile extends Generic {
+    constructor(username) {
+        super('./@' + username);
+    }
+
+    get feeds () { return new Feeds('[data-qa-id="feed-tabs"]'); }
+    get followToggle () { return $('[data-qa-id="follow-toggle"]'); }
+    get $username () { return $('[data-qa-id="profile-username"]'); }
+
+    load () {
+        super.load();
+        this.feeds.currentFeed.waitForLoad();
+    }
+}
+
+module.exports = Profile;
+```
+
+As you can see, the Profile page uses a new "Feeds" Component, which has shared 'feeds' functionality between it and the Home/Tags page:
+
+{title="test/pageObjects/Feeds.page.js"}
+```js
+const Component = require('./Component');
+const { getTrimmedText } = require('../../utils/functions')
+const Feed = require('./Feed');
+
+class Feeds extends Component {
+    get $feedsContainer () { return $(this.selector); }
+    get $$feedTabs () { return this.$feedsContainer.$$('[data-qa-type="feed-tab"]'); }
+    get feedTabsText () { return this.$$feedTabs.map(getTrimmedText); }
+    get activeFeedTabText () { return this.$feedsContainer.$$('[data-qa-type="feed-tab"] .active').map(getTrimmedText) }
+    get currentFeed () { return new Feed('[data-qa-type="article-list"]'); }
+
+    clickTab (tabText) {
+        const tabToClick = this.$$feedTabs.find($tab => $tab.getText() === tabText);
+        tabToClick.click();
+        browser.waitUntil(() => {
+            return this.activeFeedTabText[0] === tabText;
+        }, { timeoutMsg: 'Active tab text never switched to desired text' });
+        this.currentFeed.waitForLoad();
+    }
+}
+
+module.exports = Feeds;
+```
+
+Since we're using a new shared component, let's replace that code from the Home Page Object:
+
+{title="test/pageObjects/Home.page.js"}
+```js
+const Generic = require('./Generic.page');
+const { getTrimmedText } = require('../utils/functions')
+const Feeds = require('./components/Feeds');
+
+class Home extends Generic {
+    constructor (url = './') {
+        super(url)
+    }
+    get feeds () { return new Feeds('[data-qa-id="feed-tabs"]'); }
+    get $$popularTags () { return $$('//p[text()="Popular Tags"]/following-sibling::div/a') }
+    get popularTags () { return this.$$popularTags.map(getTrimmedText) }
+
+    load () {
+        super.load();
+        this.feeds.currentFeed.waitForLoad();
+    }
+}
+
+module.exports = Home;
+```
+
+Now we need to update the Home and Tag tests to use this new component path:
+
+{title="test/specs/home.js"}
+```js
+const Home = require('../pageObjects/Home.page');
+const Auth = require('../pageObjects/Auth.page');
+const { user1 } = require('../fixtures/users');
+
+const home = new Home();
+const auth = new Auth();
+
+describe('Homepage', function () {
+    describe('Logged In', function () {
+        before(function () {
+            browser.loginViaApi(user1);
+
+            home.load();
+        });
+
+        it('should show both feed tabs', function () {
+            expect(home.feeds.feedTabsText).toEqual(['Your Feed', 'Global Feed']);
+        });
+
+        it('should default to showing the global feed', function () {
+            // get all tabs with an 'active' class, check that only one returns with correct text
+            expect(home.feeds.activeFeedTabText).toEqual(['Global Feed']);
+        });
+
+        it('should let you switch between global and personal feeds', function () {
+            // click on 'Your feed' tab
+            home.feeds.clickTab('Your Feed');
+            // validate 'active' tabs are correct
+            expect(home.feeds.activeFeedTabText).toEqual(['Your Feed']);
+            // click 'Global' tab
+            home.feeds.clickTab('Global Feed');
+            // validate again
+            expect(home.feeds.activeFeedTabText).toEqual(['Global Feed']);
+            // click on 'Your feed' tab
+            home.feeds.clickTab('Your Feed');
+            // validate 'active' tabs are correct
+            expect(home.feeds.activeFeedTabText).toEqual(['Your Feed']);
+        });
+
+        describe('Personal Feed', function () {
+            before(function () {
+                // ensure we're on the personal feed tab
+                if (home.feeds.activeFeedTabText !== 'Your Feed') {
+                    home.feeds.clickTab('Your Feed');
+                }
+            });
+
+            it('should show most recent articles from people you follow', function () {
+                expect(home.feeds.currentFeed.$$articles).toHaveChildren(1);
+            });
+
+            it('should show most recent article first', function () {
+                const firstArticleDetails = home.feeds.currentFeed.articles[0].getDetails();
+                expect(firstArticleDetails).toMatchObject({
+                    author: 'singlearticleuser',
+                    'date': 'May 1, 2020',
+                    title: 'An Article',
+                    description: 'A Single Article',
+                    tags: []
+                })
+            });
+        });
+
+        after(function () {
+            auth.clearSession();
+        });
+    });
+    describe('Anonymous', function () {
+        before(function () {
+            // load the page
+            home.load();
+        });
+
+        it('should load properly', function () {
+            // check that top nav/footer exist
+            expect(home.$siteHeader).toBeExisting();
+            expect(home.$siteFooter).toBeExisting();
+            expect(home.$siteNav).toBeExisting();
+        });
+
+        it('should only show the global feed tab', function () {
+            expect(home.feeds.feedTabsText).toEqual(['Global Feed']);
+        });
+
+        it('should show "Popular Tags"', function () {
+            // get the tags that should exist from the API
+            const apiTags = browser.call(() => {
+                return global.api.getTags();
+            });
+
+            expect(home.popularTags).toEqual(apiTags);
+        });
+    });
+});
+```
+
+{title="test/specs/tag.js"}
+```js
+const { user1 } = require('../fixtures/users');
+const Tag = require('../pageObjects/Tag.page');
+
+describe('Tag Feed', function () {
+    let articleDetails, tagName, tagPage, articleResponse;
+
+    before(function () {
+        articleDetails = {
+            title: chance.sentence({ words: 3 }),
+            description: chance.sentence({ words: 7 }),
+            body: chance.paragraph({ sentences: 2 }),
+            tagList: [chance.word({ length: 30 })]
+        };
+
+        tagName = articleDetails.tagList[0];
+
+        // create the article we need to get the specific tag
+        articleResponse = browser.call(() => {
+            return global.api.createArticle(user1, articleDetails);
+        });
+
+        tagPage = new Tag(tagName);
+
+        // load the page
+        tagPage.load();
+    })
+
+    after(function () {
+        browser.call(() => {
+            return global.api.deleteArticle(user1, articleResponse.slug);
+        });
+    });
+
+    it('should have tag tab', function () {
+        // check that we're on the tag tab
+        expect(tagPage.feeds.$$activeFeedTabs[0]).toHaveText(tagName, { trim: true })
+    });
+    it('should load only articles for that tag', function () {
+        expect(tagPage.feeds.currentFeed.$$articles).toHaveChildren(1);
+    });
+    it('should load correct article preview details', function () {
+        const firstArticleDetails = tagPage.feeds.currentFeed.articles[0].getDetails();
+
+        expect(firstArticleDetails).toMatchObject({
+            title: articleDetails.title,
+            description: articleDetails.description
+        });
+    });
+});
+```
+
+Okay, with all that written, let's focus back on writing the actual tests. 
+
+In our profile test, we need to set up some data:
+- A user profile to validate
+- That user should have an article published for us to check out
+
+Add the following function to the API util, allowing us to create a new user/profile via the API:
+
+{title="utils/Api.js"}
+```js
+async createProfile(profile) {
+    const response = await this.client
+        .post(
+            'users',
+            {
+                json : {
+                    user: profile
+                }
+            }
+        );
+    return response.body.user;
+}
+```
+
+Now, we'll create a new `profile.js` test file, and call the needed API utils to create the user and article (along with sketching out the tests we want to write):
+
+{title="test/specs/profile.js"}
+```js
+const Profile = require('../pageObjects/Profile.page');
+
+describe('User Profile Page', function () {
+    let profile, profileResponse, articleDetails;
+
+    before(function () {
+        profile = {
+            email: `test+${Date.now()}@learnwebdriverio.com`,
+            password: 'testwdio',
+            username: chance.word({ length: 15 })
+        };
+
+        // create the user/profile we need to for our test
+        profileResponse = browser.call(() => {
+            return global.api.createProfile(profile);
+        });
+
+        // create a new article for the new user
+        articleDetails = {
+            title: chance.sentence({ words: 3 }),
+            description: chance.sentence({ words: 7 }),
+            body: chance.paragraph({ sentences: 2 })
+        };
+        // create the article we need to get the specific tag
+        articleResponse = browser.call(() => {
+            return global.api.createArticle(profile, articleDetails);
+        });
+
+        profilePage = new Profile(profile.username);
+
+        // load the page
+        profilePage.load();
+    });
+
+    after(function () {
+        browser.call(() => {
+            return global.api.deleteArticle(profile, articleResponse.slug);
+        });
+    });
+
+    it('should show username at top of the page', function () {
+        expect(profilePage.$username).toHaveText(profile.username);
+    });
+
+    // - You can follow/unfollow the user if you are logged in
+    // - Two tabs are shown: 'My Articles' and 'Favorited Articles'
+    //   - The content for those tabs is correct
+    //   - It's up to you whether you want to write the API code to have a "favorited" article
+});
+```
+
+That runs, so let's add our tests:
+
+// TODO finish these tests
+
+{title="test/specs/profile.js"}
+```js
+
+```

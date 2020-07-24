@@ -72,10 +72,10 @@ Given all that, I do want to demonstrate how we can go about including site-wide
 - Site Footer (The 'bar' at the bottom of the page)
 - Site Navigation (The links in the site header)
 
-We'll use a standard set of `isExisting` checks in our test file:
+We'll use a standard set of `toBeExisting` checks in our test file:
 
+{title="test/specs/home.js"}
 ```js
-const expect = require('chai').expect;
 const Home = require('../pageObjects/Home.page');
 
 const home = new Home();
@@ -88,9 +88,9 @@ describe('Homepage', function () {
 
     it('should load properly', function () {
         // check that top nav/footer exist
-        expect(home.$siteHeader.isExisting(), 'Site Header').to.be.true;
-        expect(home.$siteFooter.isExisting(), 'Site Footer').to.be.true;
-        expect(home.$siteNav.isExisting(), 'Site Nav').to.be.true;
+        expect(home.$siteHeader).toBeExisting();
+        expect(home.$siteFooter).toBeExisting();
+        expect(home.$siteNav).toBeExisting();
     })
 })
 ```
@@ -99,6 +99,7 @@ Now, normally, we'd add these element references to our `home` page object. But 
 
 We can do this in a manner similar to how we've adding a generic 'load' method on that same object:
 
+{title="test/pageObjects/Generic.page.js"}
 ```js
 const { URL } = require('url');
 
@@ -131,7 +132,7 @@ Right now, we're only going to validate that the tab appears (and not the conten
 
 ```js
 it('should only show the global feed tab', function () {
-    expect(home.feedTabsText).to.deep.equal(['Global Feed']);
+    expect(home.feedTabsText).toEqual(['Global Feed']);
 })
 ```
 
@@ -149,8 +150,8 @@ get feedTabsText () { return this.$$feedTabs.map($tab => $tab.getText().trim());
 
 Add those two lines to your `Home.page.js` file, along with the updates to the homepage test file. And while you're in that test file, we should update it to include the fact that these tests are written for the "anonymous" view. Let's do that by changing updating our test file to have two nested `describe` blocks, one for the Anonymous view and the other for when you're logged in:
 
+{title="test/specs/home.js"}
 ```js
-const expect = require('chai').expect;
 const Home = require('../pageObjects/Home.page');
 
 const home = new Home();
@@ -164,13 +165,13 @@ describe('Homepage', function () {
 
         it('should load properly', function () {
             // check that top nav/footer exist
-            expect(home.$siteHeader.isExisting(), 'Site Header').to.be.true;
-            expect(home.$siteFooter.isExisting(), 'Site Footer').to.be.true;
-            expect(home.$siteNav.isExisting(), 'Site Nav').to.be.true;
+            expect(home.$siteHeader).toBeExisting();
+            expect(home.$siteFooter).toBeExisting();
+            expect(home.$siteNav).toBeExisting();
         });
 
         it('should only show the global feed tab', function () {
-            expect(home.feedTabsText).to.deep.equal(['Global Feed']);
+            expect(home.feedTabsText).toEqual(['Global Feed']);
         });
     })
 
@@ -186,8 +187,8 @@ To be fair, we could have these as two separate files instead. I'm keeping them 
 
 For our logged in tests, we should, you know, log in. Let's copy over what we've done for our editor test to get us in to a logged in state:
 
+{title="test/specs/home.js"}
 ```js
-const expect = require('chai').expect;
 const Home = require('../pageObjects/Home.page');
 const Auth = require('../pageObjects/Auth.page');
 const { user1 } = require('../fixtures/users');
@@ -213,7 +214,7 @@ And then add our test that checks the tabs are correct:
 
 ```js
 it('should show both feed tabs', function () {
-    expect(home.feedTabsText).to.deep.equal(['Your Feed', 'Global Feed']);
+    expect(home.feedTabsText).toEqual(['Your Feed', 'Global Feed']);
 });
 ```
 
@@ -396,6 +397,7 @@ With that, let's keep things organized by creating a new file called `Api.js`, a
 
 In that file, a new class will be defined which will store all of our API interactions. The purpose of this book is not to teach you how to write an API client, so I'm going to let you cheat and just give you the code needed for it:
 
+{title="utils/Api.js"}
 ```js
 const got = require('got');
 
@@ -425,8 +427,9 @@ A brief overview of the file is this:
 
 Here's an example of a basic Node.js script using this new file:
 
+{title="temporary-example.js"}
 ```js
-const Api = require('./utils/api');
+const Api = require('./utils/Api');
 
 (async () => {
     const api = new Api('http://localhost:3000/api/');
@@ -542,7 +545,10 @@ The `addCommand` command is something I don't use too often, but it definitely c
 
 To recap, using an API to login does take extra knowledge about how API's work, including specifics surrounding how the API and authentication of the site you're testing works. But, it can really come in handy, not only for authenticating users, but adding, editing and deleting data, which is something we'll take a deeper look into soon.
 
-## 2.7.7 Exercises
+## 2.7.7 Chapter Challenge
 
 - Rather than use the `addCommand` command, update the `Auth` page object to have the `loginViaApi` functionality
 - Update the `editor.js` test to use this new function (but not the `login.js` file, since we actually want to test the login page)
+
+
+

@@ -4,8 +4,10 @@
 
 Because technology changes fast, it's good to cover what versions of software I used when creating these exercises.
 
-- Node.js: 10.15.1
-- WebdriverIO: 5.x [TODO update with actual version]
+%% [TODO update with latest versions upon book completion]
+
+- Node.js: 10.19.0
+- WebdriverIO: 6.x
 - Java 8
 
 ### Git Repository

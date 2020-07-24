@@ -7,8 +7,7 @@ While WebdriverIO is a Node.js based system, there are a few other tools needed 
 - A recent version of Node.js (8+)
 - A text-editor (I use [Sublime Text 3](https://www.sublimetext.com/3), but [Atom](https://atom.io/), [Webstorm](https://www.jetbrains.com/webstorm) and [VSCode](https://code.visualstudio.com/) are other great options)
 - A terminal/command line tool (I use [iTerm](https://iterm2.com/) with [Oh My Zsh](https://ohmyz.sh/) thrown on top)
-- A Webdriver-compliant browser for testing (Chrome or Firefox are great options)
-- A 'driver' for the browser you want to test on (we'll cover this in detail in "Browsers and 'Driving' Them")
+- A Webdriver-compliant browser for testing (Chrome is what we'll be using)
 
 Optionally, you may also want to install [Java 8](https://java.com/en/download/). This will allow you to run [selenium-standalone](https://github.com/vvo/selenium-standalone), which gives you the ability to test on different browsers in the same test run (e.g. both Firefox AND Chrome). 
 
@@ -20,7 +19,7 @@ Overall though, there are two common ways to install Node.js.
 
 #### Install via official site:
 
-Go to [nodejs.org](https://nodejs.org/) and download the release labelled "Recommended For Most Users". This will start with an even number (e.g. 10.15.1). Be aware that releases starting with odd numbers (e.g. 11.10.0) are not supported long term, so while they may have the latest features, they will stop recieving support and updates after 6 months. For more information on this, have a read through [the Node.js release plan](https://github.com/nodejs/Release#release-plan).
+Go to [nodejs.org](https://nodejs.org/) and download the release labelled "Recommended For Most Users". This will start with an even number (e.g. 10.19.0). Be aware that releases starting with odd numbers (e.g. 11.10.0) are not supported long term, so while they may have the latest features, they will stop recieving support and updates after 6 months. For more information on this, have a read through [the Node.js release plan](https://github.com/nodejs/Release#release-plan).
 
 #### Install via a 'version manager'
 

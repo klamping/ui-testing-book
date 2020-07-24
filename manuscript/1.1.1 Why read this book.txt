@@ -38,7 +38,7 @@ With that, let's get started.
 
 I mentioned that test automation isn't anything new, but I didn't explain what it is.
 
-Truthfully, test automation is a lot of things. There are a multitude of programs and tools surrounding it, not to mention the various idealogies about automated testing in general (e.g., Test-driven Development vs. Behavior-driven Development). 
+Truthfully, test automation is a lot of things. There are a multitude of programs and tools surrounding it, not to mention the various ideologies about automated testing in general (e.g., Test-driven Development vs. Behavior-driven Development). 
 
 Aside from that, there are also different types of tests. In this book, we're focusing solely on UI automation, but there's also unit, integration, performance, accessibility, usability, you-name-it testing.
 
@@ -46,7 +46,7 @@ All of these are important to know about, and can provide as much or more value 
 
 Well, you don't really have an option. You can't skip accessibility testing if you want to have a site that's accessible. Equally, you can't skip UI testing if you want to have a site that's not broken.
 
-Truthfully, we're doing tons of UI testing. Everytime someone loads up a website, they're testing the UI. When they click that button, does it make that thing happen? When I use my mobile device, does the site fit on my small screen?
+Truthfully, we're doing tons of UI testing. Every time someone loads up a website, they're testing the UI. When they click that button, does it make that thing happen? When I use my mobile device, does the site fit on my small screen?
 
 If you have a site in production, every user is testing your UI. Hopefully for them (and you), they're not the first ones to try it out.
 
@@ -63,13 +63,13 @@ I've alluded to this before, but it's worth repeating. Here are some of the many
 - Jamie, your ace front-end developer, just finished their latest task and is itching to release it. While they were careful to validate that the new functionality works, unfortunately they forgot to test whether that new code broke the zip code widget on the contact page. Lucky for you, the UI automation test caught the error, and a fix was in place before the end of the day.
 - Taylor is an awesome full-stack developer. They've got everything about their coding environment fine-tuned so that they can focus solely on pumping out fixes and new features... except for one thing: Taylor always forgets to check their code on slower, outdated computers. That's okay though, as our UI tests are configured to run on a variety of setups, and it just so happens that it caught that issue when running inside a Windows 8 environment.
 - Casey is a great product manager, but sometimes forgets to clarify the small details. This means developers can make the wrong assumption during development, which is only discovered by Casey during product demos. By adding automated tests to the mix, developers and product managers are pushed to have regular conversations on the desired behavior of certain functionality, resulting in fewer suprises later on. 
-- Avery is a superb QA tester. With great attention to detail, Avery always thinks of unique ways in which the website would be seen. Unfortunately, manually testing these edge cases takes a fair amount of time to get in place. By adding automated scripts, Avery is able to programatically generate the needed data for their tests, and allow them to run these scripts on a regular basis.
+- Avery is a superb QA tester. With great attention to detail, Avery always thinks of unique ways in which the website would be seen. Unfortunately, manually testing these edge cases takes a fair amount of time to get in place. By adding automated scripts, Avery is able to programmatically generate the needed data for their tests, and allow them to run these scripts on a regular basis.
 
-These are just a few ways test automation can help. I skipped over many other benefits for the sake of time, but there's one I omitted on purpose. Many folks claim that UI tests allow you to have fewer developers. While that's partly true, I don't think it's honest. 
+These are just a few ways test automation can help. I skipped over many other benefits for the sake of time, but there's one I omitted on purpose. Many folks claim that UI tests allow you to have fewer developers/testers. While that could be an outcome of automation, I don't think it's a valuable argument.
 
-In all the scenarios above, adding an extra human wouldn't have necessarily helped. That's because human's have blind spots, and many of them are the same. Teams have collective blindspots and that's difficult to get around. We naturally tend to focus on what's in front of us, forgetting about realities outside our own influence.
+In all the scenarios above, having an extra human around wouldn't have necessarily helped. That's because human's have blind spots, and many of them are the same. Teams have collective blindspots and that's difficult to get around. We naturally tend to focus on what's in front of us, forgetting about realities outside our own influence.
 
-UI testing isn't about replacing humans, but rather augmenting their abilities. We use automation to shore up our limitations, allowing us to focus more on our strengths.
+UI testing isn't about replacing humans, but rather augmenting their abilities. We use automation to shore up our limitations, allowing us to focus on our strengths.
 
 Developers waste their time testing on hundreds of different devices, when they could instead let a computer do that part of the work. Your QA team wastes its time running through the same test scenario week after week, when instead they could be thinking of new and undiscovered test cases.
 
@@ -102,7 +102,7 @@ So if you want to test all your functionality on all your pages, you're going to
 
 Covering all of that ground takes time. Time that could be spent on other, possibly more important, tasks.
 
-And as you're writing test after test, the website your testing is going to keep changing. New features and fixes will be continously introduced. The same feature will be tweaked again and again, causing your once-solid test suite to mysteriously start failing.
+And as you're writing test after test, the website your testing is going to keep changing. New features and fixes will be continuously introduced. The same feature will be tweaked again and again, causing your once-solid test suite to mysteriously start failing.
 
 When the glorious day comes and you're "done" writing tests, you still have to maintain them. Now, there are ways to write tests to make them more maintainable, and we'll cover that throughout the examples, but there's no such thing as a future-proof test. You're always going to need to update it.
 
