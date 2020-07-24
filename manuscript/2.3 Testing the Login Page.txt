@@ -1,4 +1,4 @@
-# 2.3 Waiting For Page Elements
+# 2.3 Testing the Login Page
 
 ## 2.3.1 Is This Thing Working?
 
@@ -25,11 +25,9 @@ One more thing about commenting like this. I really like this approach, as it le
 
 By ignoring the code specifics at the start, you allow your mind to really think about the page itself. Conversely, once you start writing the code for your tests, your brain narrows its focus to the test specifics, restricting your view of the overall page. Keep this in mind when you're in the middle of a project and feel your wheels spinning trying to get your tests working. Maybe you need to step back and look at the bigger picture of what you're really trying to acheive. 
 
-Back to our test. With our comments laid, out, let's start translating them into code. First, we'll set up our describe/it block, including importing the `expect` assertion library from chai:
+Back to our test. With our comments laid, out, let's start translating them into code. First, we'll set up our describe/it block:
 
 ```js
-const expect = require('chai').expect;
-
 describe('Login Page', function () {
     it('should let you log in', function () {
     });
@@ -53,8 +51,6 @@ Notice how I'm not specific on what username we're using, what the input selecto
 Let's throw those comments into the file:
 
 ```js
-const expect = require('chai').expect;
-
 describe('Login Page', function () {
     it('should let you log in', function () {
       // go to the login page
@@ -142,8 +138,6 @@ $('#inputId').setValue('nut'); // value is 'nut'
 Now that we've covered these actions, let put them to use. We're only going to be using `setValue` for our needs. 
 
 ```js
-const expect = require('chai').expect;
-
 describe('Login Page', function () {
     it('should let you log in', function () {
         browser.url('./login');
@@ -170,17 +164,18 @@ For our element selectors, we're using a combo of element type (`input`) with a 
 
 We tell WebdriverIO what value we want in that input field by passing it as the lone argument in the `setValue` command. First we pass in the email address, then we send over the password.
 
-
 ### Step 3: Clicking the 'Sign in' button
-TODO adding that button
 
+The last step we take is to click the `Sign In` button. We need to be able to select the button to process the click on. We've done this before, by clicking on the 'Sign In' link in the site head. Let's do something similar here. 
 
+The one problem is that the text-based selector style we used before only works for links, and the type of element we want to click here is a button. Well actually, it only work *by default* for links. If you recall from the last chapter (no judgement if you don't, it was a dense one), we can pass in a custom element type to tell it to look only for the text on an element that matches the correct type. 
+
+For our needs, we're going to look for a button with the text of 'Sign In': `$('button=Sign in')`
 
 Here's what the full file looks like:
 
+{title=test/specs/login.js}
 ```js
-const expect = require('chai').expect;
-
 describe('Login Page', function () {
     it('should let you log in', function () {
         browser.url('./login');
@@ -188,7 +183,7 @@ describe('Login Page', function () {
         $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
 
-        $('button*=Sign in').click();
+        $('button=Sign in').click();
     });
 });
 ```
@@ -213,50 +208,41 @@ Let's fix that with an assertion!
 
 As always with testing, we can assert any number of details:
 
+- No login error messages should show on the page
 - The URL shouldn't contain 'login'
-- The URL should just be 'https://demo.learnwebdriverio.com/'
+- The URL should just be 'https://localhost:8080/'
 - The login form should not exist on the page
 - The homepage should be showing
-- The top navigation should have our username
-- The top navigation should have a 'settings' link
+- The top navigation should have the following items: 'Home', 'New Article', 'Settings', and our username which links to our profile page
+- The top navigation should *not* have the following items: 'Sign In', 'Sign Up'
+- Check both of the two previous items
 
-All of these conditions show that we're not on the login page. Which one should we choose, or should we choose all of them? Honestly, it's up to you and your team to decide. While additional assertions ensure you're in the valid state, they also add complexity and dependencies to the test.
+All of these conditions potentially demonstrate that we're successfully logged in. Which one should we choose, or should we choose all of them? Honestly, it's up to you and your team to decide. While additional assertions ensure you're in the valid state, they also add complexity and dependencies to the test.
 
-What happens if the redirect after login changes to go to a different URL than the homepage? Or what if the 'settings' link is removed from the navigation? These are all alterations that will break our test, requiring upkeep to maintain that green checkmark status. A little bit of upkeep should be expected with automation, but it's smart not to tie yourself down to too many requirements that don't really add value.
+What happens if the redirect after login changes to go to a different URL than the homepage? Or what if the 'settings' link is purposefully removed from the navigation? These are all alterations that will break our test, requiring upkeep to maintain that green checkmark status. A little bit of upkeep should be expected with automation, but it's smart not to tie yourself down to too many requirements that don't really add value.
 
-For this example, we're going to start with only validating the URL doesn't contain 'login'. Similar to our navigation test, we're going to get the browser's current URL and write our assertion against that. It will end up looking like:
+For this example, we're going to check the first item in that list, that no error messages should show. If you were to inspect the HTML of the login page after trying to login with invalid credentials, you might see this:
+
+```html
+<ul class="error-messages">
+    <li>email or password is invalid</li>
+</ul>
+```
+
+What we want to do is validate that an `<li>` inside the `error-messages` class doesn't exist (hopefully meaning no errors occurred). We can check for that with this assertion:
 
 ```js
-expect(browser.getUrl()).to.not.include('/login');
+expect($('.error-messages li')).not.toBeExisting();
 ```
 
-Notice the `not` in there. That flips the assertion to do the opposite. In this case, it check that the url doesn't include `/login` anywhere in it, so `https://demo.learnwebdriverio.com/` would pass, but `https://demo.learnwebdriverio.com/loginerror` would fail. It's not perfect, in that the second instance might be a real error worth knowing about, yet it's good enough for now. 
+Notice the `not` in there. I mentioned it before, but to reiterate, that flips the assertion to do the opposite. In this case, it checks that the element matching the selector `.error-messages li` does not exist. If an error was existing on the page for some reason, it would fail. It's not perfect, but it's good enough for now. 
 
-Or is it?
+Or is it? (VSauce fans should appreciate that)
 
-Adding this assertion to our test and running it again, we get a test failure:
+Here's the full test:
 
-```
-expected 'https://demo.learnwebdriverio.com/login' to not include '/login'
-```
-
-Why is this? We entered the form, we clicked the button, it should have logged us in just fine...
-
-## 2.3.2 Slow it Down
-
-The reason it failed has to do with how the site was built. Normally a form buttom submission would trigger a standard page load, which Webdriver knows how to handle. In this case, the form submission is handled through a special VueJS route, which doesn't go through the normal browser methods. As you can guess, Webdriver isn't aware of this action and thinks everything is ready to go.
-
-How do we work around this fact? Teach Webdriver how to wait!
-
-The simplest type of wait out there, and the one I least recommend, is a `pause`. A `pause` is an abritrary time delay that stops execution of your test until said amount of time passes. 
-
-In this situation, we could add a 1 second pause to our code between clicking the button and running our assertion. Because I server should have responded with the login result by then, our assertion should pass. 
-
-Let's try it out:
-
+{title=test/specs/login.js}
 ```js
-const expect = require('chai').expect;
-
 describe('Login Page', function () {
     it('should let you log in', function () {
         browser.url('./login');
@@ -264,19 +250,59 @@ describe('Login Page', function () {
         $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
 
-        $('button*=Sign in').click();
-
-        browser.pause(1000);
-
-        // Get the URL of the page, which should no longer include 'login'
-        expect(browser.getUrl()).to.not.include('/login');
+        $('button=Sign in').click();
+        
+        expect($('.error-messages li')).not.toBeExisting();
     });
 });
 ```
 
-The command we use is `browser.pause` and we pass in the total number of milliseconds we want to wait (1000 milliseconds = 1 seconds you math nerds).
+If you were to run this test, it would pass (which is what we want, right?)
 
-If you run the test again, you'll notice it's two seconds slower, but it passes again. That is, unless you're on a slow connection. If your internet provider really sucks, you may have noticed that it's still failing. 
+But there's a hidden problem. What if we skip setting a password. The test should fail, right?
+
+Nope! It passes just fine, even though we shouldn't be logged in and an error should have been shown.
+
+Why is this?
+
+## 2.3.2 Slow it Down
+
+The reason it still passed has to do with how the site was built and the assertion we're making. Normally a form button submission triggers a standard page load, which Webdriver knows how to handle. But in this case (and this is true for many web apps out there), the form submission is handled through a special VueJS route, which doesn't go through the normal browser methods. Webdriver isn't aware of this action and thinks everything is ready to go immediately, so runs the check.
+
+The problem is, the form is still processing the submission when the check is run, and no error messages are shown yet. So the test thinks all is fine because of this and happily passes. 
+
+How do we work around this fact? Teach Webdriver how to wait!
+
+The simplest type of wait out there, and the one I **least** recommend, is a `pause`. A `pause` is an abritrary time delay that stops execution of your test until said amount of time passes. 
+
+In this situation, we could add a 1 second pause to our code between clicking the button and running our assertion. Because the server should have responded with the login result by then, our assertion should pass (or fail if there's a bug).
+
+Let's try it out:
+
+```js
+describe('Login Page', function () {
+    it('should let you log in', function () {
+        browser.url('./login');
+
+        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+        // $('input[type="password"]').setValue('wdiodemo');
+
+        $('button=Sign in').click();
+
+        browser.pause(1000);
+
+        expect($('.error-messages li')).not.toBeExisting();
+    });
+});
+```
+
+Note: I commented out the 'password' line to make the login fail.
+
+The command we use is `browser.pause` and we pass in the total number of milliseconds we want to wait (1000 milliseconds = 1 seconds, you math nerds).
+
+If you run the test again, you'll notice it takes a bit, but it does fail. With our pause in place, when the `expect($('.error-messages li')).not.toBeExisting();` is run, that element does exist. The `expect-webdriverio` library keeps retrying for this element to disappear, but it's not going anywhere, so the wait ends up timing out and failing the test.
+
+That is, unless you're on a very slow connection. If your internet provider really sucks, you may have noticed that it still passes.
 
 But if you have a decent provider then things seem a-okay. You feel no pain right now, and that's just not right. Let's resolve that.
 
@@ -285,8 +311,6 @@ But if you have a decent provider then things seem a-okay. You feel no pain righ
 Yes, we're going to take a quick detour in our test writing to learn about how to slow down our internet. Why would we ever want to do that? 
 
 Well, aside from torturing unruly kids, slowing your connection down is great practice to help catch issues that users without great service providers may face. And it's not that difficult to do.
-
-Assuming you were paying attention during the test runner configuration, you should have updated your `wdio.conf.js` file to use Chrome as the browser. If not, go ahead and do that right now, because this trick currently doesn't work in Firefox. 
 
 In our `wdio.conf.js` file, scroll down to the `before` hook section. It's about 150 lines down, commented out and looks like:
 
@@ -302,31 +326,48 @@ In our `wdio.conf.js` file, scroll down to the `before` hook section. It's about
 
 This is a "hook" that runs before our tests start running, but after the test session is created. This means we can mess with the browser at this point to make funny things happen. 
 
-The funny thing we're going to make happen is that we're going to artificially slow down our connection. This is done through the `setNetworkConditions` command that's part of the Chromium protocol. Without getting into the details, this is what it looks like:
+The funny thing we're going to make happen is that we're going to artificially slow down our connection. This is done through [the `throttle` command](https://webdriver.io/docs/api/browser/throttle.html). This is what it looks like:
 
 ```js
-browser.setNetworkConditions({
-    latency: 1000,
-    throughput: 450*1024
-});
+// throttle to Regular 3G
+browser.throttle('Regular 3G')
+
+// disable network completely
+browser.throttle('Offline')
+
+// set custom network throughput
+browser.throttle({
+    'offline': false,
+    'downloadThroughput': 200 * 1024 / 8,
+    'uploadThroughput': 200 * 1024 / 8,
+    'latency': 20
+})
 ```
 
-You can adjust these numbers as you like. The larger the latency, the slower the site loads. The higher the throughput, the more data can cross the wire at any given time. Both of those combine to impact overall page load speed. 
+As you see, you can either pass in a network preset via a matching string, or a custom object defining a specific settings.
 
-Inject that code into your `before` statement (which you should uncomment) so that it looks like this:
+This feature uses Chrome DevTools capabilities to enable such behavior. Therefore it can only be supported where such an interface is available which is Chrome, Firefox Nightly and Chromium Edge right now. 
+
+For the custom settings, you can adjust those numbers as you like. The larger the latency, the longer the delay before requests are handled. The higher the throughput, the more data can cross the wire at any given time. Both of those combine to impact overall page load speed. 
+
+Let's slow our network down by setting the latency to `1000`. This will ensure that all requests take at least a second to process. We'll also include the other three required settings, but keep them in a state that shouldn't impact speed.
+
+In our `before` hook (which you should uncomment if you haven't), add these custom settings:
 
 ```js
 before: function (capabilities, specs) {
-    browser.setNetworkConditions({
+    browser.throttle({
         latency: 1000,
-        throughput: 450*1024
+        offline: false,
+        downloadThroughput: 1000000,
+        uploadThroughput: 1000000
     });
 },
 ```
 
-Save the file and run your test again. Suddenly your `browser.pause` statement isn't so effective. The site still takes too long to process the login request and we're stuck checking an assertion a bit too early. 
+Save the file and run your test again. Suddenly the `browser.pause` statement isn't so effective. The site still takes too long to process the login request and we're stuck checking an assertion a bit too early (and have a test passing when it shouldn't). 
 
-What to do now? Well, it's unfortunately common practice to just increase that `pause` amount a little bit more, increasing the length of the test but preventing errors based on slow connections. But you're always stuck playing this game of "am I waiting long enough", usually losing. 
+What to do now? Well, it's unfortunately common practice to just increase that `pause` amount a little bit more, increasing the length of the test but preventing problems due to slow connections. But you're always stuck playing this game of "am I waiting long enough", usually losing.
 
 Plus, every pause you add to your test slows it down just a little bit more. If you've got to do this for every page load, you can easily have test that take 30 minutes to run due to all the unnecessary waiting.
 
@@ -353,12 +394,14 @@ B. Be enabled (for inputs that have a `disabled` HTML attribute)
 C. Be "displayed", which is a property that we'll put a definition to in a bit
 D. Be "clickable" (element exists, is visible, is within viewport (if not try to scroll to it), its center is not overlapped with another element, is not disabled)
 
-The last one, `waitUntil`, is a generic function used to define custom waits. For example, a common scenario is to wait until an element has specific text before moving on. We'll get in to real code examples in a little bit, but for now we're going to jump back to the `waitForExist` command.
+Sidenote: These commands are actually used under the hood by the `expect-webdriverio` library to help with our assertions.
+
+The last command, `waitUntil`, is a generic function used to define custom waits. For example, a common scenario is to wait until an element has specific text before moving on. We'll get in to real code examples in a little bit, but for now we're going to jump back to the `waitForExist` command.
 
 As mentioned, the `waitForExist` command will run until one of two things happen:
 
 - The element being searched for is found in the DOM
-- The `waitForTimeout` timeout amount is met (this amount is defined in your wdio.conf.js file).
+- The `waitForTimeout` timeout amount is met (this amount is defined in your `wdio.conf.js` file).
 
 If the latter happens, an error will be thrown and your test will fail, as this likely means something is wrong with the website. Hopefully though, the element is found and your test will continue.
 
@@ -384,8 +427,6 @@ The `<a>` tag can contain any number of attributes; that doesn't matter. But it 
 Throwing that code into our test, this is how the whole thing looks:
 
 ```js
-const expect = require('chai').expect;
-
 describe('Login Page', function () {
     it('should let you log in', function () {
         browser.url('./login');
@@ -398,39 +439,37 @@ describe('Login Page', function () {
         $('=Settings').waitForExist();
 
         // Get the URL of the page, which should no longer include 'login'
-        expect(browser.getUrl()).to.not.include('/login');
+        expect(browser.getUrl()).not.toContain('/login');
     });
 });
 ```
 
-If we run our test again, we'll notice that they now... still fail. What gives?
+Now the test passes if we do login successfully and fails if we don't. 
+
+Oh, it's a good idea to go back to your `wdio.conf.js` file and comment out that `browser.throttle` line. There's no reason to keep our tests running slow anymore. 
 
 ## 2.3.5 Waiting with Inverse Waits
 
-If you watched the page, you may have noticed that the script did pause until the login finished. However, this apparently wasn't enough waiting with our artificially slow connection (if you comment out the `browser.setNetworkConditions` command call, the test will likely pass).
+Let's look at an alternative approach we can take, just to learn a little bit more about these `wait` commands.
 
-The reason is that the `Settings` link appears before the page actually redirects. On a slow connection, this is enough time to cause the failure.
+Instead of waiting for an element to appear, we can conversely wait for one to disappear. This is done through the same command by passing in a special option. 
 
-Instead of waiting for an element to appear, we can conversely wait for one to disappear. This is done through the same command, just by passing in a boolean flag at the end. 
-
-Let's try waiting for the "Sign In" button to stop existing, as it disappears from the DOM as soon as we navigate away from the login page. The command almost looks the same as before, but we've added two new parameters to the end:
+Instead of waiting for the 'Settings' link to appear, instead we'll wait for the "Sign In" button to stop existing, (it disappears from the DOM as soon as we navigate away from the login page). The command almost looks the same as before, but now we're passing in an options object with a property of `reverse` set to true:
 
 ```js
-$('button*=Sign in').waitForExist(undefined, true);
+$('button*=Sign in').waitForExist({ reverse: true });
 ```
 
-`waitForExist` (and the other `waitFor*` commands), take two arguments:
+`waitForExist` (and the other `waitFor*` commands), takes a single argument, which is an object of several possible options:
 
-1. The first is an override to the default `waitForTimeout` amount. Since we don't want to override it, we can just pass in `undefined` and WebdriverIO will stick with the default.
-2. The second is a boolean flag that will reverse how the `waitFor` command works. In this case, if that flag is `true`, it instead waits for the selector to **not** match any elements (the default value is `false`).
+1. An override to the default `timeout` amount. Since we don't want to override it, we can just leave it out and WebdriverIO will stick with the default.
+2. A boolean flag that will reverse how the `waitFor` command works. In this case, if that flag is `true`, it instead waits for the selector to **not** match any elements (the default value is `false`). We want this, so we add it as an option
+3. A `timeoutMsg` to show if the `timeout` is met, which whill be logged out upon that error showing.
+4. An `interval` to wait between checking for the element to exist. The `waitForExist` command run the `isExisting` command multiple times if necessary, and this `interval` defines how long to wait until running that `isExisting` command again if the previous one failed.
 
-So in our code, we say "wait the default amount of time for a `<button>` with text of 'Sign in' to stop existing in the HTML".
-
-Here it is in the full test (notice that I stored the `Sign in` button element for better re-use): 
+Here it is in the full test:
 
 ```js
-const expect = require('chai').expect;
-
 describe('Login Page', function () {
     it('should let you log in', function () {
         browser.url('./login');
@@ -440,19 +479,22 @@ describe('Login Page', function () {
 
         const $signIn = $('button*=Sign in');
         $signIn.click();
+        $signIn.waitForExist({ reverse: true });
 
-        $signIn.waitForExist(undefined, true);
-
-        // Get the URL of the page, which should no longer include 'login'
-        expect(browser.getUrl()).to.not.include('/login');
+        expect($('.error-messages li')).not.toBeExisting();
     });
 });
 ```
 
-Now when we run our tests, they actually pass! It took a little bit of trial and error, but eventually we got to the right solution (Side note: You should get to use this if you're going to continue down the path of testing. Nothing is as simple as it seems).
+One thing to notice: I stored the `Sign in` button element for better re-use. Then I use that refence in the next two steps. By doing this, we only have to define our selector once, making updates to that selector changes much easier (this will be a common theme as we get into Page Objects).
+
+Also note the `$` prefix of our variable name. That's not required in any way, but I find it helpful to differentiate between WebdriverIO element references and other variables that might be stored. For example, if you were to see `$message` and `message`, it's not a stretch to guess that `$message` is a WebdriverIO element reference, while the other has to do with actual text.
+
+Well, it took a little bit of trial and error, but eventually we got to a good solution! You should get to use this if you're going to continue down the path of testing. Nothing is as simple as it seems.
 
 We still have two more tests that we want to write for our login page, but we're going to save that for the next chapter.
 
 ## 2.3.6 Chapter Challenge
+
 - Update the 'waitFor' code to instead use `waitForDisplayed`
 - Instead of waiting for the "Sign in" button to stop existing, try waiting for the "Your Feed" tab to appear.

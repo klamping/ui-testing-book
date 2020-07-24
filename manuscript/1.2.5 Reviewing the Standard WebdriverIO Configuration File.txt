@@ -69,9 +69,9 @@ Let's move on to the capabilities section, which groups the information needed b
 // First, you can define how many instances should be started at the same time. Let's
 // say you have 3 different capabilities (Chrome, Firefox, and Safari) and you have
 // set maxInstances to 1; wdio will spawn 3 processes. Therefore, if you have 10 spec
-// files and you set maxInstances to 10, all spec files will get tested
-// at the same time and 30 processes will get spawned. The property handles how
-// many capabilities from the same test should run tests.
+// files and you set maxInstances to 10, all spec files will get tested at the same time
+// and 30 processes will get spawned. The property handles how many capabilities
+// from the same test should run tests.
 //
 maxInstances: 10,
 ```
@@ -96,30 +96,24 @@ A word of warning. While running tests in parallel can certainly save time, it a
 // https://docs.saucelabs.com/reference/platforms-configurator
 //
 capabilities: [{
-// maxInstances can get overwritten per capability. So if you have an in-house Selenium
-// grid with only 5 firefox instances available you can make sure that not more than
-// 5 instances get started at a time.
+
+    // maxInstances can get overwritten per capability. So if you have an in-house Selenium
+    // grid with only 5 firefox instances available you can make sure that not more than
+    // 5 instances get started at a time.
     maxInstances: 5,
     //
-    browserName: 'firefox',
-// If outputDir is provided WebdriverIO can capture driver session logs
-// it is possible to configure which logTypes to include/exclude.
-// excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
-// excludeDriverLogs: ['bugreport', 'server'],
+    browserName: 'chrome',
+    acceptInsecureCerts: true
+    // If outputDir is provided WebdriverIO can capture driver session logs
+    // it is possible to configure which logTypes to include/exclude.
+    // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
+    // excludeDriverLogs: ['bugreport', 'server'],
 }],
 ```
 
 Up next is our `capabilities` setting. Again, the value is an array, which means that we can run our tests in multiple browsers each time we use the test runner.
 
-The configuration here looks similar to what we provided in the `desiredCapabilities` of our first `test.js` file.
-
-The default browser the test runner wants to use is Firefox, so we need to switch that to be Chrome for now just to be consistent with our previous test. Your capabilities setting can get pretty complex, but for now it should look like:
-
-```js
-capabilities: [{
- browserName: 'chrome'
-}]
-```
+The configuration here looks similar to what we provided in the `desiredCapabilities` of our first `test.js` file. Your capabilities setting can get pretty complex, but for now we can leave it as is.
 
 Note that within your capabilities you can overwrite the `spec`, `exclude`, and `maxInstances` options in order to group specific specs to a specific capability.
 
@@ -142,8 +136,8 @@ It defaults to `info`, which is a good mix in-between the two ends of the spectr
 #### Bail
 
 ```js
-// If you only want to run your tests until a specific amount of tests have failed
-// use bail (default is 0 - don't bail, run all tests).
+// If you only want to run your tests until a specific amount of tests have failed use
+// bail (default is 0 - don't bail, run all tests).
 bail: 0,
 ```
 
@@ -152,11 +146,11 @@ The `bail` setting can be useful if you only want to run your tests until a spec
 #### Base URL
 
 ```js
-// Set a base URL in order to shorten url command calls. If your `url` parameter
-// starts with `/`, the base url gets prepended, not including the path portion
-// of your baseUrl. If your `url` parameter starts without a scheme or `/`
-// (like `some/path`), the base url gets prepended directly.
-baseUrl: 'https://webdriver.io',
+// Set a base URL in order to shorten url command calls. If your `url` parameter starts
+// with `/`, the base url gets prepended, not including the path portion of your baseUrl.
+// If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
+// gets prepended directly.
+baseUrl: 'http://localhost',
 ```
 
 We've also already talked about `baseUrl`, so we'll jump past that setting as well.
@@ -174,8 +168,8 @@ waitforTimeout: 10000,
 
 ```js
 // Default timeout in milliseconds for request
-// if Selenium Grid doesn't send response
-connectionRetryTimeout: 90000,
+// if browser driver or grid doesn't send response
+connectionRetryTimeout: 120000,
 //
 // Default request retries count
 connectionRetryCount: 3,
@@ -190,10 +184,10 @@ The `connectionRetryTimeout` and `connectionRetryCount` options are useful to ad
 // Services take over a specific job you don't want to take care of. They enhance
 // your test setup with almost no effort. Unlike plugins, they don't add new
 // commands. Instead, they hook themselves up into the test process.
-services: ['selenium-standalone'],
+services: ['chromedriver'],
 ```
 
-Here's an array of services we have choosen to run when using the test runner. These services provided added features. In this instance, we've got the 'selenium-standalone' service enabled (assuming you chose to install it). The overall option is an array, so yes, you can have multiple services running at once.
+Here's an array of services we have choosen to run when using the test runner. These services provide added features. In this instance, we've got the 'chromedriver' service enabled (assuming you chose to install it). The overall option is an array, so yes, you can have multiple services running at once.
 
 Do note that not all services work together. For example, you wouldn't want to have the following services array:
 
@@ -241,7 +235,7 @@ mochaOpts: {
 
 The `mochaOpts` option is useful for passing configurations for Mocha to use. Here it defines using the `bdd` ui type, which says we want to write our tests in [the Behavior-driven Development style](https://mochajs.org/#interfaces).
 
-A `timeout` setting of 60000 is provided, which says that after 60000 milliseconds of running (or 60 seconds), our test will "timeout". Some tests can take up to three minutes to run, so updating this value to 180000 can be useful if you're tests take a little longer to complete.
+A `timeout` setting of 60000 is provided, which says that after 60000 milliseconds of running (or 60 seconds), our test will "timeout". Some tests can take up to three minutes to run, so updating this value to 180000 can be useful if your tests take a little longer to complete.
 
 There are more options you can define here for Mocha, and you can get a full list of options to set via [the Mocha website](https://mochajs.org/#command-line-usage).
 

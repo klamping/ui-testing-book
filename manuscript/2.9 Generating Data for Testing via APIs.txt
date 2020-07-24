@@ -27,6 +27,7 @@ When an article is created, a user can add 'tags' to that article to mark it as 
 
 To represent this page in our code, let's create a new "tag" page. If you look at this page, you'll notice that it's almost exactly the same as the home page, just with an extra tab for the specific tag. What we can do is instead of duplicating the Home page object, instead just extend off of it. 
 
+{title="test/pageObjects/Tag.page.js"}
 ```js
 const Home = require('./Home.page');
 
@@ -72,8 +73,9 @@ Option #3 is the method we're going to try now. By generating the data "just in 
 
 To tackle this, we need to update our API file to add a new `createArticle` function. This function will accept user and article details (the post will be attributed to that specific user). 
 
-Here's what the updated `api.js` file will look like:
+Here's what the updated `Api.js` file will look like:
 
+{title="utils/Api.js"}
 ```js
 const axios = require('axios');
 
@@ -140,8 +142,8 @@ Tests:
 
 We've covered everything we need to know to build out these tests, so let's jump right into the code:
 
+{title="test/specs/tag.js"}
 ```js
-const expect = require('chai').expect;
 const { user1 } = require('../fixtures/users');
 const Tag = require('../pageObjects/Tag.page');
 
@@ -171,17 +173,17 @@ describe('Tag Feed', function () {
 
     it('should have tag tab', function () {
         // check that we're on the tag tab
-        expect(tagPage.activeFeedTabText).to.deep.equal([tagName]);
+        expect(tagPage.feeds.$$activeFeedTabs[0]).toHaveText(tagName, { trim: true })
     });
 
     it('should load only articles for that tag', function () {
-        expect(tagPage.currentFeed.$$articles).to.have.length(1);
+        expect(tagPage.currentFeed.$$articles).toHaveChildren(1);
     });
     
     it('should load correct article preview details', function () {
         const firstArticleDetails = tagPage.currentFeed.articles[0].getDetails();
 
-        expect(firstArticleDetails).to.deep.include({
+        expect(firstArticleDetails).toMatchObject({
             title: articleDetails.title,
             description: articleDetails.description
         });
@@ -191,31 +193,30 @@ describe('Tag Feed', function () {
 
 Hopefully this is starting to look familiar by now. The one idea we haven't covered before is dynamically generating the `Tag` page in our `before` hook. But there's nothing too special about this approach; we're merely changing where we create it. 
 
-We also use the `deep.include` assertion in the final test. We haven't covered this before, but it essentially allows us to check than an object has specific properties with specific values. There's [more documentation available on the Chai website](https://www.chaijs.com/api/bdd/#method_deep) if you're interested.
-
 ## 2.9.4 Cleaning up our mess
 
 One drawback to this "on the fly" approach to creating test data is that every test run generates new content. Over time, after many test runs, our website will be flooded with random articles. This isn't always a negative, as it can inadvertently help test that the site works well even with a lot of data on it. But, there are likely much better ways to validate that.
 
-With that said, let's look at how we can "clean up" after our test, by making an API call to delete the article we used for our test. Back in the `api.js` file, let's add a new function that takes the `slug` of an article and makes a request to delete it. We also still need to pass in the user so that we have a proper auth token in order for our request to delete. 
+With that said, let's look at how we can "clean up" after our test, by making an API call to delete the article we used for our test. Back in the `Api.js` file, let's add a new function that takes the `slug` of an article and makes a request to delete it. We also still need to pass in the user so that we have a proper auth token in order for our request to delete. 
 
-```
+{title="utils/Api.js"}
+```js
 async deleteArticle(user, slug) {
     const token = await this.getAuthToken(user);
     return this.client.delete(`articles/${slug}`, { headers: { 'Authorization': `Token ${token}` }});
 }
 ```
 
-Again, I won't get into the details on the Conduit API much, because it's specific to this instance. The exact code you'll need to write will depend heavily on the website that you're testing. We also could do better than retrieving the user token everytime we need it (e.g., store it somewhere), but again I didn't want to get too bogged down with technical implementations here. 
+Again, I won't get into the details on the Conduit API much, because it's specific to this instance. The exact code you'll need to write will depend heavily on the website that you're testing. We also could do better than retrieving the user token every time we need it (e.g., store it somewhere), but again I didn't want to get too bogged down with technical implementations here. 
 
 Now to call this `deleteArticle` function. We only want to delete the article after all our tests are completed, so we'll make that call in the `after` Mocha hook:
 
-```
-  after(function () {
-        browser.call(() => {
-            return global.api.deleteArticle(user1, articleResponse.slug);
-        });
-  })
+```js
+after(function () {
+    browser.call(() => {
+        return global.api.deleteArticle(user1, articleResponse.slug);
+    });
+})
 ```
 
 Note that we get the generated slug from the API response, which was stored back in our `before` hook.
@@ -224,4 +225,12 @@ With that added, we now have a set of tests that generate the needed data via AP
 
 ## 2.9.5 Exercises
 
-TODO come up with some good examples here :)
+Create a set of tests for the user profile page (e.g., https://demo.learnwebdriverio.com/@singlearticleuser/). These tests should be responsible for creating a unique profile with a article that shows on the "My Article" feed.
+
+The test should validate that:
+- Username is shown at top of the page
+- You can follow/unfollow the user if you are logged in
+- Two tabs are shown: 'My Articles' and 'Favorited Articles'
+  - The content for those tabs is correct
+  - It's up to you whether you want to write the API code to "favorite" an article
+

@@ -11,7 +11,7 @@
 2.0 A Real World App.txt
 2.1 Site Loading and Navigation.txt
 2.2 Selectors of Every Shape and Size.txt
-2.3 Waiting For Page Elements.txt
+2.3 Testing the Login Page.txt
 2.4 Custom Functions, Page Objects and Actions.txt
 2.5 Sharing Common Page Object Functionality.txt
 2.6 Testing Complex Inputs.txt

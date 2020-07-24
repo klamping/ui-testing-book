@@ -22,6 +22,7 @@ Looking over the options, I prefer the last one as it includes the chance that c
 
 Now, using our previous knowledge, let's update the `Home` page object to include our new `activeFeedTabText` element reference: 
 
+{title="test/pageObjects/Home.page.js"}
 ```js
 const Generic = require('./Generic.page');
 
@@ -44,7 +45,7 @@ Now it's time to use it in our test. Usage is similar to the previous test we wr
 ```js
 it('should default to showing the global feed', function () {
     // get all tabs with an 'active' class, check that only one returns and has correct text
-    expect(home.activeFeedTabText).to.deep.equal(['Global Feed']);
+    expect(home.activeFeedTabText).toEqual(['Global Feed']);
 })
 ```
 
@@ -52,6 +53,7 @@ With that written, there's a little bit of optimization we can do to our Home pa
 
 So, in a new file, we'll define an exported object with a single function property that acts as our mapped method:
 
+{title="utils/functions.js"}
 ```js
 module.exports = {
     getTrimmedText: $el => $el.getText().trim()
@@ -90,13 +92,13 @@ it('should let you switch between global and personal feeds', function () {
     // Click on that tab
     yourFeedTab.click();
     // Validate 'active' tab is now `Your Feed`
-    expect(home.activeFeedTabText).to.deep.equal(['Your Feed']);
+    expect(home.activeFeedTabText).toEqual(['Your Feed']);
     // get the tab that has `Global` as text
     const globalFeedTab = home.$$feedTabs.find($tab => $tab.getText() === 'Global Feed')
     // Click on that tab
     globalFeedTab.click();
     // validate again
-    expect(home.activeFeedTabText).to.deep.equal(['Global Feed']);
+    expect(home.activeFeedTabText).toEqual(['Global Feed']);
 })
 ```
 
@@ -118,17 +120,18 @@ const tabs = home.$$feedTabs.reduce(function (accTabs, tab) {
 // click on 'Your feed' tab
 tabs['Your Feed'].click();
 // // validate 'active' tabs are correct
-expect(home.activeFeedTabText).to.deep.equal(['Your Feed']);
+expect(home.activeFeedTabText).toEqual(['Your Feed']);
 // // click 'Global' tab
 tabs['Global Feed'].click();
 // // validate again
-expect(home.activeFeedTabText).to.deep.equal(['Global Feed']);
+expect(home.activeFeedTabText).toEqual(['Global Feed']);
 ```
 
 The above is definitely a more complex coding example (understanding the `reduce` function is worthy of a PhD in my opinion), so I won't dive in to details here as it revolves more around JavaScript coding than testing. It also has its own drawback, especially if two tabs share the same name; I simply wanted to mention it as an alternative. 
 
 How about another option? We'll create a `clickTab` function on the Home page object, which looks like:
 
+{title="test/pageObjects/Home.page.js"}
 ```js
 const Generic = require('./Generic.page');
 const { getTrimmedText } = require('../../utils/functions')
@@ -147,7 +150,7 @@ class Home extends Generic {
         tabToClick.click();
         browser.waitUntil(() => {
             return this.activeFeedTabText[0] === tabText;
-        }, undefined, 'Active tab text never switched to desired text');
+        }, { timeoutMsg: 'Active tab text never switched to desired text' });
     }
 }
 
@@ -163,11 +166,11 @@ it('should let you switch between global and personal feeds', function () {
     // click on 'Your feed' tab
     home.clickTab('Your Feed');
     // // validate 'active' tabs are correct
-    expect(home.activeFeedTabText).to.deep.equal(['Your Feed']);
+    expect(home.activeFeedTabText).toEqual(['Your Feed']);
     // click 'Global' tab
     home.clickTab('Global Feed');
     // validate again
-    expect(home.activeFeedTabText).to.deep.equal(['Global Feed']);
+    expect(home.activeFeedTabText).toEqual(['Global Feed']);
 })
 ```
 
@@ -238,32 +241,33 @@ That text is removed from the page once the content is loaded, meaning we can us
 
 All that's great, except the name of the command we're going to use is `waitForExist()`, not `waitForNotExist()`. How do we do achieve the opposite effect of the name of the command?
 
-Well, all `waitFor` commands allow you to switch the condition to the opposite by passing in a boolean flag as the second argument. (TODO this changed in V6)
+Well, all `waitFor` commands allow you to switch the condition to the opposite by passing in a boolean flag via an `options` object.
 
 Here's the usage information from the WebdriverIO documentation:
 
 ```js
-$(selector).waitForExist(ms, reverse, error)
+$(selector).waitForExist({ timeout, reverse, timeoutMsg, interval })
 ```
 
-`ms` represents the time in milliseconds to wait. We don't want to change that from the default, so we'll pass in the value `undefined`.
+`timeout` represents the time in milliseconds to wait. We don't want to change that from the default, so we'll leave it out.
 
 `reverse` should be set to `true` if it instead waits for the selector to not match any elements (which is what we want).
 
-We can ignore `error` because JavaScript allows us to leave off any extra parameters we don't want changed.
+We'll ignore `timeoutMsg` and `interval` as well, because we don't want those changed.
 
 Bringing that all together, we can wait for the "Loading Articles..." text to disappear with the following code:
 
 ```js
-$('div=Loading Articles...').waitForExist(undefined, true)
+$('div=Loading Articles...').waitForExist({ reverse: true });
 ```
 
-A quick note. It can be tricky to figure out the HTML of these loading indicators because they often disappear before you can inspect them. Thankfully, the built-in browser development tools often have a way to artificially throttle your connection speed (think back to how we did this in Chapter 2.3.3 with `setNetworkConditions`). Here's how to do that in Chrome: https://developers.google.com/web/tools/chrome-devtools/network/reference#throttling
+A quick note. It can be tricky to figure out the HTML of these loading indicators because they often disappear before you can inspect them. Thankfully, the built-in browser development tools often have a way to artificially throttle your connection speed (think back to how we did this in Chapter 2.3.3 with `browser.throttle`). Here's how to do that in Chrome: https://developers.google.com/web/tools/chrome-devtools/network/reference#throttling
 
 So with the network throttled to a slowed down speed, you can reload you page, then switch the setting to 'offline' and have an indefinite time to inspect the HTML. When you've figured out what you need, set the condition back to 'online' and continue with your work.
 
 While I used the actual text in the previous example, there's also a `data-qa-id` attribute on that div, which is what we'll use for our updated page object:
 
+{title="test/pageObjects/Home.page.js"}
 ```js
 class Home extends Generic {
     // ... some contents omitted for brevity ...
@@ -275,8 +279,8 @@ class Home extends Generic {
         tabToClick.click();
         browser.waitUntil(() => {
             return this.activeFeedTabText[0] === tabText;
-        }, undefined, 'Active tab text never switched to desired text'
-        this.$articleLoadingIndicator.waitForExist(undefined, true);
+        }, { timeoutMsg: 'Active tab text never switched to desired text' });
+        this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
 }
 ```
@@ -299,6 +303,7 @@ Can we follow this pattern in our tests, building out not page objects, but page
 
 Let's start with the basic idea of what a page component should be: a simple reference to a page element. From that, we'll extend it to our individual needs:
 
+{title="test/pageObjects/components/Component.js"}
 ```js
 /*
  * This is the most basic form of a component.
@@ -306,18 +311,18 @@ Let's start with the basic idea of what a page component should be: a simple ref
  */
 
 class Component {
-    // 'origin' is the main element that all other selectors for that component are based upon.
+    // 'selector' is the selector for the main element that all other selectors for that component are based upon.
     // This can be the main container element, or an input element that has a specific id
-    // 'origin' can be either a selector, or a wdio element
-    // The $origin element can be used to move up via xpath:
-    // const $originParent = this.$origin.$('..');
+    // 'selector' can be either a selector, or a wdio element
     constructor (selector, options = {}) {
         this.selector = selector;
         this.options = options;
     }
 
+    // The $origin element can be used to move up via xpath:
+    // const $originParent = this.$origin.$('..');
     get $origin () {
-        // allow selector to be a WDIO element
+        // allow 'selector' to be a WDIO element
         return (typeof this.selector === 'string') ? $(this.selector) : this.selector;
     }
 }
@@ -337,6 +342,7 @@ In it, we'll load the component file we just created, define two article referen
 
 Here's how it looks:
 
+{title="test/pageObjects/components/Feed.js"}
 ```js
 const Component = require('./Component');
 
@@ -344,7 +350,7 @@ class Feed extends Component {
     get $$articles () { return this.$origin.$$('[data-qa-type="article-preview"]') }
     get $articleLoadingIndicator () { return this.$origin.$('[data-qa-id="article-loading-indicator"]') }
     waitForLoad () {
-        this.$articleLoadingIndicator.waitForExist(undefined, true);
+        this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
 }
 ```
@@ -369,7 +375,7 @@ Then, let's add a new reference in our object, getting the currently shown 'feed
 get currentFeed () { return new Feed('[data-qa-type="article-list"]'); }
 ```
 
-How does this selector work? Well, if you were to inspect the HTML on the page as you switch tabs, you'd notice that the code for the article list is completely switched out everytime a tab is clicked, meaning that there's only ever one element that matches the `'[data-qa-type="article-list"]'` selector. That's why we can use that single selector to find our feed, even though they're technically two different items.
+How does this selector work? Well, if you were to inspect the HTML on the page as you switch tabs, you'd notice that the code for the article list is completely switched out every time a tab is clicked, meaning that there's only ever one element that matches the `'[data-qa-type="article-list"]'` selector. That's why we can use that single selector to find our feed, even though they're technically two different items.
 
 With our `currentFeed` defined, we can use it and the `waitForLoad` function on the Feed class, to make our Home page wait until the feed is loaded to continue on. 
 
@@ -379,9 +385,9 @@ Say we were to define a new `load` function in the Home page object:
 
 ```js
 class Home extends Generic {
-  load () {
-    this.currentFeed.waitForLoad();
-  }
+    load () {
+        this.currentFeed.waitForLoad();
+    }
 }
 ```
 
@@ -393,20 +399,21 @@ If you recall from our constructor we do something similar by calling `super()` 
 
 Going back to the Home page object, we'll add that `super.load()` call to our `load` function, and also add the `this.currentFeed.waitForLoad();` call to our `clickTab` function so that it as well waits for the feed content to load before continuing on:
 
+{title="test/pageObjects/Home.page.js"}
 ```js
-  load () {
-    super.load();
-    this.currentFeed.waitForLoad();
-  }
-  
-  clickTab (tabText) {
-      const tabToClick = this.$$feedTabs.find($tab => $tab.getText() === tabText);
-      tabToClick.click();
-      browser.waitUntil(() => {
-          return this.activeFeedTabText[0] === tabText;
-      }, undefined, 'Active tab text never switched to desired text'
-      this.currentFeed.waitForLoad();
-  }
+    load () {
+        super.load();
+        this.currentFeed.waitForLoad();
+    }
+    
+    clickTab (tabText) {
+        const tabToClick = this.$$feedTabs.find($tab => $tab.getText() === tabText);
+        tabToClick.click();
+        browser.waitUntil(() => {
+            return this.activeFeedTabText[0] === tabText;
+        }, { timeoutMsg: 'Active tab text never switched to desired text' });
+        this.currentFeed.waitForLoad();
+    }
 ```
 
 ## 2.8.7 Testing Feeds
@@ -432,11 +439,11 @@ before(function () {
 })
 ```
 
-Then, we'll write our test that checks that the length of the feed is correct (which will be 1, from a special account we follow that only has a single article).
+Then, we'll write our test that checks that the number of items in the feed is correct (which will be 1, from a special account we follow that only has a single article). We use [the 'toHaveChildren' check](https://webdriver.io/docs/api/expect.html#tohavechildren), which looks at the amount of fetched elements using `$$` command and compares them to the number passed in.
 
 ```js
 it('should show most recent articles from people you follow', function () {
-    expect(home.currentFeed.$$articles).to.have.length(1);
+    expect(home.currentFeed.$$articles).toHaveChildren(1);
 })
 ```
 
@@ -451,7 +458,7 @@ describe('Homepage', function () {
             home.load();
         })
 
-        // tests here hidden for brevity
+        // tests hidden here for brevity
 
         describe('Personal Feed', function () {
             before(function () {
@@ -462,7 +469,7 @@ describe('Homepage', function () {
             })
 
             it('should show most recent articles from people you follow', function () {
-                expect(home.currentFeed.$$articles).to.have.length(1);
+                expect(home.currentFeed.$$articles).toHaveChildren(1);
             })
         })
 
@@ -491,6 +498,7 @@ We should do due diligence and check the content of the article preview, which t
 
 Let's use this outline to create a new page component, similar to how we setup the 'Feed' component:
 
+{title="test/pageObjects/components/ArticlePreview.js"}
 ```js
 const Component = require('./Component');
 
@@ -516,6 +524,7 @@ To do this, we'll need to do two things:
 
 Here's what the updated file looks like:
 
+{title="test/pageObjects/components/Feed.js"}
 ```js
 const Component = require('./Component');
 const ArticlePreview = require('./ArticlePreview');
@@ -525,7 +534,7 @@ class Feed extends Component {
     get articles () { return this.$$articles.map($article => new ArticlePreview($article)); }
     get $articleLoadingIndicator () { return this.$origin.$('[data-qa-id="article-loading-indicator"]') }
     waitForLoad () {
-        this.$articleLoadingIndicator.waitForExist(undefined, true);
+        this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
 }
 
@@ -536,8 +545,7 @@ Finally, we'll add a new test that checks the title of the first article in the 
 
 ```js
 it('should show most recent article first', function () {
-    const firstArticleTitle = home.currentFeed.articles[0].$title.getText();
-    expect(firstArticleTitle).to.equal('An Article');
+    expect(home.currentFeed.articles[0].$title).toHaveText('An Article');
 });
 ```
 
@@ -550,7 +558,7 @@ So, to recap:
 
 It's nice to know the title is correct, as it's a very positive sign that the correct data is being displayed. But if we have reference to the full article details, why not check against that as well?
 
-While we could copy/paste the test code from before, it would be more helpful to create a helper function that organizes those `getText` calls for us.
+While we could copy/paste the test code from before, it would be more helpful to create a helper function that gets all the article information on the page for us.
 
 In our `ArticlePreview` class, let's create a `getDetails` function that retrieves the text in a test friendly format for asserting against:
 
@@ -568,15 +576,18 @@ getDetails() {
 }
 ```
 
-Then, we'll update our test to reference the new `getDetails` function, validating the details:
+Then, we'll update our test to reference the new `getDetails` function, validating the details. The assertion we'll use is [`toMatchObject`](https://jestjs.io/docs/en/expect#tomatchobjectobject), which is part of ExpectJS and allows us to compare two objects with each other (here, it's the object returned from `getDetails`, with an object of expected data on the page). 
 
 ```js
 it('should show most recent article first', function () {
     const firstArticleDetails = home.currentFeed.articles[0].getDetails();
-    expect(firstArticleDetails).to.have.property('author', 'singlearticleuser');
-    expect(firstArticleDetails).to.have.property('date', 'May 1, 2020');
-    expect(firstArticleDetails).to.have.property('title', 'An Article');
-    expect(firstArticleDetails).to.have.property('description', 'A Single Article');
+    expect(firstArticleDetails).toMatchObject({
+        author: 'singlearticleuser',
+        'date': 'May 1, 2020',
+        title: 'An Article',
+        description: 'A Single Article',
+        tags: []
+    })
 });
 ```
 
@@ -584,7 +595,14 @@ As you see, we can dynamically create multiple page components on-the-fly for ou
 
 Also, it complicates the code a bit. Anyone new to the codebase would need to look into what the 'Feed' and 'ArticlePreview' components do in order to really understand the test. As will all things in code, by trying to reduce the complexity, you end up introducing new complexities. Sometimes you just can't win :D
 
-## 2.8.10 Exercises
+## 2.8.10 Chapter Challenge
 
-Make a 'tags' class that can be used to more easily get the tags array and contents
-Create a set of tests for the user profile page: https://demo.learnwebdriverio.com/@singlearticleuser/
+Use the API to get the tags to be shown on the 'Popular Tags' section on the homepage.
+
+With that data, add a test that asserts those tags are properly shown.
+
+Hint:
+The endpoint to get the tags is be `/tags/` (e.g., https://conduit-api.learnwebdriverio.com/api/tags/)
+
+
+
