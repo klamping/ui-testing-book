@@ -134,7 +134,11 @@ If you're looking to compare the two, [this cheatsheet put together by devhints.
 There are two big tricks that XPath can do that CSS currently can't. The first is to select an element by its text content, which looks something like: `//a[contains(text(),"chive")]`. The other is the ability to move "up" from an element. So you can use XPath to select a parent of an element, which isn't possible yet in CSS.
 
 We can combine these two techniques to find the parent container of our 'Archive' link:
-`//a[contains(text(),"chive")]/ancestor::ul`
+
+```
+//a[contains(text(),"chive")]/ancestor::ul
+```
+
 This technique can be very helpful when you're limited in customizing the HTML of a page and need to rely on what the text says. 
 
 Regardless of CSS vs. XPath, you can use the Chrome Developer tools to help [evaluate and validate XPath/CSS selectors](http://yizeng.me/2014/03/23/evaluate-and-validate-xpath-css-selectors-in-chrome-developer-tools/) you're working on. This is a useful tool for building and testing selectors.

@@ -654,7 +654,7 @@ Having elements appear and disappear is an essential part of today's Web Apps, b
 
 Our new assertions are pretty nice, especially since we didn't have to install anything, but we have an issue with them.
 
-Looking at the second assertion, it's limited in its flexibility. In it, we validated the entire URL. But what if we want to test a different instance of the same site (e.g., `https://my-even-better-conduit-demo.com/login`)? Our assertion would fail even though the navigation to the Login page still worked (because the top-level domain is different, even though the `/login` part of the URL was correct).
+Looking at the second assertion, it's limited in its flexibility. In it, we validated the entire URL. But what if we want to test a different instance of the same site? Our assertion would fail even though the navigation to the Login page still worked (because the top-level domain is different, even though the `/login` part of the URL was correct).
 
 We want the test to pass no matter the domain name (since we could be testing this same site on any number of different domains). Right now, with our `toHaveUrl` assertion, it will only pass if we're testing the `http://localhost:8080` site.
 

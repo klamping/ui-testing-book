@@ -648,7 +648,7 @@ NodeJS comes several built-in utilities, some of which we've already tried out (
 
 URLs may seem simple, but they can be very complex. Take a look at the example structure provided by [the NodeJS website](https://nodejs.org/api/url.html#url_url_strings_and_url_objects):
 
-![Structuring Diagram of a URL](images/97F462D98A477B95358595C05E7918A5.jpg)
+![Structuring Diagram of a URL](images/707D03233DDB485EA3ECA2121AC12194.jpg)
 
 All of that can go into a URL, and trying to break a URL string into those separate parts is complicated. But this is where the URL module helps out. We can pass in that very long, complex URL string to the module, and it will return to us a `URL Object` that has all of those properties defined for us to use. 
 

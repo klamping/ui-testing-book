@@ -50,6 +50,7 @@ Notice how I'm not specific on what username we're using, what the input selecto
 
 Let's throw those comments into the file:
 
+{title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
     it('should let you log in', function () {
@@ -137,6 +138,7 @@ $('#inputId').setValue('nut'); // value is 'nut'
 
 Now that we've covered these actions, let put them to use. We're only going to be using `setValue` for our needs. 
 
+{title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
     it('should let you log in', function () {
@@ -251,7 +253,7 @@ Or is it? (VSauce fans should appreciate that)
 
 Here's the full test:
 
-{title=test/specs/login.js}
+{title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
     it('should let you log in', function () {
@@ -289,6 +291,7 @@ In this situation, we could add a 1 second pause to our code between clicking th
 
 Let's try it out:
 
+{title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
     it('should let you log in', function () {
