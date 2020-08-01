@@ -109,16 +109,29 @@ node test.js
 
 After a second, you should see a Chrome browser pop up for a moment, and some similar output in your terminal:
 
+%% TODO convert this to a screenshot?
+
 ```sh
-2020-07-24T21:03:30.968Z INFO webdriverio: Initiate new session using the devtools protocol
-2020-07-24T21:03:30.974Z INFO devtools: Launch Google Chrome with flags: --disable-extensions --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-sync --metrics-recording-only --disable-default-apps --mute-audio --no-first-run --disable-hang-monitor --disable-prompt-on-repost --disable-client-side-phishing-detection --password-store=basic --use-mock-keychain --disable-component-extensions-with-background-pages --disable-breakpad --disable-dev-shm-usage --disable-ipc-flooding-protection --disable-renderer-backgrounding --enable-features=NetworkService,NetworkServiceInProcess --disable-features=site-per-process,TranslateUI,BlinkGenPropertyTrees --window-position=0,0 --window-size=1200,900
-2020-07-24T21:03:31.535Z INFO devtools: Connect Puppeteer with browser on port 50210
-2020-07-24T21:03:32.772Z INFO devtools: COMMAND navigateTo("https://webdriver.io/")
-2020-07-24T21:03:35.366Z INFO devtools: RESULT null
-2020-07-24T21:03:35.373Z INFO devtools: COMMAND getTitle()
-2020-07-24T21:03:35.377Z INFO devtools: RESULT WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
-Title was: WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
-2020-07-24T21:03:35.380Z INFO devtools: COMMAND deleteSession()
+2020-07-24T21:03:30.968Z INFO webdriverio: Initiate new session using the
+devtools protocol 2020-07-24T21:03:30.974Z INFO devtools: Launch Google Chrome
+with flags: --disable-extensions --disable-background-networking
+--disable-background-timer-throttling --disable-backgrounding-occluded-windows
+--disable-sync --metrics-recording-only --disable-default-apps --mute-audio
+--no-first-run --disable-hang-monitor --disable-prompt-on-repost
+--disable-client-side-phishing-detection --password-store=basic
+--use-mock-keychain --disable-component-extensions-with-background-pages
+--disable-breakpad --disable-dev-shm-usage --disable-ipc-flooding-protection
+--disable-renderer-backgrounding
+--enable-features=NetworkService,NetworkServiceInProcess
+--disable-features=site-per-process,TranslateUI,BlinkGenPropertyTrees
+--window-position=0,0 --window-size=1200,900 2020-07-24T21:03:31.535Z INFO
+devtools: Connect Puppeteer with browser on port 50210 2020-07-24T21:03:32.772Z
+INFO devtools: COMMAND navigateTo("https://webdriver.io/")
+2020-07-24T21:03:35.366Z INFO devtools: RESULT null 2020-07-24T21:03:35.373Z
+INFO devtools: COMMAND getTitle() 2020-07-24T21:03:35.377Z INFO devtools: RESULT
+WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+Title was: WebdriverIO · Next-gen browser and mobile automation test framework
+for Node.js 2020-07-24T21:03:35.380Z INFO devtools: COMMAND deleteSession()
 2020-07-24T21:03:35.382Z INFO devtools: RESULT null
 ```
 
@@ -195,20 +208,24 @@ With our WebdriverIO settings updated and Chromedriver ready to go, we can call 
 Go ahead and run `node test.js` one more time and validate it all works. The output should be similar to before:
 
 ```sh
-2020-07-18T15:29:43.175Z INFO webdriverio: Initiate new session using the webdriver protocol
-2020-07-18T15:29:43.183Z INFO webdriver: [POST] http://localhost:9515/session
-2020-07-18T15:29:43.183Z INFO webdriver: DATA { capabilities:
-   { alwaysMatch: { browserName: 'chrome' }, firstMatch: [ {} ] },
-  desiredCapabilities: { browserName: 'chrome' } }
-2020-07-18T15:29:46.174Z INFO webdriver: COMMAND navigateTo("https://webdriver.io/")
-2020-07-18T15:29:46.175Z INFO webdriver: [POST] http://localhost:9515/session/8c1bfcbb0617b87676343fe9c658fc93/url
+2020-07-18T15:29:43.175Z INFO webdriverio: Initiate new session using the
+webdriver protocol 2020-07-18T15:29:43.183Z INFO webdriver: [POST]
+http://localhost:9515/session 2020-07-18T15:29:43.183Z INFO webdriver: DATA {
+capabilities: { alwaysMatch: { browserName: 'chrome' }, firstMatch: [ {} ] },
+desiredCapabilities: { browserName: 'chrome' } } 2020-07-18T15:29:46.174Z INFO
+webdriver: COMMAND navigateTo("https://webdriver.io/") 2020-07-18T15:29:46.175Z
+INFO webdriver: [POST]
+http://localhost:9515/session/8c1bfcbb0617b87676343fe9c658fc93/url
 2020-07-18T15:29:46.175Z INFO webdriver: DATA { url: 'https://webdriver.io/' }
 2020-07-18T15:29:48.210Z INFO webdriver: COMMAND getTitle()
-2020-07-18T15:29:48.210Z INFO webdriver: [GET] http://localhost:9515/session/8c1bfcbb0617b87676343fe9c658fc93/title
-2020-07-18T15:29:48.524Z INFO webdriver: RESULT WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
-Title was: WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+2020-07-18T15:29:48.210Z INFO webdriver: [GET]
+http://localhost:9515/session/8c1bfcbb0617b87676343fe9c658fc93/title
+2020-07-18T15:29:48.524Z INFO webdriver: RESULT WebdriverIO · Next-gen browser
+and mobile automation test framework for Node.js Title was: WebdriverIO ·
+Next-gen browser and mobile automation test framework for Node.js
 2020-07-18T15:29:48.525Z INFO webdriver: COMMAND deleteSession()
-2020-07-18T15:29:48.525Z INFO webdriver: [DELETE] http://localhost:9515/session/8c1bfcbb0617b87676343fe9c658fc93
+2020-07-18T15:29:48.525Z INFO webdriver: [DELETE]
+http://localhost:9515/session/8c1bfcbb0617b87676343fe9c658fc93
 ```
 
 While there are a few differences from before, the important one is the first line. See how it says it's using the WebDriver protocol? That's how we can know things are working as we want. 
@@ -247,20 +264,30 @@ const browser = await remote({
 Running our test once more with `node test.js`, you should see similar output:
 
 ```sh
-2020-07-18T15:33:51.348Z INFO webdriverio: Initiate new session using the webdriver protocol
-2020-07-18T15:33:51.356Z INFO webdriver: [POST] http://localhost:4444/wd/hub/session
+2020-07-18T15:33:51.348Z INFO webdriverio: Initiate new session using the webdri
+ver protocol
+2020-07-18T15:33:51.356Z INFO webdriver: [POST] http://localhost:4444/wd/hub/ses
+sion
 2020-07-18T15:33:51.356Z INFO webdriver: DATA { capabilities:
    { alwaysMatch: { browserName: 'chrome' }, firstMatch: [ {} ] },
   desiredCapabilities: { browserName: 'chrome' } }
-2020-07-18T15:33:54.807Z INFO webdriver: COMMAND navigateTo("https://webdriver.io/")
-2020-07-18T15:33:54.808Z INFO webdriver: [POST] http://localhost:4444/wd/hub/session/8e71129f6b0b4cb3cd09bd17b06bd6ca/url
+2020-07-18T15:33:54.807Z INFO webdriver: COMMAND navigateTo("https://webdriver.i
+o/")
+2020-07-18T15:33:54.807Z INFO webdriver: COMMAND navigateTo("https://webdriver.i
+o/")
+2020-07-18T15:33:54.808Z INFO webdriver: [POST] http://localhost:4444/wd/hub/ses
+sion/8e71129f6b0b4cb3cd09bd17b06bd6ca/url
 2020-07-18T15:33:54.808Z INFO webdriver: DATA { url: 'https://webdriver.io/' }
 2020-07-18T15:33:57.275Z INFO webdriver: COMMAND getTitle()
-2020-07-18T15:33:57.275Z INFO webdriver: [GET] http://localhost:4444/wd/hub/session/8e71129f6b0b4cb3cd09bd17b06bd6ca/title
-2020-07-18T15:33:57.288Z INFO webdriver: RESULT WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
-Title was: WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+2020-07-18T15:33:57.275Z INFO webdriver: [GET] http://localhost:4444/wd/hub/sess
+ion/8e71129f6b0b4cb3cd09bd17b06bd6ca/title
+2020-07-18T15:33:57.288Z INFO webdriver: RESULT WebdriverIO · Next-gen browser a
+nd mobile automation test framework for Node.js
+Title was: WebdriverIO · Next-gen browser and mobile automation test framework f
+or Node.js
 2020-07-18T15:33:57.289Z INFO webdriver: COMMAND deleteSession()
-2020-07-18T15:33:57.289Z INFO webdriver: [DELETE] http://localhost:4444/wd/hub/session/8e71129f6b0b4cb3cd09bd17b06bd6ca
+2020-07-18T15:33:57.289Z INFO webdriver: [DELETE]
+ http://localhost:4444/wd/hub/session/8e71129f6b0b4cb3cd09bd17b06bd6ca
 ```
 
 Again, line one shows that we're using the WebDriver protocol. And notice on line two that it posts to `http://localhost:4444/wd/hub/session`, using the path we provided.
@@ -272,6 +299,3 @@ If you instead of all that output you see an error that includes `RequestError: 
 This will be the end of our little test file. We're not going to be updating it anymore, and will in fact be leaving this whole `wdio-standalone` folder behind.
 
 Why? Because we're moving on to a much better way of using WebdriverIO through its test runner. That's coming up next.
-
-
-

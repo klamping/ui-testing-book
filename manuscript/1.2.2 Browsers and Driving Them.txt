@@ -71,7 +71,7 @@ To install the NPM package, run
 npm install -g chromedriver
 ```
 
-![Terminal Output from installed Chromedriver Globally](images/E98612E83AA301ACA18B813373384941.jpg)
+![Terminal Output from installing Chromedriver Globally](images/E98612E83AA301ACA18B813373384941.jpg)
 
 You can then start a chromdriver instance by running:
 

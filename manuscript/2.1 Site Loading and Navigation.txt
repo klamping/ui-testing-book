@@ -14,8 +14,11 @@ Take the following error I've run into in the past:
 That's not very helpful. Here, have a hint:
 
 ```sh
-(node:2155) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): channel closed
-(node:2155) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+(node:2155) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection
+ id: 1): channel closed
+(node:2155) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecate
+d. In the future, promise rejections that are not handled will terminate the Node.js
+ process with a non-zero exit code.
 ```
 
 So, is that caused by WebdriverIO, the Selenium-Standalone server, CucumberJS or the Allure reporter?
@@ -248,13 +251,13 @@ describe('Homepage', function () {
     it('should load properly', function () {
         // load the page
         browser.url('./');
-        
+
         // Get the title of the homepage, should be 'Conduit'
-        console.log(browser.getTitle())
-        
+        console.log(browser.getTitle());
+
         // Click the 'Sign in' navigation link
         $('=Sign in').click();
-        
+
         // Get the URL of the sign in page. It should include 'login'
         console.log(browser.getUrl());
     });
@@ -268,19 +271,30 @@ Make sure it's saved because it's now time to run it. Back on the command line, 
 The test should take about half a minute to complete. Once finished, you'll see log output that looks very similar to this:
 
 ```sh
-Execution of 1 spec files started at 2020-07-24T23:11:23.203Z
+/webdriverio/build/lib/utils/BaseReporter.js:336
+    throw _iteratorError;
+    ^
+
+TypeError: Cannot read property 'trim' of undefined
+    at getTestStatus 
+    (/node_modules/wdio-allure-reporter/build/reporter.js:68:41)aExecution of 1 spec
+ files started at 2020-07-24T23:11:23.203Z
 
 2020-07-24T23:11:23.231Z INFO @wdio/cli:launcher: Run onPrepare hook
-Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/branch-heads/4147@{#310}) on port 9515
+Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/br
+anch-heads/4147@{#310}) on port 9515
 Only local connections are allowed.
-Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+Please see https://chromedriver.chromium.org/security-considerations for suggestions
+ on keeping ChromeDriver safe.
 ChromeDriver was started successfully.
 2020-07-24T23:11:23.356Z INFO @wdio/cli:launcher: Run onWorkerStart hook
 2020-07-24T23:11:23.357Z INFO @wdio/local-runner: Start worker 0-0 with arg:
 [0-0] 2020-07-24T23:11:23.755Z INFO @wdio/local-runner: Run worker command: run
-2020-07-24T23:11:23.765Z INFO webdriverio: Initiate new session using the ./protocol-stub protocol
+2020-07-24T23:11:23.765Z INFO webdriverio: Initiate new session using the ./protocol
+-stub protocol
 [0-0] RUNNING in chrome - /test/specs/navigation.js
-[0-0] 2020-07-24T23:11:23.899Z INFO webdriverio: Initiate new session using the webdriver protocol
+[0-0] 2020-07-24T23:11:23.899Z INFO webdriverio: Initiate new session using the webd
+river protocol
 [0-0] 2020-07-24T23:11:23.902Z INFO webdriver: [POST] http://localhost:9515/session
 [0-0] 2020-07-24T23:11:23.902Z INFO webdriver: DATA {
   capabilities: {
@@ -289,33 +303,45 @@ ChromeDriver was started successfully.
   },
   desiredCapabilities: { browserName: 'chrome', acceptInsecureCerts: true }
 }
-[0-0] 2020-07-24T23:11:26.215Z INFO webdriver: COMMAND navigateTo("http://localhost:8080/")
-[0-0] 2020-07-24T23:11:26.216Z INFO webdriver: [POST] http://localhost:9515/session/92360947699c9250dbef80ada5d299fd/url
-[0-0] 2020-07-24T23:11:26.217Z INFO webdriver: DATA { url: 'http://localhost:8080/' }
+[0-0] 2020-07-24T23:11:26.215Z INFO webdriver: COMMAND navigateTo("http://localhost:
+8080/")
+[0-0] 2020-07-24T23:11:26.216Z INFO webdriver: [POST] http://localhost:9515/session/
+92360947699c9250dbef80ada5d299fd/url
+[0-0] 2020-07-24T23:11:26.217Z INFO webdriver: DATA { url: 'http://localhost:8080/' 
+}
 [0-0] 2020-07-24T23:11:27.928Z INFO webdriver: COMMAND getTitle()
-2020-07-24T23:11:27.928Z INFO webdriver: [GET] http://localhost:9515/session/92360947699c9250dbef80ada5d299fd/title
+2020-07-24T23:11:27.928Z INFO webdriver: [GET] http://localhost:9515/session/9236094
+7699c9250dbef80ada5d299fd/title
 [0-0] 2020-07-24T23:11:27.940Z INFO webdriver: RESULT Conduit
 [0-0] Conduit
-[0-0] 2020-07-24T23:11:27.941Z INFO webdriver: COMMAND findElement("link text", "Sign in")
-[0-0] 2020-07-24T23:11:27.941Z INFO webdriver: [POST] http://localhost:9515/session/92360947699c9250dbef80ada5d299fd/element
-[0-0] 2020-07-24T23:11:27.941Z INFO webdriver: DATA { using: 'link text', value: 'Sign in' }
+[0-0] 2020-07-24T23:11:27.941Z INFO webdriver: COMMAND findElement("link text", "Sig
+n in")
+[0-0] 2020-07-24T23:11:27.941Z INFO webdriver: [POST] http://localhost:9515/session/
+92360947699c9250dbef80ada5d299fd/element
+[0-0] 2020-07-24T23:11:27.941Z INFO webdriver: DATA { using: 'link text', value: 'Si
+gn in' }
 [0-0] 2020-07-24T23:11:27.969Z INFO webdriver: RESULT {
   'element-6066-11e4-a52e-4f735466cecf': '34d561d8-4300-48b5-a085-b30dce080609'
 }
-[0-0] 2020-07-24T23:11:27.975Z INFO webdriver: COMMAND elementClick("34d561d8-4300-48b5-a085-b30dce080609")
-2020-07-24T23:11:27.975Z INFO webdriver: [POST] http://localhost:9515/session/92360947699c9250dbef80ada5d299fd/element/34d561d8-4300-48b5-a085-b30dce080609/click
+[0-0] 2020-07-24T23:11:27.975Z INFO webdriver: COMMAND elementClick("34d561d8-4300-4
+8b5-a085-b30dce080609")
+2020-07-24T23:11:27.975Z INFO webdriver: [POST] http://localhost:9515/session/923609
+47699c9250dbef80ada5d299fd/element/34d561d8-4300-48b5-a085-b30dce080609/click
 [0-0] 2020-07-24T23:11:28.052Z INFO webdriver: COMMAND getUrl()
-[0-0] 2020-07-24T23:11:28.053Z INFO webdriver: [GET] http://localhost:9515/session/92360947699c9250dbef80ada5d299fd/url
+[0-0] 2020-07-24T23:11:28.053Z INFO webdriver: [GET] http://localhost:9515/session/9
+2360947699c9250dbef80ada5d299fd/url
 [0-0] 2020-07-24T23:11:28.102Z INFO webdriver: RESULT http://localhost:8080/login
 [0-0] http://localhost:8080/login
 [0-0] 2020-07-24T23:11:28.109Z INFO webdriver: COMMAND deleteSession()
-[0-0] 2020-07-24T23:11:28.110Z INFO webdriver: [DELETE] http://localhost:9515/session/92360947699c9250dbef80ada5d299fd
+[0-0] 2020-07-24T23:11:28.110Z INFO webdriver: [DELETE] http://localhost:9515/sessio
+n/92360947699c9250dbef80ada5d299fd
 [0-0] PASSED in chrome - /test/specs/navigation.js
 2020-07-24T23:11:28.334Z INFO @wdio/cli:launcher: Run onComplete hook
 
  "spec" Reporter:
 ------------------------------------------------------------------
-[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs/navigation.js
+[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs
+/navigation.js
 [chrome 84.0.4147.89 mac os x #0-0] Running: chrome (v84.0.4147.89) on mac os x
 [chrome 84.0.4147.89 mac os x #0-0] Session ID: 92360947699c9250dbef80ada5d299fd
 [chrome 84.0.4147.89 mac os x #0-0]
@@ -328,7 +354,8 @@ ChromeDriver was started successfully.
 Spec Files:  1 passed, 1 total (100% completed) in 00:00:05
 
 2020-07-24T23:11:28.336Z INFO @wdio/local-runner: Shutting down spawned worker
-2020-07-24T23:11:28.589Z INFO @wdio/local-runner: Waiting for 0 to shut down gracefully
+2020-07-24T23:11:28.589Z INFO @wdio/local-runner: Waiting for 0 to shut down gracefu
+lly
 2020-07-24T23:11:28.589Z INFO @wdio/local-runner: shutting down
 ```
 
@@ -337,9 +364,11 @@ In the middle of all that output are two lines with the content we need. Let's h
 ```sh
 Execution of 1 spec files started at 2020-07-24T23:12:13.610Z
 
-Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/branch-heads/4147@{#310}) on port 9515
+Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/br
+anch-heads/4147@{#310}) on port 9515
 Only local connections are allowed.
-Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+Please see https://chromedriver.chromium.org/security-considerations for suggestions
+ on keeping ChromeDriver safe.
 ChromeDriver was started successfully.
 [0-0] RUNNING in chrome - /test/specs/navigation.js
 [0-0] Conduit
@@ -348,7 +377,8 @@ ChromeDriver was started successfully.
 
  "spec" Reporter:
 ------------------------------------------------------------------
-[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs/navigation.js
+[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs
+/navigation.js
 [chrome 84.0.4147.89 mac os x #0-0] Running: chrome (v84.0.4147.89) on mac os x
 [chrome 84.0.4147.89 mac os x #0-0] Session ID: dd4009892dde40a2ffef0088bdfd27a5
 [chrome 84.0.4147.89 mac os x #0-0]
@@ -378,7 +408,7 @@ Let's take that first log message. Replacing it, we want to assert that the titl
 ```js
 if (browser.getTitle() !== 'Conduit') {
     // throw an error explaining what went wrong
-    throw new Error('Title of the homepage should be "Conduit"')
+    throw new Error('Title of the homepage should be "Conduit"');
 }
 ```
 
@@ -388,7 +418,7 @@ Let's make the update for our `getUrl` call as well:
 
 ```js
 if (browser.getUrl() !== 'http://localhost:8080/login') {
-    throw new Error('URL of "login" page should be correct')
+    throw new Error('URL of "login" page should be correct');
 }
 ```
 
@@ -399,19 +429,19 @@ describe('Homepage', function () {
     it('should load properly', function () {
         // load the page
         browser.url('./');
-        
+
         // Get the title of the homepage, should be 'Conduit'
         if (browser.getTitle() !== 'Conduit') {
             // throw an error explaining what went wrong
-            throw new Error('Title of the homepage should be "Conduit"')
+            throw new Error('Title of the homepage should be "Conduit"');
         }
-        
+
         // Click the 'Sign in' navigation link
         $('=Sign in').click();
-        
+
         // Get the URL of the sign in page. It should include 'login'
         if (browser.getUrl() !== 'http://localhost:8080/login') {
-            throw new Error('URL of "login" page should be correct')
+            throw new Error('URL of "login" page should be correct');
         }
     });
 });
@@ -429,19 +459,22 @@ Title of the homepage should be "Conduit"
 
  "spec" Reporter:
 ------------------------------------------------------------------
-[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs/navigation.js
+[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs
+/navigation.js
 [chrome 84.0.4147.89 mac os x #0-0] Running: chrome (v84.0.4147.89) on mac os x
 [chrome 84.0.4147.89 mac os x #0-0] Session ID: f237a09f87b12748ed7ef7e3ac862554
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] Homepage
-[chrome 84.0.4147.89 mac os x #0-0]    ✖ should load properly
+[chrome 84.0.4147.89 mac os x #0-0]    x should load properly
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] 1 failing (2.7s)
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] 1) Homepage should load properly
 [chrome 84.0.4147.89 mac os x #0-0] Title of the homepage should be "Conduit"
 [chrome 84.0.4147.89 mac os x #0-0] Error: Title of the homepage should be "Conduit"
-[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/Users/klamping/wdio-testrunner/test/specs/navigation.js:9:19)
+
+[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/Users/klamping/wdio
+-testrunner/test/specs/navigation.js:9:19)
 ```
 
 Now our test fails because it didn't get what it was expecting. We no longer need to check the log messages, having added a little more automation in our tests.
@@ -490,12 +523,13 @@ Expected values to be strictly equal:
 
  "spec" Reporter:
 ------------------------------------------------------------------
-[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs/navigation.js
+[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs
+/navigation.js
 [chrome 84.0.4147.89 mac os x #0-0] Running: chrome (v84.0.4147.89) on mac os x
 [chrome 84.0.4147.89 mac os x #0-0] Session ID: 1adcc0cea040b954eb9722daa2b8f49b
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] Homepage
-[chrome 84.0.4147.89 mac os x #0-0]    ✖ should load properly
+[chrome 84.0.4147.89 mac os x #0-0]    x should load properly
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] 1 failing (2.2s)
 [chrome 84.0.4147.89 mac os x #0-0]
@@ -505,12 +539,14 @@ Expected values to be strictly equal:
 
 + 'Conduit'
 - 'The Wrong Title'
-[chrome 84.0.4147.89 mac os x #0-0] AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+[chrome 84.0.4147.89 mac os x #0-0] AssertionError [ERR_ASSERTION]: Expected values 
+to be strictly equal:
 [chrome 84.0.4147.89 mac os x #0-0] + actual - expected
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] + 'Conduit'
 [chrome 84.0.4147.89 mac os x #0-0] - 'The Wrong Title'
-[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/Users/klamping/wdio-testrunner/test/specs/navigation.js:15:16)
+[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/Users/klamping/wdio
+-testrunner/test/specs/navigation.js:15:16)
 ```
 
 Not only is the assertion a little less code to write, it's actually a more helpful message in that it provides the expected AND actual values. Assuming we've updated our second check as well, here's what our test now looks like:
@@ -564,13 +600,13 @@ describe('Homepage', function () {
     it('should load properly', function () {
         // load the page
         browser.url('./');
-        
+
         // Get the title of the homepage, should be 'Conduit'
         expect(browser).toHaveTitle('Conduit');
-        
+
         // Click the 'Sign in' navigation link
         $('=Sign in').click();
-        
+
         // Get the URL of the sign in page. It should include 'login'
         expect(browser).toHaveUrl('http://localhost:8080/login');
     });
@@ -634,13 +670,13 @@ describe('Homepage', function () {
     it('should load properly', function () {
         // load the page
         browser.url('./');
-        
+
         // Get the title of the homepage, should be 'Conduit'
         expect(browser).toHaveTitle('Conduit');
-        
+
         // Click the 'Sign in' navigation link
         $('=Sign in').click();
-        
+
         // Get the URL of the sign in page. It should include 'login'
         expect(browser).toHaveUrl('/login', { containing: true });
     });
@@ -660,12 +696,13 @@ Received: "http://localhost:8080/login"
 
  "spec" Reporter:
 ------------------------------------------------------------------
-[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs/navigation.js
+[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs
+/navigation.js
 [chrome 84.0.4147.89 mac os x #0-0] Running: chrome (v84.0.4147.89) on mac os x
 [chrome 84.0.4147.89 mac os x #0-0] Session ID: 401a1cda9409618a995325421823eae4
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] Homepage
-[chrome 84.0.4147.89 mac os x #0-0]    ✖ should load properly
+[chrome 84.0.4147.89 mac os x #0-0]    x should load properly
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] 1 failing (11.9s)
 [chrome 84.0.4147.89 mac os x #0-0]
@@ -678,10 +715,11 @@ Received: "http://localhost:8080/login"
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] Expected: "/other-login"
 [chrome 84.0.4147.89 mac os x #0-0] Received: "http://localhost:8080/login"
-[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/Users/klamping/wdio-testrunner/test/specs/navigation.js:13:25)
+[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/Users/klamping/wdio
+-testrunner/test/specs/navigation.js:13:25)
 
 
-Spec Files:	 0 passed, 1 failed, 1 total (100% completed) in 00:00:14
+Spec Files:  0 passed, 1 failed, 1 total (100% completed) in 00:00:14
 ```
 
 One final note for now on this. Aside from the WebdriverIO specific assertions `expect-webdriverio` adds, you also gain access to the [built-in ExpectJS assertions](https://jestjs.io/docs/en/expect). Some example assertions are:
@@ -716,4 +754,4 @@ Next up, we'll look in-depth at a plethora of element selectors, along with how 
 
 ## 2.1.10 Chapter Challenge
 
-TODO add a new challenge here (replacing the ChaiJS one)
+In your existing test, add a check that validates that when you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.

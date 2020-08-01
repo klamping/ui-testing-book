@@ -8,7 +8,7 @@ By default, both logged in and out views should show the 'global' tab by default
 
 ```js
 it('should default to showing the "global" feed', function () {
-    // get all tabs with an 'active' class, check that only one returns with correct text
+    // get all tabs with an 'active' class, check only one returns with correct text
 })
 ```
 
@@ -27,12 +27,18 @@ Now, using our previous knowledge, let's update the `Home` page object to includ
 const Generic = require('./Generic.page');
 
 class Home extends Generic {
-    constructor () {
-        super('./')
+    constructor() {
+        super('./');
     }
-    get $$feedTabs () { return $$('[data-qa-id="feed-tabs"] [data-qa-type="feed-tab"]') }
-    get feedTabsText () { return this.$$feedTabs.map($tab => $tab.getText().trim()); }
-    get activeFeedTabText () { return this.$$feedTabs.$$('.active').map($tab => $tab.getText().trim()) }
+    get $$feedTabs() {
+        return $$('[data-qa-id="feed-tabs"] [data-qa-type="feed-tab"]');
+    }
+    get feedTabsText() {
+        return this.$$feedTabs.map(($tab) => $tab.getText().trim());
+    }
+    get activeFeedTabText() {
+        return this.$$feedTabs.$$('.active').map(($tab) => $tab.getText().trim());
+    }
 }
 
 module.exports = Home;
@@ -44,7 +50,7 @@ Now it's time to use it in our test. Usage is similar to the previous test we wr
 
 ```js
 it('should default to showing the global feed', function () {
-    // get all tabs with an 'active' class, check that only one returns and has correct text
+    // get all tabs with an 'active' class, check only one returns with correct text
     expect(home.activeFeedTabText).toEqual(['Global Feed']);
 })
 ```
@@ -64,16 +70,26 @@ We'll save this in the `utils` folder we created for our API file, naming it `fu
 
 ```js
 const Generic = require('./Generic.page');
-const { getTrimmedText } = require('../utils/functions')
+const { getTrimmedText } = require('../utils/functions');
 
 class Home extends Generic {
-    constructor () {
-        super('./')
+    constructor() {
+        super('./');
     }
-    get $feedsContainer () { return $('[data-qa-id="feed-tabs"]') }
-    get $$feedTabs () { return this.$feedsContainer.$$('[data-qa-type="feed-tab"]') }
-    get feedTabsText () { return this.$$feedTabs.map(getTrimmedText); }
-    get activeFeedTabText () { return this.$feedsContainer.$$('[data-qa-type="feed-tab"] .active').map(getTrimmedText) }
+    get $feedsContainer() {
+        return $('[data-qa-id="feed-tabs"]');
+    }
+    get $$feedTabs() {
+        return this.$feedsContainer.$$('[data-qa-type="feed-tab"]');
+    }
+    get feedTabsText() {
+        return this.$$feedTabs.map(getTrimmedText);
+    }
+    get activeFeedTabText() {
+        return this.$feedsContainer
+            .$$('[data-qa-type="feed-tab"] .active')
+            .map(getTrimmedText);
+    }
 }
 
 module.exports = new Home();
@@ -88,18 +104,22 @@ So we've validated that both tabs show, and that `Global` is the default showing
 ```js
 it('should let you switch between global and personal feeds', function () {
     // get the tab that has `Your Feed` as text
-    const yourFeedTab = home.$$feedTabs.find($tab => $tab.getText() === 'Your Feed')
+    const yourFeedTab = home.$$feedTabs.find(
+        ($tab) => $tab.getText() === 'Your Feed'
+    );
     // Click on that tab
     yourFeedTab.click();
     // Validate 'active' tab is now `Your Feed`
     expect(home.activeFeedTabText).toEqual(['Your Feed']);
     // get the tab that has `Global` as text
-    const globalFeedTab = home.$$feedTabs.find($tab => $tab.getText() === 'Global Feed')
+    const globalFeedTab = home.$$feedTabs.find(
+        ($tab) => $tab.getText() === 'Global Feed'
+    );
     // Click on that tab
     globalFeedTab.click();
     // validate again
     expect(home.activeFeedTabText).toEqual(['Global Feed']);
-})
+});
 ```
 
 There are a couple problems with this code. First off, it's a bit verbose to have to find the tab text each time we want to switch. It would be nice not to have to do that each time we switch tabs.
@@ -134,23 +154,38 @@ How about another option? We'll create a `clickTab` function on the Home page ob
 {title="test/pageObjects/Home.page.js"}
 ```js
 const Generic = require('./Generic.page');
-const { getTrimmedText } = require('../../utils/functions')
+const { getTrimmedText } = require('../../utils/functions');
 
 class Home extends Generic {
-    constructor () {
-        super('./')
+    constructor() {
+        super('./');
     }
-    get $feedsContainer () { return $('[data-qa-id="feed-tabs"]') }
-    get $$feedTabs () { return this.$feedsContainer.$$('[data-qa-type="feed-tab"]') }
-    get feedTabsText () { return this.$$feedTabs.map(getTrimmedText); }
-    get activeFeedTabText () { return this.$feedsContainer.$$('[data-qa-type="feed-tab"] .active').map(getTrimmedText) }
+    get $feedsContainer() {
+        return $('[data-qa-id="feed-tabs"]');
+    }
+    get $$feedTabs() {
+        return this.$feedsContainer.$$('[data-qa-type="feed-tab"]');
+    }
+    get feedTabsText() {
+        return this.$$feedTabs.map(getTrimmedText);
+    }
+    get activeFeedTabText() {
+        return this.$feedsContainer
+            .$$('[data-qa-type="feed-tab"] .active')
+            .map(getTrimmedText);
+    }
 
-    clickTab (tabText) {
-        const tabToClick = this.$$feedTabs.find($tab => $tab.getText() === tabText);
+    clickTab(tabText) {
+        const tabToClick = this.$$feedTabs.find(
+            ($tab) => $tab.getText() === tabText
+        );
         tabToClick.click();
-        browser.waitUntil(() => {
-            return this.activeFeedTabText[0] === tabText;
-        }, { timeoutMsg: 'Active tab text never switched to desired text' });
+        browser.waitUntil(
+            () => {
+                return this.activeFeedTabText[0] === tabText;
+            },
+            { timeoutMsg: 'Active tab text never switched to desired text' }
+        );
     }
 }
 
@@ -171,7 +206,7 @@ it('should let you switch between global and personal feeds', function () {
     home.clickTab('Global Feed');
     // validate again
     expect(home.activeFeedTabText).toEqual(['Global Feed']);
-})
+});
 ```
 
 Let's move forward with this solution, as it's a good mix between providing a utility method and not complicating our code too much.
@@ -271,15 +306,22 @@ While I used the actual text in the previous example, there's also a `data-qa-id
 ```js
 class Home extends Generic {
     // ... some contents omitted for brevity ...
-    
-    get $articleLoadingIndicator () { return $('[data-qa-id="article-loading-indicator"]') }
 
-    clickTab (tabText) {
-        const tabToClick = this.$$feedTabs.find($tab => $tab.getText() === tabText);
+    get $articleLoadingIndicator() {
+        return $('[data-qa-id="article-loading-indicator"]');
+    }
+
+    clickTab(tabText) {
+        const tabToClick = this.$$feedTabs.find(
+            ($tab) => $tab.getText() === tabText
+        );
         tabToClick.click();
-        browser.waitUntil(() => {
-            return this.activeFeedTabText[0] === tabText;
-        }, { timeoutMsg: 'Active tab text never switched to desired text' });
+        browser.waitUntil(
+            () => {
+                return this.activeFeedTabText[0] === tabText;
+            },
+            { timeoutMsg: 'Active tab text never switched to desired text' }
+        );
         this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
 }
@@ -314,16 +356,16 @@ class Component {
     // 'selector' is the selector for the main element that all other selectors for that component are based upon.
     // This can be the main container element, or an input element that has a specific id
     // 'selector' can be either a selector, or a wdio element
-    constructor (selector, options = {}) {
+    constructor(selector, options = {}) {
         this.selector = selector;
         this.options = options;
     }
 
     // The $origin element can be used to move up via xpath:
     // const $originParent = this.$origin.$('..');
-    get $origin () {
+    get $origin() {
         // allow 'selector' to be a WDIO element
-        return (typeof this.selector === 'string') ? $(this.selector) : this.selector;
+        return typeof this.selector === 'string' ? $(this.selector) : this.selector;
     }
 }
 
@@ -347,9 +389,13 @@ Here's how it looks:
 const Component = require('./Component');
 
 class Feed extends Component {
-    get $$articles () { return this.$origin.$$('[data-qa-type="article-preview"]') }
-    get $articleLoadingIndicator () { return this.$origin.$('[data-qa-id="article-loading-indicator"]') }
-    waitForLoad () {
+    get $$articles() {
+        return this.$origin.$$('[data-qa-type="article-preview"]');
+    }
+    get $articleLoadingIndicator() {
+        return this.$origin.$('[data-qa-id="article-loading-indicator"]');
+    }
+    waitForLoad() {
         this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
 }
@@ -401,19 +447,24 @@ Going back to the Home page object, we'll add that `super.load()` call to our `l
 
 {title="test/pageObjects/Home.page.js"}
 ```js
-    load () {
-        super.load();
-        this.currentFeed.waitForLoad();
-    }
-    
-    clickTab (tabText) {
-        const tabToClick = this.$$feedTabs.find($tab => $tab.getText() === tabText);
-        tabToClick.click();
-        browser.waitUntil(() => {
+load () {
+    super.load();
+    this.currentFeed.waitForLoad();
+}
+
+clickTab (tabText) {
+    const tabToClick = this.$$feedTabs.find(
+        ($tab) => $tab.getText() === tabText
+    );
+    tabToClick.click();
+    browser.waitUntil(
+        () => {
             return this.activeFeedTabText[0] === tabText;
-        }, { timeoutMsg: 'Active tab text never switched to desired text' });
-        this.currentFeed.waitForLoad();
-    }
+        },
+        { timeoutMsg: 'Active tab text never switched to desired text' }
+    );
+    this.currentFeed.waitForLoad();
+}
 ```
 
 ## 2.8.7 Testing Feeds
@@ -436,7 +487,7 @@ before(function () {
     if (home.activeFeedTabText !== 'Your Feed') {
         home.clickTab('Your Feed');
     }
-})
+});
 ```
 
 Then, we'll write our test that checks that the number of items in the feed is correct (which will be 1, from a special account we follow that only has a single article). We use [the 'toHaveChildren' check](https://webdriver.io/docs/api/expect.html#tohavechildren), which looks at the amount of fetched elements using `$$` command and compares them to the number passed in.
@@ -444,7 +495,7 @@ Then, we'll write our test that checks that the number of items in the feed is c
 ```js
 it('should show most recent articles from people you follow', function () {
     expect(home.currentFeed.$$articles).toHaveChildren(1);
-})
+});
 ```
 
 Overall, it looks like:
@@ -456,7 +507,7 @@ describe('Homepage', function () {
             browser.loginViaApi(user1);
 
             home.load();
-        })
+        });
 
         // tests hidden here for brevity
 
@@ -466,12 +517,12 @@ describe('Homepage', function () {
                 if (home.activeFeedTabText !== 'Your Feed') {
                     home.clickTab('Your Feed');
                 }
-            })
+            });
 
             it('should show most recent articles from people you follow', function () {
                 expect(home.currentFeed.$$articles).toHaveChildren(1);
-            })
-        })
+            });
+        });
 
         after(function () {
             auth.clearSession();
@@ -506,7 +557,9 @@ class ArticlePreview extends Component {
     get $author () { return this.$origin.$('[data-qa-type="author-name"]') }
     get $date () { return this.$origin.$('[data-qa-type="article-date"]') }
     get $title () { return this.$origin.$('[data-qa-type="preview-title"]') }
-    get $description () { return this.$origin.$('[data-qa-type="preview-description"]') }
+    get $description() {
+        return this.$origin.$('[data-qa-type="preview-description"]');
+    }
     get $readMoreLink () { return this.$origin.$('[data-qa-type="preview-link"]') }
     get $favorite () { return this.$origin.$('[data-qa-type="article-favorite"]') }
     get $$tags () { return this.$origin.$$('[data-qa-type="tag-list"] li') }
@@ -531,8 +584,12 @@ const ArticlePreview = require('./ArticlePreview');
 
 class Feed extends Component {
     get $$articles () { return this.$origin.$$('[data-qa-type="article-preview"]') }
-    get articles () { return this.$$articles.map($article => new ArticlePreview($article)); }
-    get $articleLoadingIndicator () { return this.$origin.$('[data-qa-id="article-loading-indicator"]') }
+    get articles() {
+        return this.$$articles.map(($article) => new ArticlePreview($article));
+    }
+    get $articleLoadingIndicator() {
+        return this.$origin.$('[data-qa-id="article-loading-indicator"]');
+    }
     waitForLoad () {
         this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
@@ -564,7 +621,8 @@ In our `ArticlePreview` class, let's create a `getDetails` function that retriev
 
 ```js
 getDetails() {
-    // this is important, because `getText` will return an empty string if the article preview is outside the browser's viewport
+    // this is important, because `getText` will return an empty string if the
+    // article preview is outside the browser's viewport
     this.$origin.scrollIntoView(true);
     return {
         author: this.$author.getText().trim(),
@@ -583,12 +641,13 @@ it('should show most recent article first', function () {
     const firstArticleDetails = home.currentFeed.articles[0].getDetails();
     expect(firstArticleDetails).toMatchObject({
         author: 'singlearticleuser',
-        'date': 'May 1, 2020',
+        date: 'May 1, 2020',
         title: 'An Article',
         description: 'A Single Article',
         tags: []
-    })
+    });
 });
+
 ```
 
 As you see, we can dynamically create multiple page components on-the-fly for our use. Now, this is a very powerful feature, but do understand that it comes with a cost. Creating each dynamic component does take a half-second of time, so if you have hundreds of components to create, perhaps this isn't the best approach. 

@@ -28,8 +28,8 @@ So, let's just delete that entire `navigation.js` file and get ready to set up a
 const Generic = require('./Generic.page');
 
 class Home extends Generic {
-    constructor () {
-        super('./')
+    constructor() {
+        super('./');
     }
 }
 
@@ -91,8 +91,8 @@ describe('Homepage', function () {
         expect(home.$siteHeader).toBeExisting();
         expect(home.$siteFooter).toBeExisting();
         expect(home.$siteNav).toBeExisting();
-    })
-})
+    });
+});
 ```
 
 Now, normally, we'd add these element references to our `home` page object. But since these are elements that will be on every page, it's smarter to add them to our Generic page object. 
@@ -104,7 +104,7 @@ We can do this in a manner similar to how we've adding a generic 'load' method o
 const { URL } = require('url');
 
 class Generic {
-    constructor (url) {
+    constructor(url) {
         this.url = url;
 
         // store the fullUrl by combining specific page url with WDIO base url
@@ -124,7 +124,7 @@ module.exports = Generic;
 
 By including these references in the Generic page object, anything that extends off of it will have those references (hence `home.$siteHeader` in the test file). This is useful for sharing common page template details across all your specific files. 
 
-## 2.7.2  Checking Those Feeds
+## 2.7.2 Checking Those Feeds
 
 In my list of "components on the homepage", I mentioned that there are two 'feeds' available. The 'Global' feed, which shows up for all visitors, and a specialized feed for users who are logged in. Let's going about getting these added to our test suite.
 
@@ -173,7 +173,7 @@ describe('Homepage', function () {
         it('should only show the global feed tab', function () {
             expect(home.feedTabsText).toEqual(['Global Feed']);
         });
-    })
+    });
 
     describe('Logged In', function () {
         // we'll fill this out soon
@@ -198,7 +198,7 @@ const auth = new Auth();
 
 describe('Homepage', function () {
     // ... anonymous tests hidden for brevity
-    
+
     describe('Logged In', function () {
         before(function () {
             auth.load();
@@ -207,7 +207,7 @@ describe('Homepage', function () {
             home.load();
         });
     });
-})
+});
 ```
 
 And then add our test that checks the tabs are correct:
@@ -244,7 +244,7 @@ describe('Logged In', function () {
         home.load();
     });
     after(function () {
-      // run steps to log out
+        // run steps to log out
     });
 });
 ```
@@ -301,12 +301,12 @@ Getting back to our original goal, which is to clear the browser's Local Storage
 ```js
 describe('Homepage', function () {
     // ... anonymous tests hidden for brevity
-    
+
     describe('Logged In', function () {
         before(function () {
             auth.load();
             auth.login(user1);
-    
+
             home.load();
         });
         // ... some tests here ...
@@ -402,19 +402,19 @@ In that file, a new class will be defined which will store all of our API intera
 const got = require('got');
 
 class Api {
-    constructor (prefixUrl) {
+    constructor(prefixUrl) {
         this.client = got.extend({
             prefixUrl,
             responseType: 'json'
-        })
+        });
     }
 
-    getAuthToken ({email, password}) {
+    getAuthToken({ email, password }) {
         return this.client
             .post('/users/login', {
-                json: { user: {email, password} }
+                json: { user: { email, password } }
             })
-            .then(response => response.body.user.token);
+            .then((response) => response.body.user.token);
     }
 }
 
@@ -470,7 +470,7 @@ before(function () {
 
     // 2. Instantiate a new Api instance with the url of our Api
     const api = new Api('http://localhost:3000/api/');
-    
+
     // 3. Call the `getAuthToken` function
     const token = browser.call(() => {
         return api.getAuthToken(user1);
@@ -486,7 +486,7 @@ before(function () {
 
     // 6. Reload the homepage
     home.load();
-})
+});
 ```
 
 Now if you're to run this test, you'd see everything load basically the same, except it skips the login page step. Because we're retrieving our token via the API, we don't need to go through the login page steps.

@@ -4,7 +4,38 @@ Each chapter includes a challenge or two for you to tackle on your own. But it's
 
 ## 2.1 Assertions
 
-TODO
+In your existing test, add a check that validates that when you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.
+
+In the test we're adding to, we're on the login page. Now we need to click that logo, which can be done using the link text selector like we used for the 'Sign Up' button: `$('=conduit')`
+
+This does need to be lowercase, because that's how it is on the page itself. 
+
+Next, we want to write our assertion. The page title doesn't actually change between pages, so that's not a good option (we could still be on the sign up page and it would pass since the title for that page is the same as the homepage).
+
+Instead, we'll just validate that we're no longer on the login url, by using the `.not` flip in our assertion. All together, our updated file looks like so:
+
+{title="test/specs/navigation.js"}
+```js
+describe('Homepage', function () {
+    it('should load properly', function () {
+        // load the page
+        browser.url('./');
+
+        // Get the title of the homepage, should be 'Conduit'
+        expect(browser).toHaveTitle('Conduit');
+
+        // Click the 'Sign in' navigation link
+        $('=Sign in').click();
+
+        // Get the URL of the sign in page. It should include 'login'
+        expect(browser).toHaveUrl('/login', { containing: true });
+
+        $('=conduit').click();
+
+        expect(browser).not.toHaveUrl('/login', { containing: true });
+    });
+});
+```
 
 ## 2.2 Selectors
 
@@ -43,8 +74,8 @@ The full file would look like:
 
 {title="test/specs/login.js"}
 ```js
-describe('Login Page', function() {
-    it('should let you log in', function() {
+describe('Login Page', function () {
+    it('should let you log in', function () {
         browser.url('./login');
 
         $('input[type="email"]').setValue('demo@learnwebdriverio.com');
@@ -70,8 +101,8 @@ This is a pretty lengthy exercise, so I'm not going to detail the steps involved
 const Generic = require('./Generic.page');
 
 class Register extends Generic {
-    constructor () {
-        super('./register')
+    constructor() {
+        super('./register');
     }
 
     get $username () { return $('input[name="email"]'); }
@@ -80,7 +111,7 @@ class Register extends Generic {
     get $register () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    submit ({ username, email, password }) {
+    submit({ username, email, password }) {
         this.$username.setValue(username);
         this.$email.setValue(email);
         this.$password.setValue(password);
@@ -88,20 +119,23 @@ class Register extends Generic {
         this.$register.click();
 
         // wait until either the register button is gone or an error has appeared
-        browser.waitUntil(() => {
-            const buttonExists = this.$signUpButton.isExisting();
-            const errorExists = this.$errorMessages.isExisting();
+        browser.waitUntil(
+            () => {
+                const buttonExists = this.$signUpButton.isExisting();
+                const errorExists = this.$errorMessages.isExisting();
 
-            return !buttonExists || errorExists;
-        }, {
-            timeoutMsg: 'The "Sign Up" button is not gone and an error never appeared'
-        });
+                return !buttonExists || errorExists;
+            },
+            {
+                timeoutMsg:
+                    'The "Sign Up" button is not gone and an error never appeared'
+            }
+        );
     }
 }
 
 module.exports = Register;
 ```
-
 
 {title="test/specs/register.js"}
 ```js
@@ -113,10 +147,10 @@ const username = 'newuser';
 const email = 'newuser@learnwebdriverio.com';
 const password = 'hunter2';
 
-describe('Register Page', function() {
+describe('Register Page', function () {
     beforeEach(function () {
         register.load();
-    })
+    });
 
     it('should let you register', function () {
         // use a timestamp to generate "unique" username/email every test run
@@ -207,7 +241,7 @@ Your updated function will look like:
 
 {title="test/pageObjects/Auth.page.js"}
 ```js
-login ({ email, password }) {
+login({ email, password }) {
     this.load();
 
     this.$email.setValue(email);
@@ -216,12 +250,18 @@ login ({ email, password }) {
     this.$signIn.click();
 
     // wait until either the sign in button is gone or an error has appeared
-    browser.waitUntil(() => {
-        const signInExists = this.$signIn.isExisting();
-        const errorExists = this.$errorMessages.isExisting();
+    browser.waitUntil(
+        () => {
+            const signInExists = this.$signIn.isExisting();
+            const errorExists = this.$errorMessages.isExisting();
 
-        return !signInExists || errorExists;
-    }, { timoutMsg: 'The "Sign in" button still exists and an error never appeared' });
+            return !signInExists || errorExists;
+        },
+        {
+            timoutMsg:
+                'The "Sign in" button still exists and an error never appeared'
+        }
+    );
 }
 ```
 
@@ -348,7 +388,7 @@ There are two steps to this change:
 class Auth extends Generic {
     // ... other Auth page object stuff goes here
 
-    loginViaApi (user) {
+    loginViaApi(user) {
         const token = browser.call(() => {
             return global.api.getAuthToken(user);
         });
@@ -387,7 +427,9 @@ Next, add the 'popularTags' parts to your Home page object:
 
 {title="test/pageObjects/Home.page.js"}
 ```js
-get $$popularTags () { return $$('//p[text()="Popular Tags"]/following-sibling::div/a') }
+get $$popularTags() {
+    return $$('//p[text()="Popular Tags"]/following-sibling::div/a');
+}
 get popularTags () { return this.$$popularTags.map(getTrimmedText) }
 ```
 
@@ -457,17 +499,28 @@ const Feed = require('./Feed');
 
 class Feeds extends Component {
     get $feedsContainer () { return $(this.selector); }
-    get $$feedTabs () { return this.$feedsContainer.$$('[data-qa-type="feed-tab"]'); }
+    get $$feedTabs() {
+        return this.$feedsContainer.$$('[data-qa-type="feed-tab"]');
+    }
     get feedTabsText () { return this.$$feedTabs.map(getTrimmedText); }
-    get activeFeedTabText () { return this.$feedsContainer.$$('[data-qa-type="feed-tab"] .active').map(getTrimmedText) }
+    get activeFeedTabText() {
+        return this.$feedsContainer
+            .$$('[data-qa-type="feed-tab"] .active')
+            .map(getTrimmedText);
+    }
     get currentFeed () { return new Feed('[data-qa-type="article-list"]'); }
 
-    clickTab (tabText) {
-        const tabToClick = this.$$feedTabs.find($tab => $tab.getText() === tabText);
+    clickTab(tabText) {
+        const tabToClick = this.$$feedTabs.find(
+            ($tab) => $tab.getText() === tabText
+        );
         tabToClick.click();
-        browser.waitUntil(() => {
-            return this.activeFeedTabText[0] === tabText;
-        }, { timeoutMsg: 'Active tab text never switched to desired text' });
+        browser.waitUntil(
+            () => {
+                return this.activeFeedTabText[0] === tabText;
+            },
+            { timeoutMsg: 'Active tab text never switched to desired text' }
+        );
         this.currentFeed.waitForLoad();
     }
 }
@@ -488,7 +541,9 @@ class Home extends Generic {
         super(url)
     }
     get feeds () { return new Feeds('[data-qa-id="feed-tabs"]'); }
-    get $$popularTags () { return $$('//p[text()="Popular Tags"]/following-sibling::div/a') }
+    get $$popularTags() {
+        return $$('//p[text()="Popular Tags"]/following-sibling::div/a');
+    }
     get popularTags () { return this.$$popularTags.map(getTrimmedText) }
 
     load () {
@@ -524,7 +579,8 @@ describe('Homepage', function () {
         });
 
         it('should default to showing the global feed', function () {
-            // get all tabs with an 'active' class, check that only one returns with correct text
+            // get all tabs with an 'active' class,
+            // check only one returns with correct text
             expect(home.feeds.activeFeedTabText).toEqual(['Global Feed']);
         });
 
@@ -551,19 +607,22 @@ describe('Homepage', function () {
                 }
             });
 
-            it('should show most recent articles from people you follow', function () {
-                expect(home.feeds.currentFeed.$$articles).toHaveChildren(1);
-            });
+            it('should show most recent articles from people you follow',
+                function () {
+                    expect(home.feeds.currentFeed.$$articles).toHaveChildren(1);
+                }
+            );
 
             it('should show most recent article first', function () {
-                const firstArticleDetails = home.feeds.currentFeed.articles[0].getDetails();
+                const firstArticleDetails = home.feeds.currentFeed.articles[0]
+                    .getDetails();
                 expect(firstArticleDetails).toMatchObject({
                     author: 'singlearticleuser',
-                    'date': 'May 1, 2020',
+                    date: 'May 1, 2020',
                     title: 'An Article',
                     description: 'A Single Article',
                     tags: []
-                })
+                });
             });
         });
 
@@ -627,7 +686,7 @@ describe('Tag Feed', function () {
 
         // load the page
         tagPage.load();
-    })
+    });
 
     after(function () {
         browser.call(() => {
@@ -637,13 +696,16 @@ describe('Tag Feed', function () {
 
     it('should have tag tab', function () {
         // check that we're on the tag tab
-        expect(tagPage.feeds.$$activeFeedTabs[0]).toHaveText(tagName, { trim: true })
+        expect(tagPage.feeds.$$activeFeedTabs[0]).toHaveText(tagName, {
+            trim: true
+        });
     });
     it('should load only articles for that tag', function () {
         expect(tagPage.feeds.currentFeed.$$articles).toHaveChildren(1);
     });
     it('should load correct article preview details', function () {
-        const firstArticleDetails = tagPage.feeds.currentFeed.articles[0].getDetails();
+        const firstArticleDetails = tagPage.feeds.currentFeed.articles[0]
+            .getDetails();
 
         expect(firstArticleDetails).toMatchObject({
             title: articleDetails.title,
@@ -651,6 +713,7 @@ describe('Tag Feed', function () {
         });
     });
 });
+
 ```
 
 Okay, with all that written, let's focus back on writing the actual tests. 
@@ -664,20 +727,44 @@ Add the following function to the API util, allowing us to create a new user/pro
 {title="utils/Api.js"}
 ```js
 async createProfile(profile) {
-    const response = await this.client
-        .post(
-            'users',
-            {
-                json : {
-                    user: profile
-                }
-            }
-        );
+    const response = await this.client.post('users', {
+        json: {
+            user: profile
+        }
+    });
     return response.body.user;
 }
 ```
 
-Now, we'll create a new `profile.js` test file, and call the needed API utils to create the user and article (along with sketching out the tests we want to write):
+We need to make one small update to the `Feed.page.js` component, which is adding an element reference for the text that shows if no articles are available (i.e., 'No articles are here... yet.'). We'll use a text-based selector to match a div with that text. The line of code will be `get $noArticlesText () { return this.$origin.$('div=No articles are here... yet.'); }`.
+
+Here's what the full file looks like:
+
+{title="test/pageObjects/components/Feed.js"}
+```js
+const Component = require('./Component');
+const ArticlePreview = require('./ArticlePreview');
+
+class Feed extends Component {
+    get $$articles () { return this.$origin.$$('[data-qa-type="article-preview"]') }
+    get articles() {
+        return this.$$articles.map(($article) => new ArticlePreview($article));
+    }
+    get $articleLoadingIndicator() {
+        return this.$origin.$('[data-qa-id="article-loading-indicator"]');
+    }
+    get $noArticlesText() {
+        return this.$origin.$('div=No articles are here... yet.');
+    }
+    waitForLoad () {
+        this.$articleLoadingIndicator.waitForExist({ reverse: true });
+    }
+}
+
+module.exports = Feed;
+```
+
+Now, we'll create a new `profile.js` test file, and call the needed API utils to create the user and article (along with sketching out the tests we want to write), then run our tests:
 
 {title="test/specs/profile.js"}
 ```js
@@ -725,18 +812,75 @@ describe('User Profile Page', function () {
         expect(profilePage.$username).toHaveText(profile.username);
     });
 
-    // - You can follow/unfollow the user if you are logged in
-    // - Two tabs are shown: 'My Articles' and 'Favorited Articles'
-    //   - The content for those tabs is correct
-    //   - It's up to you whether you want to write the API code to have a "favorited" article
+    it('should show username at top of the page', function () {
+        expect(profilePage.$username).toHaveText(profile.username);
+    });
+
+    it('should allow you to follow and unfollow the user if you are logged in', 
+    function () {
+        expect(profilePage.$followToggle).toHaveText(`Follow ${profile.username}`, {
+            trim: true
+        });
+
+        profilePage.$followToggle.click();
+
+        expect(profilePage.$followToggle).toHaveText(
+            `Unfollow ${profile.username}`,
+            { trim: true }
+        );
+
+        profilePage.$followToggle.click();
+
+        expect(profilePage.$followToggle).toHaveText(`Follow ${profile.username}`, {
+            trim: true
+        });
+    });
+
+    it('should show "My Articles" and "Favorited Articles" tabs with correct content',
+    function () {
+        // check that the tabs are correct
+        expect(profilePage.feeds.feedTabsText).toEqual([
+            'My Articles',
+            'Favorited Articles'
+        ]);
+        expect(profilePage.feeds.activeFeedTabText).toEqual(['My Articles']);
+
+        // // check that the content for the 'My Articles' tab is correct
+        expect(profilePage.feeds.currentFeed.$$articles).toHaveChildren(1);
+
+        const articleDetails = profilePage.feeds.currentFeed.articles[0]
+            .getDetails();
+
+        // format created date to format of "August 1, 2020"
+        const months = [
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
+        ];
+        const createdDate = new Date(articleResponse.createdAt);
+        const formattedDate = `${
+            months[createdDate.getMonth()]
+        } ${createdDate.getDate()}, ${createdDate.getFullYear()}`;
+
+        expect(articleDetails.author).toEqual(profile.username);
+        expect(articleDetails.date).toEqual(formattedDate);
+        expect(articleDetails.title).toEqual(articleResponse.title);
+        expect(articleDetails.tags).toEqual(articleResponse.tagList);
+
+        // switch tabs and run again
+        profilePage.feeds.clickTab('Favorited Articles');
+
+        expect(profilePage.feeds.currentFeed.$$articles).toHaveLength(0);
+        expect(profilePage.feeds.currentFeed.$noArticlesText).toBeExisting();
+    });
 });
-```
-
-That runs, so let's add our tests:
-
-// TODO finish these tests
-
-{title="test/specs/profile.js"}
-```js
-
 ```

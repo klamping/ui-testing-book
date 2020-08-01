@@ -103,7 +103,7 @@ exports.config = {
     capabilities: {
         browserName: 'chrome'
     }
-}
+};
 ```
 
 The main difference from before is the `exports.config` part. That gives us the ability to share our configuration for all our tests. 

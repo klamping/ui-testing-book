@@ -60,12 +60,13 @@ For us, the decision here is pretty easy. We're going to go with a `beforeEach` 
 
 With that, let's move our step over. This is what the code looks like:
 
+{title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
     beforeEach(function () {
         browser.url('./login');
     });
-    
+
     it('should let you log in', function () {
         $('input[type="email"]').setValue('demo@learnwebdriverio.com');
         $('input[type="password"]').setValue('wdiodemo');
@@ -99,7 +100,7 @@ it('should error with a missing password', function () {
     $('input[type="email"]').setValue('demo@learnwebdriverio.com');
 
     $('button*=Sign in').click();
-    
+
     // assert that error message is showing
 });
 ```
@@ -159,10 +160,17 @@ Let's look again at the HTML for our error message:
 Assuming that all elements are visible, here's what our `getText` and `getHTML` commands would return:
 
 ```js
-$('.error-messages li').getText(); // returns "email can't be blank"
-$('.error-messages li').getHTML(); // returns "<li>email can't be blank</li>"
-$('.error-messages').getText(); // returns "email can't be blank"
-$('.error-messages').getHTML(); // returns "<ul class="error-messages"><li>email can't be blank</li></ul>"
+$('.error-messages li').getText();
+// returns "email can't be blank"
+
+$('.error-messages li').getHTML();
+// returns "<li>email can't be blank</li>"
+
+$('.error-messages').getText();
+// returns "email can't be blank"
+
+$('.error-messages').getHTML();
+// returns "<ul class="error-messages"><li>email can't be blank</li></ul>"
 ```
 
 First, notice how getting the text of the parent element returned the same value as getting the text of the individual element itself. That's by design, and you can use that knowledge to your advantage, so keep it in mind.
@@ -172,8 +180,11 @@ Second, the `getHTML` included the `<li>` tags in the response. It would be a mo
 `getHTML` accepts a single paramenter, which is a boolean flag to include the selector element tag or not. By default it's `true`, and therefore includes that tag. If we pass in `false`, we get different results:
 
 ```js
-$('.error-messages li').getHTML(false); // returns "email can't be blank"
-$('.error-messages').getHTML(false); // returns "<li>email can't be blank</li>"
+$('.error-messages li').getHTML(false);
+// returns "email can't be blank"
+
+$('.error-messages').getHTML(false);
+// returns "<li>email can't be blank</li>"
 ```
 
 In the first command, now we get just the text with no HTML. However, because that boolean flag only works on the main element, any child tags will still be included in the results, regardless of what we pass in. This means that `getHTML` still has its limitations, but I still like keeping the command in my back pocket for times when I need to get the text of a hidden element. 
@@ -201,14 +212,14 @@ Say we're working on a test, but it's failing and we don't really have time to f
 
 ```js
 describe('All tests', function () {
-    it('will run', function () {})
+    it('will run', function () {});
 
-    it.skip('will be skipped', function () {})
+    it.skip('will be skipped', function () {});
 
     describe.skip('Skipped Suite', function () {
-        it('will be skipped', function () {})
-        it('will also be skipped', function () {})
-    })
+        it('will be skipped', function () {});
+        it('will also be skipped', function () {});
+    });
 });
 ```
 
@@ -216,14 +227,14 @@ Alternatively, say you only want to run a single test (or single set of tests). 
 
 ```js
 describe('All tests', function () {
-    it('will be skipped', function () {})
+    it('will be skipped', function () {});
 
-    it.only('will run', function () {})
+    it.only('will run', function () {});
 
     describe.only('Only Suite', function () {
-        it('will run', function () {})
-        it('will also run', function () {})
-    })
+        it('will run', function () {});
+        it('will also run', function () {});
+    });
 });
 ```
 
@@ -423,14 +434,14 @@ So what we really need is "just in time" references. We want to store the code t
 
 ```js
 const $email = function () {
-  return $('input[type="email"]');
-}
+    return $('input[type="email"]');
+};
 const $password = function () {
-  return $('input[type="password"]');
-}
+    return $('input[type="password"]');
+};
 const $signIn = function () {
-  return $('button*=Sign in');
-}
+    return $('button*=Sign in');
+};
 
 function login(email, password) {
     $email().setValue(email);
@@ -564,8 +575,8 @@ Another consideration is how you'll name types of components. For example, if yo
 
 ```html
 <ul>
-  <li>Item 1</li>
-  <li>Item 2</li>
+    <li>Item 1</li>
+    <li>Item 2</li>
 </ul>
 ```
 
@@ -607,7 +618,7 @@ class Auth {
     get $errorMessages () { return $('.error-messages li'); }
     
     login (email, password) {
-      // login actions go here
+        // login actions go here
     }
 }
 
@@ -697,7 +708,6 @@ We've now fully built-out our page object with element references and custom fun
 
 ## 2.4.8 Improving Our Login Detection
 
-
 We've gotten rid of the code duplication between our tests, but there's one final step we can take to reduce future duplication. When we login, we have a `waitForExist` command that pauses execution until the page has updated (i.e., `auth.$signIn.waitForExist({ reverse: true });`). Right now we're only using it once, but we'll be using this login function a lot in the future when we tests pages that require user login. 
 
 But we can't just move that `waitForExist` command into our login function, because then our other two tests will fail as the `Sign in` button never disappears in those flows. How do we get around this?
@@ -738,7 +748,7 @@ Well, that message isn't very helpful. We know `waitUntil` failed, but unless yo
 
 We can help that by passing in a custom error message. The `waitUntil` function signature looks like: 
 
-```
+```js
 browser.waitUntil(condition, { timeout, timeoutMsg, interval });
 ```
 
@@ -749,12 +759,15 @@ The `timeoutMsg` option is the custom error message we want to show in case of f
 Here's what this looks like:
 
 ```js
-browser.waitUntil(function () {
-    const signInExists = auth.$signIn.isExisting();
-    const errorExists = auth.$errorMessages.isExisting();
+browser.waitUntil(
+    function () {
+        const signInExists = auth.$signIn.isExisting();
+        const errorExists = auth.$errorMessages.isExisting();
 
-    return !signInExists || errorExists;
-}, { timoutMsg: 'The "Sign in" button still exists and an error never appeared' });
+        return !signInExists || errorExists;
+    },
+    { timoutMsg: 'The "Sign in" button still exists and an error never appeared' }
+);
 ```
 
 Perfect! Now we can remove that `waitForExist` statement in our test code and add our new `waitUntil` function to our `login` function:
@@ -773,12 +786,18 @@ class Auth {
         this.$signIn.click();
 
         // wait until either the sign in button is gone or an error appears
-        browser.waitUntil(() => {
-            const signInExists = this.$signIn.isExisting();
-            const errorExists = this.$errorMessages.isExisting();
-        
-            return !signInExists || errorExists;
-        }, { timoutMsg: 'The "Sign in" button still exists and an error never appeared' });
+        browser.waitUntil(
+            () => {
+                const signInExists = this.$signIn.isExisting();
+                const errorExists = this.$errorMessages.isExisting();
+
+                return !signInExists || errorExists;
+            },
+            {
+                timoutMsg:
+                    'The "Sign in" button still exists and an error never appeared'
+            }
+        );
     }
 }
 ```
@@ -791,12 +810,15 @@ Two important things to point out that I changed here.
 Remember how I said `this` can be tricky? Well, here's your example. If we used the following code:
 
 ```js
-browser.waitUntil(function () {
-    const signInExists = this.$signIn.isExisting();
-    const errorExists = this.$errorMessages.isExisting();
+browser.waitUntil(
+    function () {
+        const signInExists = this.$signIn.isExisting();
+        const errorExists = this.$errorMessages.isExisting();
 
-    return !signInExists || errorExists;
-}, { timoutMsg: 'The "Sign in" button still exists and an error never appeared' });
+        return !signInExists || errorExists;
+    },
+    { timoutMsg: 'The "Sign in" button still exists and an error never appeared' }
+);
 ```
 
 The `this` in our code wouldn't refer to our page object, but rather the WebdriverIO `browser` instance (so it would be the same as calling `browser.$signIn.isExisting()`, which doesn't work). By using a fat arrow function, we bind `this` to the page object, allowing us to say `this.$signIn.isExisting();`. 
@@ -813,19 +835,25 @@ class Auth {
     get $signIn () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    login (email, password) {
+    login(email, password) {
         this.$email.setValue(email);
         this.$password.setValue(password);
 
         this.$signIn.click();
 
         // wait until either the sign in button is gone or an error appears
-        browser.waitUntil(() => {
-            const signInExists = this.$signIn.isExisting();
-            const errorExists = this.$errorMessages.isExisting();
+        browser.waitUntil(
+            () => {
+                const signInExists = this.$signIn.isExisting();
+                const errorExists = this.$errorMessages.isExisting();
 
-            return !signInExists || errorExists;
-        }, { timoutMsg: 'The "Sign in" button still exists and an error never appeared' });
+                return !signInExists || errorExists;
+            },
+            {
+                timoutMsg:
+                    'The "Sign in" button still exists and an error never appeared'
+            }
+        );
     }
 }
 
@@ -872,19 +900,25 @@ class Auth {
     get $signIn () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    login (email, password) {
+    login(email, password) {
         this.$email.setValue(email);
         this.$password.setValue(password);
 
         this.$signIn.click();
 
         // wait until either the sign in button is gone or an error appears
-        browser.waitUntil(() => {
-            const signInExists = this.$signIn.isExisting();
-            const errorExists = this.$errorMessages.isExisting();
+        browser.waitUntil(
+            () => {
+                const signInExists = this.$signIn.isExisting();
+                const errorExists = this.$errorMessages.isExisting();
 
-            return !signInExists || errorExists;
-        }, { timoutMsg: 'The "Sign in" button still exists and an error never appeared' });
+                return !signInExists || errorExists;
+            },
+            {
+                timoutMsg:
+                    'The "Sign in" button still exists and an error never appeared'
+            }
+        );
     }
 }
 

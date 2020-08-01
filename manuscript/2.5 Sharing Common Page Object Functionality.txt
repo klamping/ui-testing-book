@@ -37,8 +37,8 @@ describe('Post Editor', function () {
         // Load the Post Editor page
         // Assert the URL is correct
         // Assert the page fields are correct
-    })
-})
+    });
+});
 ```
 
 This structure is very similar to what we've seen with our Login page, which means that it's a good thing we've made our Auth page object available for re-use. Let's go ahead and take advantage of it by adding the login code to our test:
@@ -46,13 +46,13 @@ This structure is very similar to what we've seen with our Login page, which mea
 ```js
 it('should load page properly', function () {
     // Load the login page
-    browser.url('./login')
+    browser.url('./login');
     // Login with a valid user
     auth.login('demo@learnwebdriverio.com', 'wdiodemo');
     // Load the Post Editor page
     // Assert the URL is correct
     // Assert the page fields are correct
-})
+});
 ```
 
 Thinking ahead, we'll want to be logged in for all our tests in this file. This is similar to how, in our login tests, we re-loaded the login page for test using Mocha's `beforeEach` hook.
@@ -65,16 +65,16 @@ Using the same code as our login page, we can add in a `before` hook that will l
 describe('Post Editor', function () {
     before(function () {
         // Load the login page
-        browser.url('./login')
+        browser.url('./login');
         // Login with a valid user
         auth.login('demo@learnwebdriverio.com', 'wdiodemo');
-    })
+    });
     it('should load page properly', function () {
         // Load the Post Editor page
         // Assert the URL is correct
         // Assert the page fields are correct
-    })
-})
+    });
+});
 ```
 
 The next step in our test is to load the 'Editor' page. We'll do this with a simple `browser.url('./editor')` command. But where to put this? As mentioned in the previous chapter, including the `url` command in our `beforeEach` hook is my preferred approach, as it ensures we have a clean page between all our test runs. If we added to the `before` hook, changes we make in one test might impact the state of the page in another. 
@@ -85,19 +85,19 @@ Here's what the code looks like with both a `before` and a `beforeEach` hook:
 describe('Post Editor', function () {
     before(function () {
         // Load the login page
-        browser.url('./login')
+        browser.url('./login');
         // Login with a valid user
         auth.login('demo@learnwebdriverio.com', 'wdiodemo');
-    })
+    });
     beforeEach(function () {
         // Load the Post Editor page
-        browser.url('./editor')
-    })
+        browser.url('./editor');
+    });
     it('should load page properly', function () {
         // Assert the URL is correct
         // Assert the page fields are correct
-    })
-})
+    });
+});
 ```
 
 ## 2.5.2 Has the Page Loaded Properly?
@@ -186,6 +186,7 @@ Before moving on, I'd like to review the fact that we have common login credenti
 
 Similar to how we store our page objects in separate files, we can do the same with our login credentials. Let's create a new file, and in it, define an object which will store information on multiple users:
 
+{title="test/fixtures/users.js"}
 ```js
 const users = {
     user1: {
@@ -241,12 +242,12 @@ const editor = new Editor();
 
 describe('Post Editor', function () {
     before(function () {
-        browser.url('./login')
+        browser.url('./login');
         auth.login(user1.email, user1.password);
-    })
+    });
     beforeEach(function () {
-        browser.url('./editor')
-    })
+        browser.url('./editor');
+    });
     it('should load page properly', function () {
         expect(browser).toHaveUrl('editor', { containing: true });
         expect(editor.$title).toBeExisting();
@@ -254,8 +255,8 @@ describe('Post Editor', function () {
         expect(editor.$body).toBeExisting();
         expect(editor.$tags).toBeExisting();
         expect(editor.$publish).toBeExisting();
-    })
-})
+    });
+});
 ```
 
 ## 2.5.4 Using and Updating the Auth Login Function
@@ -305,7 +306,7 @@ const auth = new Auth();
 describe('Login Form', function () {
     beforeEach(function () {
         browser.url('./login');
-    })
+    });
 
     it('should let you log in', function () {
         auth.login(user1);
@@ -355,7 +356,7 @@ class Login {
 before(function () {
     auth.load();
     auth.login(user1);
-})
+});
 ```
 
 Now, we could call that `load` function from inside our login function, and I'm really tempted to do just that. But, I don't want distract us yet again with yet another micro-optimization, especially when we're already in the middle of one. So I'll leave it up to you for that (in the chapter challenges of course)
@@ -375,7 +376,7 @@ And in the `beforeEach` hook of our `editor.js` file:
 ```js
 beforeEach(function () {
     editor.load();
-})
+});
 ```
 
 You know, we're going to follow this `load` function pattern a fair bit for all of our future page objects. It sure would be nice not to have to write the same `load` function over and over...
@@ -438,10 +439,10 @@ This path value can be stored to the class's `this` value and then used in the `
 
 ```js
 class Generic {
-    constructor (path) {
+    constructor(path) {
         this.path = path;
     }
-    
+
     load() {
         browser.url(this.path); // navigates to './login', which is passed in below
     }
@@ -458,17 +459,17 @@ We can define a class to 'extend' another class, similar to the phone analogy be
 
 ```js
 class Generic {
-    constructor (path) {
+    constructor(path) {
         this.path = path;
     }
-    
+
     load() {
         browser.url(this.path); // navigates to './login', which is passed in below
     }
 }
 
 class Auth extends Generic {
-  // element references and login function left out for brevity
+    // element references and login function left out for brevity
 }
 
 const auth = new Auth('./login');
@@ -479,7 +480,7 @@ Now our Auth class has that `load` function built in, so our `beforeEach` hook n
 ```js
 beforeEach(function () {
     auth.load();
-})
+});
 ```
 
 That's nice, but I don't like passing in the login path via the class instantiation line. We're going to need to use the Auth class in several tests, and it'll be the same issue that we're defining that path in every test. What if we instead store that path information inside the Auth class itself?
@@ -538,8 +539,8 @@ The contents of that file will be:
 
 ```js
 class Generic {
-    constructor (path) {
-        this.path = path
+    constructor(path) {
+        this.path = path;
     }
     load() {
         browser.url(this.path);
@@ -555,7 +556,7 @@ Next up, we need to update our Auth and Editor files to import the Generic page 
 const Generic = require('./Generic.page');
 
 class Auth extends Generic {
-    constructor () {
+    constructor() {
         super('./login')
     }
     
@@ -564,19 +565,25 @@ class Auth extends Generic {
     get $signIn () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    login ({ email, password }) {
+    login({ email, password }) {
         this.$email.setValue(email);
         this.$password.setValue(password);
 
         this.$signIn.click();
 
         // wait until either the sign in button is gone or an error has appeared
-        browser.waitUntil(() => {
-            const signInExists = this.$signIn.isExisting();
-            const errorExists = this.$errorMessages.isExisting();
+        browser.waitUntil(
+            () => {
+                const signInExists = this.$signIn.isExisting();
+                const errorExists = this.$errorMessages.isExisting();
 
-            return !signInExists || errorExists;
-        }, { timoutMsg: 'The "Sign in" button still exists and an error never appeared' });
+                return !signInExists || errorExists;
+            },
+            {
+                timoutMsg:
+                    'The "Sign in" button still exists and an error never appeared'
+            }
+        );
     }
 }
 
@@ -587,7 +594,7 @@ module.exports = Auth;
 const Generic = require('./Generic.page');
 
 class Editor extends Generic {
-    constructor () {
+    constructor() {
         super('./editor')
     }
     
@@ -619,7 +626,7 @@ Similar to how we can access element references in our tests (e.g., `editor.$tit
 expect(browser).toHaveUrl(editor.path, { containing: true });
 ```
 
-But there's a problem with that. If we were to run the test, it would fail with the error message: `expected 'https://localhost:8080/editor' to include './editor'`
+But there's a problem with that. If we were to run the test, it would fail with the error message: `expected 'http://localhost:8080/editor' to include './editor'`
 
 The reason for this is that `path` is set to `./editor` and not just `editor`. Why the extra `.`? Well if you remember back to Chapter 2.1, we needed to set our path to be relative to the `baseUrl`. Using the `.` does just that. 
 
@@ -650,12 +657,15 @@ For example:
 ```js
 const url = require('url');
 
-const myURL = new URL('https://user:pass@sub.example.com:8080/p/a/t/h?query=string#hash');
+const myURL = new URL(
+    'https://user:pass@sub.example.com:8080/p/a/t/h?query=string#hash'
+);
 console.log(myURL.hash);
 // prints `#hash`
 
 console.log(myURL.pathname);
 // Prints /p/a/t/h
+
 ```
 
 Any property defined in the chart above can be accessed as a property on our URL. 
@@ -679,7 +689,7 @@ Pulling this all together, our Generic page object now looks like:
 const { URL } = require('url');
 
 class Generic {
-    constructor (path) {
+    constructor(path) {
         this.path = path;
 
         // store the url by combining specific page path with WDIO base url

@@ -180,9 +180,12 @@ Let's try out that first option. As the tests run, you should see logs appearing
 
 ```sh
 2020-07-24T22:50:20.066Z INFO @wdio/cli:launcher: Run onWorkerStart hook
-2020-07-24T22:50:20.067Z INFO @wdio/local-runner: Start worker 0-0 with arg: --logLevel=trace
-[0-0] 2020-07-24T22:50:20.425Z INFO @wdio/local-runner: Run worker command: run
-[0-0] 2020-07-24T22:50:20.431Z DEBUG @wdio/local-runner:utils: init remote session
+2020-07-24T22:50:20.067Z INFO @wdio/local-runner: Start worker 0-0 with arg:
+--logLevel=trace
+[0-0] 2020-07-24T22:50:20.425Z INFO @wdio/local-runner: Run
+worker command: run
+[0-0] 2020-07-24T22:50:20.431Z DEBUG
+@wdio/local-runner:utils: init remote session
 ```
 
 As the test continues, old messages will "scroll" off the top of the log, while new messages appear at the bottom.
@@ -204,22 +207,32 @@ If you were to choose `warn`, you'd only get those messages, plus any `error` me
 After our tests have completed, WebdriverIO prints out the entirety of messages in a single section. Here's what that looks like:
 
 ```sh
-2020-07-24T22:50:19.909Z DEBUG @wdio/utils:initialiseServices: initialise service "chromedriver" as NPM package
+2020-07-24T22:50:19.909Z DEBUG @wdio/utils:initialiseServices: initialise
+service "chromedriver" as NPM package
 2020-07-24T22:50:19.933Z INFO @wdio/cli:launcher: Run onPrepare hook
-Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/branch-heads/4147@{#310}) on port 9515
+Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-ref
+s/branch-heads/4147@{#310}) on port 9515
 Only local connections are allowed.
-Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+Please see https://chromedriver.chromium.org/security-considerations for suggest
+ions on keeping ChromeDriver safe.
 ChromeDriver was started successfully.
 2020-07-24T22:50:20.066Z INFO @wdio/cli:launcher: Run onWorkerStart hook
-2020-07-24T22:50:20.067Z INFO @wdio/local-runner: Start worker 0-0 with arg: --logLevel=trace
+2020-07-24T22:50:20.067Z INFO @wdio/local-runner: Start worker 0-0 with arg: --l
+ogLevel=trace
 [0-0] 2020-07-24T22:50:20.425Z INFO @wdio/local-runner: Run worker command: run
-[0-0] 2020-07-24T22:50:20.431Z DEBUG @wdio/local-runner:utils: init remote session
-2020-07-24T22:50:20.433Z INFO webdriverio: Initiate new session using the ./protocol-stub protocol
+[0-0] 2020-07-24T22:50:20.431Z DEBUG @wdio/local-runner:utils: init remote sessi
+on
+2020-07-24T22:50:20.433Z INFO webdriverio: Initiate new session using the ./prot
+ocol-stub protocol
 [0-0] RUNNING in chrome - /test/specs/example.js
-[0-0] 2020-07-24T22:50:20.576Z DEBUG @wdio/utils:initialiseServices: initialise service "chromedriver" as NPM package
-[0-0] 2020-07-24T22:50:20.592Z DEBUG @wdio/local-runner:utils: init remote session
-[0-0] 2020-07-24T22:50:20.592Z INFO webdriverio: Initiate new session using the webdriver protocol
-[0-0] 2020-07-24T22:50:20.599Z INFO webdriver: [POST] http://localhost:9515/session
+[0-0] 2020-07-24T22:50:20.576Z DEBUG @wdio/utils:initialiseServices: initialise 
+service "chromedriver" as NPM package
+[0-0] 2020-07-24T22:50:20.592Z DEBUG @wdio/local-runner:utils: init remote sessi
+on
+[0-0] 2020-07-24T22:50:20.592Z INFO webdriverio: Initiate new session using the 
+webdriver protocol
+[0-0] 2020-07-24T22:50:20.599Z INFO webdriver: [POST] http://localhost:9515/sess
+ion
 [0-0] 2020-07-24T22:50:20.599Z INFO webdriver: DATA {
   capabilities: {
     alwaysMatch: { browserName: 'chrome', acceptInsecureCerts: true },
@@ -227,15 +240,22 @@ ChromeDriver was started successfully.
   },
   desiredCapabilities: { browserName: 'chrome', acceptInsecureCerts: true }
 }
-[0-0] 2020-07-24T22:50:22.453Z INFO webdriver: COMMAND navigateTo("https://webdriver.io/")
-[0-0] 2020-07-24T22:50:22.454Z INFO webdriver: [POST] http://localhost:9515/session/32eec5f507ed6f86473e3c4b685fd96b/url
-[0-0] 2020-07-24T22:50:22.454Z INFO webdriver: DATA { url: 'https://webdriver.io/' }
+[0-0] 2020-07-24T22:50:22.453Z INFO webdriver: COMMAND navigateTo("https://webdr
+iver.io/")
+[0-0] 2020-07-24T22:50:22.454Z INFO webdriver: [POST] http://localhost:9515/sess
+ion/32eec5f507ed6f86473e3c4b685fd96b/url
+[0-0] 2020-07-24T22:50:22.454Z INFO webdriver: DATA { url: 'https://webdriver.io
+/' }
 [0-0] 2020-07-24T22:50:23.711Z INFO webdriver: COMMAND getTitle()
-[0-0] 2020-07-24T22:50:23.711Z INFO webdriver: [GET] http://localhost:9515/session/32eec5f507ed6f86473e3c4b685fd96b/title
-[0-0] 2020-07-24T22:50:24.119Z INFO webdriver: RESULT WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+[0-0] 2020-07-24T22:50:23.711Z INFO webdriver: [GET] http://localhost:9515/sessi
+on/32eec5f507ed6f86473e3c4b685fd96b/title
+[0-0] 2020-07-24T22:50:24.119Z INFO webdriver: RESULT WebdriverIO · Next-gen bro
+wser and mobile automation test framework for Node.js
 [0-0] 2020-07-24T22:50:24.124Z INFO webdriver: COMMAND deleteSession()
-2020-07-24T22:50:24.124Z INFO webdriver: [DELETE] http://localhost:9515/session/32eec5f507ed6f86473e3c4b685fd96b
-2020-07-24T22:50:24.292Z DEBUG @wdio/local-runner: Runner 0-0 finished with exit code 0
+2020-07-24T22:50:24.124Z INFO webdriver: [DELETE] http://localhost:9515/session/
+32eec5f507ed6f86473e3c4b685fd96b
+2020-07-24T22:50:24.292Z DEBUG @wdio/local-runner: Runner 0-0 finished with exit
+ code 0
 [0-0] PASSED in chrome - /test/specs/example.js
 2020-07-24T22:50:24.297Z INFO @wdio/cli:launcher: Run onComplete hook
 ```
@@ -272,17 +292,24 @@ Take the `getUrl` command in the next few lines. WebdriverIO sends a request to 
 Overall, the logs for this look like:
 
 ```sh
-[0-0] 2020-07-24T22:50:22.453Z INFO webdriver: COMMAND navigateTo("https://webdriver.io/")
-[0-0] 2020-07-24T22:50:22.454Z INFO webdriver: [POST] http://localhost:9515/session/32eec5f507ed6f86473e3c4b685fd96b/url
-[0-0] 2020-07-24T22:50:22.454Z INFO webdriver: DATA { url: 'https://webdriver.io/' }
+[0-0] 2020-07-24T22:50:20.599Z INFO webdriver: [POST] http://localhost:9515/session
+[0-0] 2020-07-24T22:50:20.599Z INFO webdriver: DATA {
+  capabilities: {
+    alwaysMatch: { browserName: 'chrome', acceptInsecureCerts: true },
+    firstMatch: [ {} ]
+  },
+  desiredCapabilities: { browserName: 'chrome', acceptInsecureCerts: true }
+}
 ```
 
 In the next set of logs, WebdriverIO requests the page title from the Browser. No data is sent to Chromedriver, as there isn't any information to send. Instead, Chromedriver returns data back to us, namely, the title of the page. You see this in the "result" log output and sequentially, the console output we sent in our test:
 
 ```sh
 [0-0] 2020-07-24T22:50:23.711Z INFO webdriver: COMMAND getTitle()
-[0-0] 2020-07-24T22:50:23.711Z INFO webdriver: [GET] http://localhost:9515/session/32eec5f507ed6f86473e3c4b685fd96b/title
-[0-0] 2020-07-24T22:50:24.119Z INFO webdriver: RESULT WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
+[0-0] 2020-07-24T22:50:23.711Z INFO webdriver: [GET] http://localhost:9515/session/3
+2eec5f507ed6f86473e3c4b685fd96b/title
+[0-0] 2020-07-24T22:50:24.119Z INFO webdriver: RESULT WebdriverIO · Next-gen browser
+ and mobile automation test framework for Node.js
 ```
 
 Finally, WebdriverIO closes our browser by sending a `DELETE` request for our session endpoint. Once it gets the successful close message, it closes down the worker and runs the `onComplete` hook. With that the test is complete.
@@ -290,9 +317,11 @@ Finally, WebdriverIO closes our browser by sending a `DELETE` request for our se
 That was a lot of logs. What if we want to ignore all this output and only show the basics (plus any `console.log` messages we may have added). Let's see what the log output looks like when running with `logLevel` set to `silent`:
 
 ```sh
-Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/branch-heads/4147@{#310}) on port 9515
+Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/br
+anch-heads/4147@{#310}) on port 9515
 Only local connections are allowed.
-Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+Please see https://chromedriver.chromium.org/security-considerations for suggestions
+ on keeping ChromeDriver safe.
 ChromeDriver was started successfully.
 [0-0] RUNNING in chrome - /test/specs/example.js
 [0-0] PASSED in chrome - /test/specs/example.js

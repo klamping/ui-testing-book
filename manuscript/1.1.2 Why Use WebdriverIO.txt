@@ -133,7 +133,7 @@ WebdriverIO makes this really easy. Just call the "addCommand" function, and pas
 Here's an example from their docs:
 
 ```js
-browser.addCommand("getUrlAndTitle", function () {
+browser.addCommand('getUrlAndTitle', function () {
     // `this` refers to the `browser` scope
     return {
         url: this.getUrl(),

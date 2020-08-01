@@ -81,13 +81,13 @@ With those reasons in mind, the best approach here is to use a simple `browser.u
 
 ```js
 it('should let you log in', function () {
-  // go to the login page
-  browser.url('./login');
-  
-  // enter a valid username into the "email" input
-  // enter a valid password into the "password" input
-  // click the 'Sign In' button
-  // assert that we're logged in
+    // go to the login page
+    browser.url('./login');
+    
+    // enter a valid username into the "email" input
+    // enter a valid password into the "password" input
+    // click the 'Sign In' button
+    // assert that we're logged in
 });
 ```
 
@@ -152,13 +152,23 @@ For our element selectors, we're using a combo of element type (`input`) with a 
 
 ```html
 <form>
-  <fieldset class="form-group">
-    <input type="email" placeholder="Email" class="form-control form-control-lg" autocomplete="off">
-  </fieldset>
-  <fieldset class="form-group">
-    <input type="password" placeholder="Password" class="form-control form-control-lg" autocomplete="off">
-  </fieldset>
-  <button class="btn btn-lg btn-primary pull-xs-right">Sign in</button>
+    <fieldset class="form-group">
+        <input
+            type="email"
+            placeholder="Email"
+            class="form-control form-control-lg"
+            autocomplete="off"
+        />
+    </fieldset>
+    <fieldset class="form-group">
+        <input
+            type="password"
+            placeholder="Password"
+            class="form-control form-control-lg"
+            autocomplete="off"
+        />
+    </fieldset>
+    <button class="btn btn-lg btn-primary pull-xs-right">Sign in</button>
 </form>
 ```
 
@@ -210,7 +220,7 @@ As always with testing, we can assert any number of details:
 
 - No login error messages should show on the page
 - The URL shouldn't contain 'login'
-- The URL should just be 'https://localhost:8080/'
+- The URL should just be 'http://localhost:8080/'
 - The login form should not exist on the page
 - The homepage should be showing
 - The top navigation should have the following items: 'Home', 'New Article', 'Settings', and our username which links to our profile page
@@ -251,7 +261,7 @@ describe('Login Page', function () {
         $('input[type="password"]').setValue('wdiodemo');
 
         $('button=Sign in').click();
-        
+
         expect($('.error-messages li')).not.toBeExisting();
     });
 });
@@ -315,8 +325,10 @@ Well, aside from torturing unruly kids, slowing your connection down is great pr
 In our `wdio.conf.js` file, scroll down to the `before` hook section. It's about 150 lines down, commented out and looks like:
 
 ```js
- * Gets executed before test execution begins. At this point you can access to all global
- * variables like `browser`. It is the perfect place to define custom commands.
+/*
+ * Gets executed before test execution begins. At this point you can access to 
+ * all global variables like `browser`. It is the perfect place to define custom
+ * commands.
  * @param {Array.<Object>} capabilities list of capabilities details
  * @param {Array.<String>} specs List of spec file paths that are to be run
  */
@@ -330,18 +342,18 @@ The funny thing we're going to make happen is that we're going to artificially s
 
 ```js
 // throttle to Regular 3G
-browser.throttle('Regular 3G')
+browser.throttle('Regular 3G');
 
 // disable network completely
-browser.throttle('Offline')
+browser.throttle('Offline');
 
 // set custom network throughput
 browser.throttle({
-    'offline': false,
-    'downloadThroughput': 200 * 1024 / 8,
-    'uploadThroughput': 200 * 1024 / 8,
-    'latency': 20
-})
+    offline: false,
+    downloadThroughput: (200 * 1024) / 8,
+    uploadThroughput: (200 * 1024) / 8,
+    latency: 20
+});
 ```
 
 As you see, you can either pass in a network preset via a matching string, or a custom object defining a specific settings.
@@ -426,6 +438,7 @@ The `<a>` tag can contain any number of attributes; that doesn't matter. But it 
 
 Throwing that code into our test, this is how the whole thing looks:
 
+{title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
     it('should let you log in', function () {
@@ -469,6 +482,7 @@ $('button*=Sign in').waitForExist({ reverse: true });
 
 Here it is in the full test:
 
+{title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
     it('should let you log in', function () {

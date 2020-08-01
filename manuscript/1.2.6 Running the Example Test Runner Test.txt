@@ -28,13 +28,17 @@ On Windows, `touch` will not work, so you can instead go to the `test/specs/` fo
 
 Open that file in a text editor and paste in the example from the official WebdriverIO website:
 
+{title="test/specs/example.js"}
 ```js
 describe('webdriver.io page', () => {
     it('should have the right title', () => {
-        browser.url('https://webdriver.io')
-        expect(browser).toHaveTitle('WebdriverIO · Next-gen browser and mobile automation test framework for Node.js');
-    })
-})
+        browser.url('https://webdriver.io');
+        expect(browser).toHaveTitle(
+            'WebdriverIO · Next-gen browser and mobile automation test \
+framework for Node.js'
+        );
+    });
+});
 ```
 
 There is one thing we want to change. Where it sets the `url` to go to, we instead want to use the `baseUrl` we defined in our configuration file.
@@ -165,10 +169,13 @@ const { remote } = require('webdriverio');
 ```js
 describe('webdriver.io page', () => {
     it('should have the right title', () => {
-        browser.url('./')
-        expect(browser).toHaveTitle('WebdriverIO · Next-gen browser and mobile automation test framework for Node.js');
-    })
-})
+        browser.url('https://webdriver.io');
+        expect(browser).toHaveTitle(
+            'WebdriverIO · Next-gen browser and mobile automation test \
+framework for Node.js'
+        );
+    });
+});
 ```
 
 Overall our test runner code is much more succinct. This is due to quite a few things:
@@ -207,12 +214,12 @@ To bring it all together, here's an example test file with just the structure in
 
 ```js
 describe('Login Page', function () {
-  it('should allow you to log in using valid credentials', function () {
-    // valid login code here
-  })
-  it('should not allow you to log in using invalid credentials', function () {
-    // invalid login code here
-  })
+    it('should allow you to log in using valid credentials', function () {
+        // valid login code here
+    });
+    it('should not allow you to log in using invalid credentials', function () {
+        // invalid login code here
+    });
 });
 ```
 

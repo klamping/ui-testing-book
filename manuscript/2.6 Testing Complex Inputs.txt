@@ -19,11 +19,11 @@ There are is a tags field we can fill out as well, but we'll save that for later
 Using our `editor` page object, we can set all three values calling the `setValue` command we used before:
 
 ```js
-    it('should let you publish a new post', function () {
-        editor.$title.setValue('Test Title');
-        editor.$description.setValue('Test Description');
-        editor.$body.setValue('Test Body');
-    })
+it('should let you publish a new post', function () {
+    editor.$title.setValue('Test Title');
+    editor.$description.setValue('Test Description');
+    editor.$body.setValue('Test Body');
+});
 ```
 
 Except we can't. While the `setValue` command works for the first two fields, the 'Body' field throws an error: `invalid element state: Element must be user-editable in order to clear it.`
@@ -127,17 +127,17 @@ it('should let you publish a new post', function () {
     editor.$description.setValue('Test Description');
     editor.$body.setValue('Test Body');
 
-    editor.$tags.setValue('Tag1')
-    editor.$tags.keys('Enter')
+    editor.$tags.setValue('Tag1');
+    editor.$tags.keys('Enter');
 
     editor.$publish.click();
 
     // expect to be on new article page
     expect(browser).toHaveUrl('articles/test-title', { containing: true });
 
-    // to avoid making a ton of articles, let's just click the delete button to clean ourselves up
-    // We'll talk about a better way to clean later on
-    $('button*=Delete Article').click()
+    // to avoid making a ton of articles, let's just click the delete button to
+    // clean ourselves up. We'll talk about a better way to clean later on.
+    $('button*=Delete Article').click();
 });
 ```
 
@@ -160,29 +160,24 @@ For the tag field, it would be nice to allow for multiple tags. We can accomplis
 
 ```js
 editor.submitArticle({
-  title: 'Test Title',
-  description: 'Test Description',
-  body: 'Test Body',
-  tags: ['Tag1']
-})
+    title: 'Test Title',
+    description: 'Test Description',
+    body: 'Test Body',
+    tags: ['Tag1']
+});
 ```
 
 In that example, we only pass in a single tag, but still use an array for it. This way our function does not need to handle mutliple data types. Here is what that function is going to look like:
 
 ```js
-submitArticle ({
-    title,
-    description,
-    body,
-    tags
-}) {
+submitArticle({ title, description, body, tags }) {
     this.$title.setValue(title);
     this.$description.setValue(description);
     this.$body.setValue(body);
-    tags.forEach(tag => {
+    tags.forEach((tag) => {
         this.$tags.setValue(tag);
-        this.$tags.keys('Enter')
-    })
+        this.$tags.keys('Enter');
+    });
     this.$publish.click();
 }
 ```
@@ -197,6 +192,7 @@ Finally, we end the function by clicking the publish button, which submits the f
 
 Combined into our page object, here's how the entire thing looks:
 
+{title="test/specs/Editor.page.js"}
 ```js
 const Generic = require('./Generic.page');
 
@@ -211,19 +207,14 @@ class Editor extends Generic {
     get $tags () { return $('[data-qa-id="editor-tags"]'); }
     get $publish () { return $('[data-qa-id="editor-publish"]'); }
 
-    submitArticle ({
-        title,
-        description,
-        body,
-        tags
-    }) {
+    submitArticle({ title, description, body, tags }) {
         this.$title.setValue(title);
         this.$description.setValue(description);
         this.$body.setValue(body);
-        tags.forEach(tag => {
+        tags.forEach((tag) => {
             this.$tags.setValue(tag);
-            this.$tags.keys('Enter')
-        })
+            this.$tags.keys('Enter');
+        });
         this.$publish.click();
     }
 }
@@ -240,14 +231,14 @@ it('should let you publish a new post', function () {
         description: 'Test Description',
         body: 'Test Body',
         tags: ['Tag1']
-    })
+    });
 
     // expect to be on new article page
     expect(browser).toHaveUrl('articles/test-title', { containing: true });
 
-    // to avoid making a ton of articles, let's just click the delete button to clean ourselves up
-    // We'll talk about a better way to clean later on
-    $('button*=Delete Article').click()
+    // to avoid making a ton of articles, let's just click the delete button to
+    // clean ourselves up. We'll talk about a better way to clean later on
+    $('button*=Delete Article').click();
 });
 ```
 
@@ -318,7 +309,10 @@ editor.submitArticle(articleDetails);
 Then in our URL assertion, reference the `title` property stored in our `articleDetails` object. Except... we need to convert the title to the URL version. Here's what that looks like:
 
 ```js
-const slug = articleDetails.title.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'');
+const slug = articleDetails.title
+    .toLowerCase()
+    .replace(/ /g, '-')
+    .replace(/[^\w-]+/g, '');
 
 // expect to be on new article page
 expect(browser).toHaveUrl(`articles/${slug}`, { containing: true });
@@ -382,9 +376,9 @@ it('should let you publish a new post', function () {
     expect(article.$title).toHaveText(articleDetails.title);
     expect(article.$body).toHaveText(articleDetails.body);
 
-    // to avoid making a ton of articles, let's just click the delete button to clean ourselves up
-    // We'll talk about a better way to clean later on
-    article.$delete.click()
+    // to avoid making a ton of articles, let's just click the delete button to
+    // clean ourselves up. We'll talk about a better way to clean later on
+    article.$delete.click();
 });
 ```
 
@@ -402,7 +396,9 @@ So first thing is to add a new element reference, which looks like:
 
 ```js
 get $tags () { return $('[data-qa-id="article-tags"]'); }
-get $$tags () { return $$('[data-qa-id="article-tags"] [data-qa-type="article-tag"]'); }
+get $$tags () { 
+    return $$('[data-qa-id="article-tags"] [data-qa-type="article-tag"]');
+}
 ```
 
 So we use `$$` to target all elements that match (not just the first), and we add a second bit of information to our selector to match the specific tag (not just the container of the tags). 
@@ -423,7 +419,7 @@ Using `forEach`, we could `console.log` out the information:
 
 ```js
 myAwesomeNumbers.forEach(awesomeNumber => {
-  console.log(awesomeNumber * 2);
+    console.log(awesomeNumber * 2);
 });
 ```
 
@@ -439,7 +435,7 @@ But that's not very useful if we want to use those doubled numbers in our code. 
 
 ```js
 const myAwesomeNumbersDoubled = myAwesomeNumbers.map(awesomeNumber => {
-  return awesomeNumber * 2;
+    return awesomeNumber * 2;
 });
 ```
 
@@ -449,7 +445,7 @@ Instead of working with numbers, we can work with element references. Using this
 
 ```js
 const tags = article.$$tags.map($tag => {
-  return $tag.getText();
+    return $tag.getText();
 });
 ```
 
@@ -457,7 +453,7 @@ Now tags will be an array of whatever text is there (e.g. ['tag1', 'tag2']), whi
 
 ```js
 const tags = article.$$tags.map($tag => {
-  return $tag.getText();
+    return $tag.getText();
 });
 expect(tags).toEqual(articleDetails.tags);
 ```
@@ -473,7 +469,9 @@ class Article extends Generic {
     get $title () { return $('[data-qa-id="article-title"]'); }
     get $body () { return $('[data-qa-id="article-body"]'); }
     get $tags () { return $$('[data-qa-id="article-tags"]'); }
-    get $$tags () { return $$('[data-qa-id="article-tags"] [data-qa-type="article-tag"]'); }
+    get $$tags () {
+        return $$('[data-qa-id="article-tags"] [data-qa-type="article-tag"]');
+    }
     get $edit () { return $('[data-qa-id="article-edit"]'); }
     get $delete () { return $('[data-qa-id="article-delete"]'); }
 
@@ -518,7 +516,7 @@ describe('Post Editor', function () {
         expect(editor.$tags).toExist();
         expect(editor.$publish).toExist();
     });
-    
+
     it('should let you publish a new post', function () {
         const articleDetails = {
             title: chance.sentence({ words: 3 }),
@@ -533,9 +531,9 @@ describe('Post Editor', function () {
         expect(article.$body).toHaveText(articleDetails.body);
         expect(article.tags).toEqual(articleDetails.tags);
 
-        // to avoid making a ton of articles, let's just click the delete button to clean ourselves up
-        // We'll talk about a better way to clean later on
-        article.$delete.click()
+        // to avoid making a ton of articles, let's just click the delete button to
+        // clean ourselves up. We'll talk about a better way to clean later on
+        article.$delete.click();
     });
 });
 ```
@@ -546,7 +544,7 @@ One of the most frustrating experiences on a website for a user occurs when they
 
 To avoid this tragic outcome, website owners now implement "alerts" that pop-up when you try leaving certain pages. These alerts will inquire about your intentions and whether they were purposeful or not:
 
-![Screenshot of Alert box appearing upon page navigation](images/5CC24D75786F70E70F86E0CF010CCC94.jpg)
+![Screenshot of Alert box appearing upon page navigation](images/7E1FF58355D214AF24C266B8EBD5BF0C.jpg)
 
 It's a minor annoyance for those content to destroy whatever content they've created, but a lifesaver for clumsier folks like me. What we're going to do is write a few tests checking that these alerts appear on our editor page.
 
@@ -559,10 +557,10 @@ Since these two tests are related, we're going to group them under a specific `d
 
 ```js
 describe('Post Editor', function () {
-  ... other tests and such here ...
-  
-  describe('"Unsaved Changes" alerts', function () {
-  });
+    ... other tests and such here ...
+    
+    describe('"Unsaved Changes" alerts', function () {
+    });
 });
 ```
 
@@ -585,18 +583,18 @@ Before doing that though, I need to edit one of the fields to trigger the "unsav
 Here's what all that looks like:
 
 ```js
-describe('"Unsaved Changes" alerts', function () { 
-  beforeEach(function () {
-    editor.$title.setValue('Unsaved Change');
-  });
-  
-  it('should alert you when using browser navigation', function () {
-    // try refreshing the page
-    browser.refresh();
+describe('"Unsaved Changes" alerts', function () {
+    beforeEach(function () {
+        editor.$title.setValue('Unsaved Change');
+    });
 
-    // validate alert is showing
-    // ??
-  });
+    it('should alert you when using browser navigation', function () {
+        // try refreshing the page
+        browser.refresh();
+
+        // validate alert is showing
+        // ??
+    });
 });
 ```
 
@@ -628,11 +626,11 @@ describe('"Unsaved Changes" alerts', function () {
     });
 
     it('should alert you when using browser navigation', function () {
-      // try refreshing the page
-      browser.refresh();
+        // try refreshing the page
+        browser.refresh();
 
-      // validate alert is showing
-      expect(() => browser.acceptAlert()).not.toThrow();
+        // validate alert is showing
+        expect(() => browser.acceptAlert()).not.toThrow();
     });
 });
 ```
@@ -660,7 +658,9 @@ it('should warn you when trying to change URL', function () {
 
     const alertText = browser.getAlertText();
 
-    expect(alertText).toEqual('Do you really want to leave? You have unsaved changes!');
+    expect(alertText).toEqual(
+        'Do you really want to leave? You have unsaved changes!'
+    );
 
     // accept the alert to avoid it from preventing further tests from executing
     browser.acceptAlert();
@@ -709,10 +709,12 @@ Next, we need to be able to pass in a previously used seed. There are a couple w
 
 ```js
 if (!process.env.SEED) {
-    // store as a string since that's how the SEED environment variable is passed in as 
+    // store as a string since that's how the SEED environment variable is passed in
     process.env.SEED = Math.random().toString();
 }
-console.log(`ChanceJS Seed: ${process.env.SEED} - Pass in using 'SEED=${process.env.SEED}'`);
+console.log(
+    `ChanceJS Seed: ${process.env.SEED} - Pass in using 'SEED=${process.env.SEED}'`
+);
 const chance = new Chance(process.env.SEED);
 ```
 
@@ -724,7 +726,9 @@ Now when we run our `editor.js` test, we'll get that seed data logged out, which
 SEED=0.00726358915055525 npx wdio --spec=editor
 ```
 
-On the Windows command line, this looks like: (TODO confirm this is true on windows :)
+On the Windows command line, this looks like:
+
+%% TODO confirm this is true on Windows
 
 ```sh
 cmd /C "set SEED=0.00726358915055525 && npx wdio --spec=editor"
@@ -768,10 +772,12 @@ const Chance = require('chance');
 
 // Instantiate Chance so it can be used
 if (!process.env.SEED) {
-    // store as a string since that's how the SEED environment variable is passed in as
+    // store as a string since that's how the SEED environment variable is passed in
     process.env.SEED = Math.random().toString();
 }
-console.log(`ChanceJS Seed: ${process.env.SEED} - Pass in using 'SEED=${process.env.SEED}'`);
+console.log(
+    `ChanceJS Seed: ${process.env.SEED} - Pass in using 'SEED=${process.env.SEED}'`
+);
 
 exports.config = {
   ... configs here (including the `before` hook) ...

@@ -80,34 +80,30 @@ Here's what the updated `Api.js` file will look like:
 const axios = require('axios');
 
 class Api {
-    constructor (baseURL) {
+    constructor(baseURL) {
         this.api = axios.create({
             baseURL,
-            'Accept': 'application/json, text/plain, */*',
+            Accept: 'application/json, text/plain, */*',
             'Content-Type': 'application/json'
-        })
+        });
     }
 
-    getAuthToken ({email, password}) {
+    getAuthToken({ email, password }) {
         return this.api
-            .post('/users/login', { user: {email, password} })
-            .then(res => res.data.user.token);
+            .post('/users/login', { user: { email, password } })
+            .then((res) => res.data.user.token);
     }
 
     async createArticle(user, details) {
         const token = await this.getAuthToken(user);
-        const response = await this.client
-            .post(
-                'articles',
-                {
-                    json : {
-                        article: details
-                    },
-                    headers: {
-                        'Authorization': `Token ${token}`
-                    }
-                }
-            );
+        const response = await this.client.post('articles', {
+            json: {
+                article: details
+            },
+            headers: {
+                Authorization: `Token ${token}`
+            }
+        });
         return response.body.article;
     }
 }
@@ -173,13 +169,15 @@ describe('Tag Feed', function () {
 
     it('should have tag tab', function () {
         // check that we're on the tag tab
-        expect(tagPage.feeds.$$activeFeedTabs[0]).toHaveText(tagName, { trim: true })
+        expect(tagPage.feeds.$$activeFeedTabs[0]).toHaveText(tagName, {
+            trim: true
+        });
     });
 
     it('should load only articles for that tag', function () {
         expect(tagPage.currentFeed.$$articles).toHaveChildren(1);
     });
-    
+
     it('should load correct article preview details', function () {
         const firstArticleDetails = tagPage.currentFeed.articles[0].getDetails();
 
@@ -203,7 +201,9 @@ With that said, let's look at how we can "clean up" after our test, by making an
 ```js
 async deleteArticle(user, slug) {
     const token = await this.getAuthToken(user);
-    return this.client.delete(`articles/${slug}`, { headers: { 'Authorization': `Token ${token}` }});
+    return this.client.delete(`articles/${slug}`, {
+        headers: { Authorization: `Token ${token}` }
+    });
 }
 ```
 
@@ -216,7 +216,7 @@ after(function () {
     browser.call(() => {
         return global.api.deleteArticle(user1, articleResponse.slug);
     });
-})
+});
 ```
 
 Note that we get the generated slug from the API response, which was stored back in our `before` hook.
