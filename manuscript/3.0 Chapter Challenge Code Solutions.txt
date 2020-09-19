@@ -377,7 +377,7 @@ describe('Existing Article Editor', function () {
 
 To be honest, this isn't the prettiest of code samples, but it gets the job done!
 
-## 2.7 Move 'loginViaApi' Command to the Auth Page Object
+## Chapter 2.7: Move 'loginViaApi' Command to the Auth Page Object
 
 There are two steps to this change:
 
