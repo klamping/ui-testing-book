@@ -1,8 +1,8 @@
-# 2.x Chapter Challenge Code Solutions
+# 3.0 Chapter Challenge Code Solutions
 
 Each chapter includes a challenge or two for you to tackle on your own. But it's nice to check your work, so the following are solutions for each challenge.
 
-## 2.1 Assertions
+## Chapter 2.1: Assertions
 
 In your existing test, add a check that validates that when you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.
 
@@ -37,7 +37,7 @@ describe('Homepage', function () {
 });
 ```
 
-## 2.2 Selectors
+## Chapter 2.2: Selectors
 
 **Page Footer Text**
 
@@ -60,7 +60,7 @@ From there, we need to navigate over to the links. We can use the `following-sib
 
 All together, this is what your selector may look like: `$$('//p[contains(text(), "Popular Tags")]/following-sibling::div//a')`
 
-## 2.3 Waiting Another Way
+## Chapter 2.3: Waiting Another Way
 
 **Update the 'waitFor' code to instead use `waitForDisplayed`**
 
@@ -90,7 +90,7 @@ describe('Login Page', function () {
 });
 ```
 
-## 2.4 Registration Tests
+## Chapter 2.4: Registration Tests
 
 **Write a set of tests for the register account page**
 
@@ -229,7 +229,7 @@ describe('Register Page', function () {
 });
 ```
 
-## 2.5 More Sharing
+## Chapter 2.5: More Sharing
 
 **Move the Auth's `load` function call to be inside the `login` function.**
 
@@ -294,7 +294,7 @@ module.exports = Generic;
 
 Then, in any Page Object based off of the Generic one, reference it as if it were already there: `editor.$siteNav.isExisting();`
 
-## 2.6 Validating 'Edit Article' Functionality
+## Chapter 2.6: Validating 'Edit Article' Functionality
 
 First, we need an article to edit. The pre-existing "Demo Article" is a good option, although it would be useful to create a unique article just for testing purposes. Which one you choose is up to you, but I went ahead and went with creating a new one. 
 
@@ -408,7 +408,7 @@ class Auth extends Generic {
 
 Personally, I prefer the custom command style, but I did want to demonstrate another way you can make this happen. 
 
-## 2.8 Validating the "Popular Tags" Block
+## Chapter 2.8: Validating the "Popular Tags" Block
 
 **Use the API to get the tags to be shown on the 'Popular Tags' section on the homepage.**
 
@@ -453,7 +453,7 @@ Note that this test does have the chance it will fail, if the tags haven't loade
 
 It's also difficult to add a proper wait here, since there is no "loading" indicator in that popular tags box. Sometimes you just can't be perfect :)
 
-## 2.9 Public User Profile Page Tests
+## Chapter 2.9: Public User Profile Page Tests
 
 Create a set of tests for the user profile page (e.g., https://demo.learnwebdriverio.com/@singlearticleuser/). These tests should be responsible for creating a unique profile with a article that shows on the "My Article" feed.
 

@@ -1,6 +1,6 @@
 ## 1.2.6 Running the Example Test Runner Test
 
-Now that we've created and review our configuration file, it's time to write a test to make use of it. 
+Now that we've created and reviewed our configuration file, it's time to write a test to make use of it. 
 
 Since this is the first time we're creating a test, we need to create our folders for the test files to go into.
 
@@ -41,9 +41,9 @@ framework for Node.js'
 });
 ```
 
-There is one thing we want to change. Where it sets the `url` to go to, we instead want to use the `baseUrl` we defined in our configuration file.
+There is one thing we want to change. Where it sets the `url`, we instead want to use the `baseUrl` we defined in our configuration file.
 
-So change `browser.url('https://webdriver.io');` to be `browser.url('./');`. Now when WebdriverIO runs that command, it will see that it isn't a full website URL, and prepend our `baseUrl` from the config file.
+So change `browser.url('https://webdriver.io');` to be `browser.url('./');`. When WebdriverIO runs that command, it will see that it isn't a full website URL, and prepend our `baseUrl` from the config file.
 
 Okay, let's save the file and try running the test.
 
@@ -69,7 +69,7 @@ Assuming you selected the Selenium Standalone service during our config run-thro
 
 The one thing we should check on is making sure the Selenium server we started up earlier isn't still running. Check your terminal windows to make sure this isn't the case (remember you can stop the server by sending the `ctrl-c` key command).
 
-You can also go to `http://localhost:4444/wd/hub` and making sure it returns a "site can't be reached" error. 
+You can also go to `http://localhost:4444/wd/hub` and make sure it returns a "site can't be reached" error. 
 
 Okay, with that out of the way, let's run our tests by calling the WDIO testrunner inside our terminal: 
 
@@ -93,11 +93,11 @@ npm install @wdio/selenium-standalone-service
 
 Then add it to your `services` array and give it a shot. 
 
-### Running with Chromedriver
+### Running with ChromeDriver
 
-Chromedriver also comes with its own WebdriverIO service, allowing us the ability to automatically start and stop a `chromedriver` server during our test run. 
+ChromeDriver also comes with its own WebdriverIO service, allowing us to automatically start and stop a `chromedriver` server during our test run. 
 
-If you didn't select `chromedriver` from the `services` list during the config, installation and usage is much like that with `selenium-standalone`, beginning with our NPM install step.
+If you didn't select `chromedriver` from the `services` list during the config, installation and usage is much like `selenium-standalone`, beginning with our NPM install step.
 
 You'll need to install two packages:
 
@@ -109,11 +109,11 @@ Even though, in an earlier example, we installed the `chromedriver` package glob
 
 Information on the packages we install locally automatically get saved to a `dependency` section of our package.json file by NPM. This gives us the ability to re-install any missing dependencies later on by running `npm install`. This is helpful if you want to load your project from scratch.
 
-With the install done, we need to do two more things. Jump back in to your `wdio.conf.js` file and skip down to the services section. Ensure that the only service defined is `chromedriver` (e.g., `services: ['chromedriver']`)
+With the installation done, we need to do two more things. Jump back into your `wdio.conf.js` file and skip down to the services section. Ensure that the only service defined is `chromedriver` (e.g., `services: ['chromedriver']`)
 
 As I've mentioned before, you don't want to have both `selenium-standalone` and `chromedriver` in your services at the same time as they would conflict with each other.
 
-With that done, let's talk about one more thing. You may recall during our first time using Chromedriver that we had to update the `port` and `path` settings in our Webdriver session initialization. Well, to help us out, the Chromedriver service configures this for us. Before you'd need to set this manually in your config, but now it's all handled in the service.
+With that done, let's talk about one more thing. You may recall during our first time using ChromeDriver that we had to update the `port` and `path` settings in our WebDriver session initialization. Well, to help us out, the ChromeDriver service configures this for us. Before you'd need to set this manually in your config, but now it's all handled in the service.
 
 With that all set up, let's run our tests again with our `wdio` command:
 
@@ -123,17 +123,17 @@ npx wdio
 
 The output should look almost identical to before:
 
-![Terminal output running our test via Chromedriver](images/295EF6EFD41A012957D8763159977669.jpg)
+![Terminal output running our test via ChromeDriver](images/295EF6EFD41A012957D8763159977669.jpg)
 
-Notice the line `INFO webdriver: [POST] http://localhost:9515/session`. See how the port is set to `9515`? That's the chromedriver service managing it all for us!
+Notice the line `INFO webdriver: [POST] http://localhost:9515/session`. See how the port is set to `9515`? That's the ChromeDriver service managing it all for us!
 
-Whether you use Chromedriver or Selenium Standalone is entirely up to you. The benefit of Chromedriver is that you don't need to have Java installed to run, but the drawback is that you can only run your tests in Chrome. 
+Whether you use ChromeDriver or Selenium Standalone is entirely up to you. The benefit of ChromeDriver is that you don't need to have Java installed to run, but the drawback is that you can only run your tests in Chrome. 
 
 On the other hand, Selenium Standalone installs and manages all the browser drivers for you, so you're free to run most any browser installed on your computer.
 
-Personally I use either of them depending on the situation. I usually lean on Chromedriver when starting out, as it's usally quicker to run, then switch over to Selenium Standalone when I need to expand my browser coverage.
+Personally I use either of them depending on the situation. I usually lean on ChromeDriver when starting out, as it's usually quicker to run, then switch to Selenium Standalone when I need to expand my browser coverage.
 
-For the rest of the book, we'll be using Chromedriver going forward. 
+For the rest of the book, we'll be using ChromeDriver going forward. 
 
 Now that we've got our test running, let's take some time to review the actual code.
 
@@ -180,13 +180,13 @@ framework for Node.js'
 
 Overall our test runner code is much more succinct. This is due to quite a few things:
 
-* **No need for `remote` and setting up our `browser` object**: This is all done via our configuration file and the test runner
+* **No need for `remote` and setting up our `browser` object**: This is all done via the configuration file and test runner
 * **No need for `async` and `await` keywords**: By running our tests in `sync` mode, we no longer need to add all that extra code.
-* **No need to delete the session**: The test runner manages both creating and ending the sessions for us, so we don't manually have to do this.
+* **No need to delete the session**: The test runner manages both creating and ending the sessions, so we don't manually have to do this.
 
 Those are all the things that have been removed, but there are a couple new bits added as well.
 
-There are these `describe` and `it` function calls. They are part of the Mocha framework, and help organize our tests into individual test cases. This is helpful for overall readability, plus we can use this to run or exclude certain cases from our test runs.
+There are these `describe` and `it` function calls. They are part of the Mocha framework, and help organize our tests into individual test cases. This is helpful for overall readability, plus we can use them to run or exclude certain cases from our test runs.
 
 - `describe` is used to group sets of tests by the feature they are testing.
 - `it` defines a specific test to run.
@@ -201,14 +201,14 @@ describe('name of test section', function () { });
 
 The first parameter is a name for the feature we are testing, in this case `'name of test section'`. The second half of our `describe` call is a function which contains all of the code we want to associate with this feature. 
 
-Inside of this function we'll be adding the `it` call. Similar to `describe`, `it` is a function call that again takes two parameters:
+Inside this function we'll be adding the `it` call. Similar to `describe`, `it` is a function call that takes two parameters:
 
 ```js
 it('name of individual test', function () { });
 ```
 
-- The first paramater is the name we give our test, in this case `'name of individual test'`. I like to begin my test case names with `should`, so that it reads `it('should do whatever'...`
-- The second is a function which contains our browser commands and assertions.
+- The first parameter is the name we give our test, in this case `'name of individual test'`. I like to begin my test case names with `should`, so that it reads `it('should do whatever'...`
+- The second parameter is a function which contains our browser commands and assertions.
 
 To bring it all together, here's an example test file with just the structure in place:
 

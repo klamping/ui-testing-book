@@ -1,23 +1,23 @@
-# 2.0 A "Real World" App
+# 2.0 A 'Real World' App
 
-## 2.0.1 Why "Real World"?
+## 2.0.1 Why 'Real World'?
 
-Over the past few chapters, we've covered the basics of getting started with WebdriverIO. Now we're ready to fully jump in to writing tests.
+Over the past few chapters, we've covered the basics of getting started with WebdriverIO. Now we're ready to fully jump into writing tests.
 
 In my experience, the best way to learn a subject is to use real-world examples. Knowing why and when you would use specific code is just as important as knowing how to use that code. 
-To be "real-world", we need a good website to test. Something more than a barebones example, which always seem "too clean". We need a website we can get our hands dirty with.
+To be 'real-world', we need a good website to test. It needs to be something more than a barebones example, which always seems "too clean." We need a website we can get our hands dirty with.
 
-After much searching and contemplation, I found a option that fits the bill. The folks at [Thinkster](https://thinkster.io/) have created "The mother of all demo apps", which they've named "[The RealWorld Project](https://realworld.io/)". 
+After much searching and contemplation, I found an option that fits the bill. The folks at [Thinkster](https://thinkster.io/) have created 'The mother of all demo apps', which they've named "[The RealWorld Project](https://realworld.io/)."
 
-At its core, the RealWorld project is just an architecture for trying out different technologies (e.g. React and/or Express). Developers from all over the world have built out various implementations of the same structure, and made them all available for us to try out. 
+At its core, the RealWorld project is just an architecture for trying out different technologies (e.g., React and/or Express). Developers from all over the world have built out various implementations of the same structure, and made them all available for us to try out. 
 
-On [their GitHub homepage](https://github.com/gothinkster/realworld), you can see the many clones availabe from the community. They split the clones between the front-end and back-end implementations. There are over 15 front-end variants to choose from, and over 30 back-ends choices. 
+On [their GitHub homepage](https://github.com/gothinkster/realworld), you can see the many clones available from the community. They split the clones between the front-end and back-end implementations. There are over 15 front-end variants to choose from, and over 30 back-end choices. 
 
 Here are some benefits of this:
 
-1. All the variants of implementations allow you to fit the project to your needs. There are many choices availabe to developers in the web industry today, so the framework that you're working with is going to be different from other companies out there. With this app, you're able to choose the flavor that best fits your needs.
-2. Wherever you fall in the "Battle of the JavaScript Frameworks", you have to admit that most websites are built with one of them. Having an example built that utilizes these technologies provides a more real-life type website to test.
-3. It has myriad of features that can throw you for a loop when testing. This makes it good for teaching how not to get thrown for a loop.
+1. All the variants of implementations allow you to fit the project to your needs. There are many choices available to developers in the web industry today, so the framework that you're working with is going to be different from other companies out there. With this app, you're able to choose the flavor that best fits your needs.
+2. Wherever you fall in the 'Battle of the JavaScript Frameworks', you have to admit that most websites are built with one of them. Having an example built that utilizes these technologies provides a more real-life type website to test.
+3. It has a myriad of features that can throw you for a loop when testing. This makes it good for teaching how not to get thrown for a loop.
 4. The functionality is complex, without being overbearing. A more "pure" example wouldn't have this, which means you're more likely to be thrown for a loop when testing. And you know how I feel about that.
 
 That's enough reasons I think. 
@@ -28,19 +28,19 @@ We've got a few options, with benefits and drawbacks of each. Let's go over thos
 
 ## 2.0.2 Use the Shared Demo App
 
-I've put together an instance of the project using [the VueJS front-end](https://github.com/klamping/vue-realworld-example-app) and [the Node/Express back-end](https://github.com/klamping/node-express-realworld-example-app), with a few modifications. These modifications are necessary to complete the examples in the later chapters, so do make sure you don't use other RealWorld code repos (unless they've also been modified to fit our needs).
+I've put together an instance of the project using [the VueJS front-end](https://github.com/klamping/vue-realworld-example-app) and [the Node/Express back-end](https://github.com/klamping/node-express-realworld-example-app), with a few modifications. These modifications are necessary to complete the examples in the later chapters, so make sure you don't use other RealWorld code repos (unless they've also been modified to fit our needs).
 
 To make things easier, I have a demo site of this code at: [https://demo.learnwebdriverio.com/](https://demo.learnwebdriverio.com/)
 
 Feel free to look around there to see what the site is all about. You're also welcome to create an account and add some posts; it's a sandbox for anyone's use. And because of that, it's not ideal for writing tests with.
 
-I'll cover this in later chapters, but there is specific data needed in order to succesfully run certain tests. Because this is a public app, anyone can change the data on this demo site, which would cause those tests to fail.
+I'll cover this in later chapters, but there is specific data needed in order to successfully run certain tests. Because this is a public app, anyone can change the data on this demo site, which would cause those tests to fail.
 
-My recommendation is: If you don't want to worry about settting up this app on your own right now, you should be able to complete the next few chapters without issue. However, as you get further into the exercises, you may find your tests failing because the data has been modified by someone else. That brings up the next option.
+My recommendation is: If you don't want to worry about setting up this app on your own right now, you should be able to complete the next few chapters without issue. However, as you get further into the exercises, you may find your tests failing because the data has been modified by someone else. That brings up the next option.
 
 ## 2.0.3 Run Your Own Server Locally
 
-While we won't be modifying the front-end/back-end system code itself, there's good reason you'd want to install a local server. As I mentioned, the data on the demo app is all shared, so someone could change it in a way that breaks the test examples. If you get things set up locally, this won't be an issue.
+While we won't be modifying the front-end/back-end system code itself, there a good reason you'd want to install a local server. As I mentioned, the data on the demo app is all shared, so someone could change it in a way that breaks the test examples. If you get things set up locally, this won't be an issue.
 
 A word of caution. With either option provided below, **ensure your local server is running when you execute your tests**. Much pain has been caused by testers running their tests, seeing a lot of failures, and not realizing they didn't have their local server running at the time. Because there are a lot of examples to go through and it will likely take you days/weeks to digest the information, there is a good chance your server will be shutdown at some point and you'll need to restart it. Keep that in mind if you run across unexpected failures.
 
@@ -48,9 +48,9 @@ With that said, while I can't walk you through your specific system, here are my
 
 ## 2.0.4 Using a Docker Image (Recommended)
 
-Docker is an "Open-source software for deploying containerized applications". Chances are, if you know what that means, you're already familiar with Docker.
+Docker is an "Open-source software for deploying containerized applications." Chances are, if you know what that means, you're already familiar with Docker.
 
-If not, maybe I can simplify that description. Docker is an application that you can install on your local computer. It allows you to download "images" of applications that can be quickly set up and started locally, without configuration or installation of other dependencies. The goal is to make it simple to run applications on your personal computer, without having to process through endless installation steps.
+If not, maybe I can simplify that description. Docker is an application that you can install on your local computer. It allows you to download "images" of applications that can be quickly set up and started locally without configuration or installation of other dependencies. The goal is to make it simple to run applications on your personal computer without having to process through endless installation steps.
 
 There are many well-written guides to Docker already available, so I won't cover in detail how to get it installed and set up. I'm going to assume you're familiar enough with Docker and have it installed for the next set of tasks. If you don't want to use Docker, feel free to skip to the next section.
 
@@ -113,7 +113,7 @@ If you prefer not to go the Docker route, you can try downloading the server sou
 Open a terminal and do the following:
 
 1. Run `git clone git@github.com:klamping/node-express-realworld-example-app.git`
-2. Move into the created directory and run `npm install`
+2. Change to the created directory and run `npm install`
 3. Install MongoDB Community Edition ([instructions](https://docs.mongodb.com/manual/installation/#tutorials)) and run it by executing `mongod`
 4. Import the test data by running: `sh mongoImport.sh`
 5. Start the API server with `npm start`
@@ -123,11 +123,11 @@ Open a terminal and do the following:
 Open a terminal and do the following:
 
 1. Run `git clone git@github.com:klamping/vue-realworld-example-app.git`
-2. Move into the created directory and run `npm install`
+2. Change to the created directory and run `npm install`
 5. Start the Front-end server with `npm run serve`
 
 Give it a few moments to load the server (you should see the logs stop loading and a "App running at" message), then visit [http://localhost:8080](http://localhost:8080) to see your local site!
 
 ## 2.0.6 A Final Reminder
 
-I mentioned this earlier, but it's worth saying again. As you continue through the examples, you may be coming back to the material after a break. If you run your tests and they're not working, double-check that your server is started. You can always do that by opening up [http://localhost:8080](http://localhost:8080) in a browser. With that said, let's jump into testing!
+I mentioned this earlier, but it's worth saying again. As you continue through the examples, you may be coming back to the material after a break. If you run your tests and they're not working, double-check that your server started. You can always do that by opening up [http://localhost:8080](http://localhost:8080) in a browser. With that said, let's jump into testing!

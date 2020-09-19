@@ -1,10 +1,8 @@
 ## 1.2.3 Installing WebdriverIO and Basic Usage
 
-The time has finally come! We've laid all the groundwork to understand the nuts and bolts behind UI testing, now it's time to do some!
+The time has finally come! We've laid all the groundwork to understand the nuts and bolts behind UI testing. Now it's time to do some!
 
-To start off, we're going to create a new folder for all of our project to go in. Later on, we'll be incorporating this project into a fully-fledged application repo, but for now we'll create an individual WebdriverIO project.
-
-So, in a directory of your choice, make a new folder called `wdio-standalone`:
+To start off, we're going to create a new folder for our first example. In a directory of your choice, make a new folder called `wdio-standalone`:
 
 ```sh
 mkdir wdio-standalone
@@ -14,7 +12,7 @@ Why `wdio-standalone`?
 
 Well, WebdriverIO allows you to use it through two modes. The first, which we're going through here, is called "standalone" mode. It's meant as a simple way to use WebdriverIO, and allows you to build wrappers around the tool. 
 
-"Testrunner" mode, which we'll cover in the next section, is a bit more complicated. It provides an entire set of tools and hooks for full-fledged integration testing. I mentioned that standalone mode allows you to build wrappers around it? Well, the testrunner is essentially that.
+"Testrunner" mode, which we'll cover in the next section, is a bit more complicated. It provides an entire set of tools and hooks for full-fledged integration testing. I mentioned that standalone mode allows you to build wrappers around it. Well, the testrunner is essentially that.
 
 Right now, just to introduce you to WebdriverIO, we're going to use the standalone runner. This is only for this exercise though, and we'll be upgrading to the testrunner soon.
 
@@ -42,7 +40,7 @@ With that out of the way, let's install WebdriverIO:
 npm install webdriverio
 ```
 
-Now is a good time to mention that WebdriverIO is split into multiple NPM packages. We'll be looking at those packages in detail later on, but know for now that installing `webdriverio` via the command above does not give you everything.
+Now is a good time to mention that WebdriverIO is split into multiple NPM packages. We'll be looking at those packages in detail later on, but note that installing `webdriverio` via the command above does not give you everything.
 
 What it does give us is a Node.js module that we can use inside of a Node.js file. Let's use that.
 
@@ -60,7 +58,7 @@ type nul > test.js
 
 Now we have a file to add our first test to. Go ahead and open that file up in the text editor of your choice.
 
-Next, we'll copy the example given on the official WebdriverIO website. Throw the following code into your `test.js` file:
+Next, we'll copy the example given on the official WebdriverIO website. Throw the following code into your `test.js` file and save it:
 
 {title="test.js"}
 ```js
@@ -87,7 +85,7 @@ Here's a quick overview of the file:
 1. We load the `remote` object from the WebdriverIO package.
 2. We wrap our code in an `async` function so we can use `await` statements.
 3. We create a new session using `remote`, saving the reference to a `browser` object which we use to send commands.
-4. We send a `url` command, requesting the browser go to the WebdriverIO homepage.
+4. We send a `url` command, requesting the browser go to the WebdriverIO website.
 5. We then get the title of the page, storing it as a local variable.
 6. The title of the page is logged to the terminal.
 7. The session is ended, since we're done with our test.
@@ -97,7 +95,7 @@ Okay, that's what it does; let's run it to see it in action.
 
 To do that, we need to have a browser available to running. This can be through the built-in support from a Chrome install, through a specific browser driver, or through Selenium server. 
 
-In "Browsers and 'Driving' Them", I detailed Chrome DevTools, along with how to install and run Chromedriver and the selenium-standalone NPM package. Now let's put that knowledge to use.
+In "Browsers and 'Driving' Them", I detailed Chrome DevTools, along with how to install and run ChromeDriver and the selenium-standalone NPM package. Now let's put that knowledge to use.
 
 ### Running Through Chrome DevTools
 
@@ -107,9 +105,7 @@ So long as you have Chrome (or a Blink-based browser installed), there's really 
 node test.js
 ```
 
-After a second, you should see a Chrome browser pop up for a moment, and some similar output in your terminal:
-
-%% TODO convert this to a screenshot?
+After a second, you should see a Chrome browser pop-up for a moment, and some similar output in your terminal:
 
 ```sh
 2020-07-24T21:03:30.968Z INFO webdriverio: Initiate new session using the
@@ -141,19 +137,19 @@ Notice that the first line says "Initiate new session using the devtools protoco
 
 If you choose to go with the DevTools protocol, support for the various commands does differ from WebDriver. While in general everything is supported the same, there are still differences which can cause hiccups along the way. The book is written with support for the WebDriver protocol, so if you choose to stick with the DevTools protocol, expect some differences.
 
-Now let's look at running via Chromedriver.
+Now let's look at running via ChromeDriver.
     
-### Running in Chromedriver
+### Running in ChromeDriver
 
 The basic idea is the same, although we do need to tweak our settings just a little bit.
 
-This is a little technical, but by default, a Chromedriver server uses port `9515` to listens for commands (e.g., http://localhost:9515)
+This is a little technical, but by default, a ChromeDriver server uses port `9515` to listens for commands (e.g., http://localhost:9515)
 
 But by default, WebdriverIO expects the WebDriver server to be running on port `4444`.
 
-So, we can either override the WebdriverIO defaults, or tell our Chromedriver server to use port `4444`.
+So, we can either override the WebdriverIO defaults, or tell our ChromeDriver server to use port `4444`.
 
-It's most useful in the example to see how to overwrite the WebdriverIO defaults, so let's do that. If you are interested, you can do the latter by running `chromedriver --port=4444` when starting the Chromedriver server.
+It's most useful to see how to overwrite the WebdriverIO defaults, so let's do that next. If you are interested, you can do the latter by running `chromedriver --port=4444` when starting the ChromeDriver server.
 
 Back in your `test.js` file, take a look at lines 4-8:
 
@@ -165,11 +161,11 @@ const browser = await remote({
 });
 ```
 
-What we're doing here is creating a new `remote` WebDriver session and telling it that we want to open up the 'chrome' browser. We'll get in to capabilities at a later point, so don't worry too much about it right now.
+What we're doing here is creating a new `remote` WebDriver session and telling it that we want to open up the 'chrome' browser. We'll get into capabilities at a later point, so don't worry too much about it right now.
 
 What we will worry about is how to customize that 'remote' session to use post 9515 instead of the default 4444.
 
-Along with customizing the `capabilities`, there are a number of other options available to us. [The official documentation](https://webdriver.io/docs/options.html#webdriver-options) gives the entire list, but there are three we're going to change:
+Along with customizing the `capabilities`, there are a number of other options available to us. [The official documentation](https://webdriver.io/docs/options.html#webdriver-options) gives the entire list, but there are three options that we're going to change:
 
 **hostname**
 Host of your driver server.
@@ -201,11 +197,11 @@ const browser = await remote({
 
 Note that it's a number, not a string (i.e., `9515` versus `'9515'`). If you try using a string, you will get an error of `Error: Expected option "port" to be type of number but was string`. 
 
-If you still have your Chromedriver instance running from before, leave it up and running (you can check http://localhost:9515/ to see if it gives you a response). If not, start an instance in a separate terminal window. 
+If you still have your ChromeDriver instance running from before, leave it up and running (you can check http://localhost:9515/ to see if it gives you a response). If not, start an instance in a separate terminal window. 
 
-With our WebdriverIO settings updated and Chromedriver ready to go, we can call our test script again.
+With our WebdriverIO settings updated and ChromeDriver ready to go, we can call our test script again.
 
-Go ahead and run `node test.js` one more time and validate it all works. The output should be similar to before:
+Run `node test.js` one more time and validate that it all works as expected. The output should be similar to before:
 
 ```sh
 2020-07-18T15:29:43.175Z INFO webdriverio: Initiate new session using the
@@ -232,7 +228,7 @@ While there are a few differences from before, the important one is the first li
 
 ### Running Through Selenium Standalone
 
-_Note: Selenium Standalone is **not** the same thing as WebdriverIO Standalone mode. The simply share the same name to describe their "indepedent" nature._
+_Note: Selenium Standalone is **not** the same thing as WebdriverIO Standalone mode. They simply share the same name to describe their "independent" nature._
 
 If you already have your Selenium server running from before, great! If not, open up a new terminal window and run `selenium-standalone start`. 
 
@@ -242,11 +238,11 @@ You should see a website looking a lot like this:
 
 ![Preview of Selenium Standalone 'hub' page](images/36DFFD8164ACC4192A2D97CB974C62FC.jpg)
 
-If you get a 404 error, something went wrong starting your server, and you'll need further debugging to resolve it.
+Note: If you get a 404 error, something went wrong while starting your server, and you'll need to resolve it before proceeding.
 
 The next thing we need to do is configure WebdriverIO to use the Selenium server. 
 
-Unlike Chromedriver, when you start Selenium, it runs on port `4444` by default. That means we can comment out or remove the `port` option we had for our Chromedriver usage.
+Unlike ChromeDriver, when you start Selenium, it runs on port `4444` by default. That means we can comment out or remove the `port` option we had for our ChromeDriver usage.
 
 That said, Selenium waits for requests to come through the `/wd/hub` URL endpoint/path (hence `http://localhost:4444/wd/hub` being mentioned before). But if you recall from our options, WebdriverIO doesn't have that at it's default `path` option (which is just `/`).
 
@@ -294,7 +290,7 @@ Again, line one shows that we're using the WebDriver protocol. And notice on lin
 
 If you instead of all that output you see an error that includes `RequestError: connect ECONNREFUSED 127.0.0.1:4444`, this means your Selenium server wasn't running. Start it back up and try again. 
 
-### Leaving it at that
+### Leaving It at That
 
 This will be the end of our little test file. We're not going to be updating it anymore, and will in fact be leaving this whole `wdio-standalone` folder behind.
 

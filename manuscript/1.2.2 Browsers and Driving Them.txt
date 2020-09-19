@@ -2,24 +2,24 @@
 
 We normally use browsers by clicking with our mouse and typing with our keyboard. That works well for humans, but doesn't make sense when trying to write automated tests.
 
-Instead of building some sort of physical robot that can control a mouse and type on a keyboard, we invented software that mimicks these actions. Selenium RC was one of the original tools to do this. WebDriver, which was also developed around the same time as Selenium RC, became a popular alternative. In 2009, the two teams combined forces to create Selenium WebDriver.
+Instead of building some sort of physical robot that can control a mouse and type on a keyboard, we invented software that mimics these actions. Selenium RC was one of the original tools to do this. WebDriver, which was also developed around the same time as Selenium RC, became a popular alternative. In 2009, the two teams combined forces to create Selenium WebDriver.
 
-Over the years, standardization on the Selenium WebDriver commands occurred, and now there is [an official W3C spec for WebDriver](https://w3c.github.io/webdriver/). The teams behind the browsers we use have also started to implement that spec (e.g. chromedriver), allowing for use of WebDriver commands outside of Selenium. 
+Over the years, standardization on the Selenium WebDriver commands occurred, and now there is [an official W3C spec for WebDriver](https://w3c.github.io/webdriver/). The teams behind the browsers we use have also started to implement that spec (e.g. chromedriver), allowing the use of WebDriver commands outside of Selenium. 
 
 Recently, Chrome has released support for their own protocol called "Chrome DevTools". WebdriverIO has added support for this protocol through [the devtools package](https://www.npmjs.com/package/devtools). The industry has evolved its tooling over the years and WebdriverIO has kept up giving you the flexibility to pick what works best.
 
-This is why WebdriverIO has the tagline "Next-gen browser and mobile automation test framework for Node.js", excluding any specific protocol. While you can use Selenium in your WebdriverIO tests, it's really just about running commands through any protocol with support. WebdriverIO doesn't want to box you in to a specific solution, and we appreciate that :)
+This is why WebdriverIO has the tagline "Next-gen browser and mobile automation test framework for Node.js," excluding any specific protocol. While you can use Selenium in your WebdriverIO tests, it's really just about running commands through any protocol with support. WebdriverIO doesn't want to box you in to a specific solution, and we appreciate that :)
 
-Now, it's important not to confuse terms, so to be clear, the following list are all *different* things:
+Now, it's important not to confuse terms, so to be clear, the following list contains many *different* things:
 
 - **WebDriver**: A technical specification defining how tools should work.
 - **The Selenium Project**: An organization providing tools used for automated testing.
-- **Selenium/Selenium Webdriver**: Language specific bindings for the Webdriver spec that are officially supported by the Selenium project, like the NPM package [selenium-webdriver](https://www.npmjs.com/package/selenium-webdriver).
-- **Browser Driver**: Browser specific implementations of the Webdriver spec (e.g. Chromedriver, Geckodriver, etc).
-- **Selenium Server**: A proxy server used to help run a variety of browser drivers.
+- **Selenium/Selenium WebDriver**: Language-specific bindings for the WebDriver spec that are officially supported by the Selenium project, like the NPM package [selenium-webdriver](https://www.npmjs.com/package/selenium-webdriver).
+- **Browser Driver**: Browser specific implementations of the WebDriver spec (e.g. ChromeDriver, GeckoDriver, etc).
+- **Selenium Server**: A proxy server used to assist a variety of browser drivers.
 - **Chrome Devtools Protocol**: A protocol that allows for tools to instrument, inspect, debug and profile Chromium, Chrome and other Blink-based browsers. ([Project Homepage](https://chromedevtools.github.io/devtools-protocol/))
 - **Puppeteer** A Node.js library which provides a high-level API to control Chrome or Chromium over the DevTools Protocol.
-- **WebdriverIO**: A test framework written in Node.js that provides bindings for tools like Selenium Server, Chrome DevTools (via Puppeteer) and Webdriver-based browser drivers (e.g., ChromeDriver).
+- **WebdriverIO**: A test framework written in Node.js that provides bindings for tools like Selenium Server, Chrome DevTools (via Puppeteer) and WebDriver-based browser drivers (e.g., ChromeDriver).
 
 That's a fair number of terms to keep in mind. I don't have a great suggestion for how to memorize everything, but maybe just reference this section when you need a good reminder. 
 
@@ -43,27 +43,27 @@ To use the Chrome DevTools protocol for your tests, simply ensure you have Chrom
 
 ### How To Use a 'Driver'?
 
-If you are interested running your tests for a browser that isn't based on the 'Blink' engine (or just prefer to stick with the WebDriver standard), you'll want to use some sort of WebDriver-based browser driver. There are several WebDriver clients available out there, Selenium Server being the most popular. Let's walk through getting one of these clients running so you can start writing tests.
+If you are interested running your tests for a browser that isn't based on the 'Blink' engine (or just prefer to stick with the WebDriver standard), you'll want to use some sort of WebDriver-based browser driver. There are several WebDriver clients available, Selenium Server being the most popular. Let's walk through setting up one of these clients so that you can start writing tests.
 
 All major browsers have 'drivers' that mostly follow the WebDriver spec (unfortunately there are still differences between them).
 
-Here are the drivers for each major browser
+Here are the drivers for each major browser:
 
-- [Geckodriver](https://github.com/mozilla/geckodriver) for Firefox (v48 and above)
-- [ChromeDriver](https://chromedriver.chromium.org/downloads) for Chromium.
-- [Edgedriver](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) for Microsoft Edge
-- [SafariDriver](https://developer.apple.com/documentation/webkit/about_webdriver_for_safari) for Safari - Implemented as a Safari browser extension.
+- [GeckoDriver](https://github.com/mozilla/geckodriver) for Firefox (v48 and above)
+- [ChromeDriver](https://chromedriver.chromium.org/downloads) for Chromium
+- [EdgeDriver](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) for Microsoft Edge
+- [SafariDriver](https://developer.apple.com/documentation/webkit/about_webdriver_for_safari) for Safari (implemented as a Safari browser extension)
 - [IEDriver](https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver) for Internet Explorer
 
 To see how your favorite browser driver stacks up in regards to WebDriver support, check out [the Web Platform Tests page](https://wpt.fyi/results/webdriver/tests). This site runs regular tests against clients implementing the WebDriver spec, and provides the results showing how well they support it.
 
-There are also drivers for mobile testing (e.g. Appium), but that won't be covered in this book. 
+There are drivers available for mobile testing (e.g. Appium), but they won't be covered in this book. 
 
-### Installing and Running Chromedriver
+### Installing and Running ChromeDriver
 
-Installation instructions for these clients can be found on their respective homepage, but in many cases you can search on npmjs.org for Node.js based installation tools. 
+Installation instructions for these clients can be found on their respective websites, but in many cases, you can search on npmjs.org for Node.js-based installation tools. 
 
-For example, you can download and install Chromedriver using [the NPM Chromedriver package](https://www.npmjs.com/package/chromedriver).
+For example, you can download and install ChromeDriver using [the NPM ChromeDriver package](https://www.npmjs.com/package/chromedriver).
 
 To install the NPM package, run 
 
@@ -71,15 +71,15 @@ To install the NPM package, run
 npm install -g chromedriver
 ```
 
-![Terminal Output from installing Chromedriver Globally](images/E98612E83AA301ACA18B813373384941.jpg)
+![Terminal Output from installing ChromeDriver Globally](images/E98612E83AA301ACA18B813373384941.jpg)
 
-You can then start a chromdriver instance by running:
+You can then start a ChromeDriver instance by running:
 
 ```sh
 chromedriver
 ```
 
-![Terminal Output from manually running Chromedriver](images/67E0ABF397C9682B162CA5AAEC198DE9.jpg)
+![Terminal Output from manually running ChromeDriver](images/67E0ABF397C9682B162CA5AAEC198DE9.jpg)
 
 This instance will continue to run until you stop it. To do that, issue an 'exit' command by pressing the `ctrl+c` key combo.
 
@@ -89,9 +89,9 @@ _First off, if you're going to be using this method, you need to ensure you have
 
 If you're looking to run tests on a variety of browsers, you'll probably want to check out what the Selenium Server project does. It offers a 'hub' that allows you to start multiple browser instances and control them all through one single location.
 
-While it's is possible to manually download and start [a selenium server](https://www.seleniumhq.org/download/), there is an NPM tool called "[selenium-standalone](https://github.com/vvo/selenium-standalone)" that makes all this much easier.
+While it is possible to manually download and start [a selenium server](https://www.seleniumhq.org/download/), there is an NPM tool called "[selenium-standalone](https://github.com/vvo/selenium-standalone)" that makes this much easier.
 
-To install and use it, run the following from your terminal:
+To install and use it, run the following command in your terminal:
 
 ```sh
 npm i -g selenium-standalone
@@ -99,7 +99,7 @@ npm i -g selenium-standalone
 
 This will make a global command available called `selenium-standalone`. With this command, we can do the following:
 
-1. Install the four supported WebDriver clients (ChromeDriver, FirefoxDriver, IEDriver, Edge WebDriver)
+1. Install the four supported WebDriver clients (ChromeDriver, FirefoxDriver, IEDriver, Microsoft Edge Driver)
 2. Start a Selenium Server that acts as a proxy to these clients
 
 To run the install, issue this command:
@@ -120,6 +120,6 @@ selenium-standalone start
 
 ![Terminal Output from running selenium-standalone 'start' command](images/1DBF914439371D62317FD2BCFB7E0D23.jpg)
 
-This server will run until it recieves an exit command (similar to how Chromedriver works). You can issue that command with the `ctrl+c` key combo).
+This server will run until it receives an `exit` command (similar to how ChromeDriver works). You can issue that command with the `ctrl+c` key combo.
 
-We'll talk more on using Chrome DevTools, the Selenium Standalone Server and Chromedriver (including services to integrate them with WebdriverIO) in a little bit. 
+We'll talk more about using Chrome DevTools, the Selenium Standalone Server and ChromeDriver (including services to integrate them with WebdriverIO) in a little bit. 

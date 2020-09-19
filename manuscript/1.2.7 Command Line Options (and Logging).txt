@@ -1,8 +1,8 @@
 ## 1.2.7 Command Line Options (and Logging)
 
-Now that we've gotten comfortable with the Test Runner, let's dig in to some advanced usage of the tool.
+Now that we've gotten comfortable with the Test Runner, let's dig into some advanced usage of the tool.
 
-Out of the box, there are several command line overrides you can use to customize your tests runs on a case-by-case basis.
+From the start, there are several command line overrides you can use to customize your tests runs on a case-by-case basis.
 
 To get a full listing of all options, pass in the `help` option when running `npx wdio`:
 
@@ -24,9 +24,7 @@ If you look at the first example near the bottom, it shows:
 wdio run wdio.conf.js --suite foobar      Run suite on testsuite "foobar"
 ```
 
-There are three parts.
-
-First, the `wdio run` command (note `npx wdio` and `npx wdio run` do the same thing, as `wdio` calls `run` by default).
+There are three parts: First, the `wdio run` command (note `npx wdio` and `npx wdio run` do the same thing, as `wdio` calls `run` by default).
 
 Then, a path to a configuration file (i.e., `wdio.conf.js`, we'll talk about this in just a second). 
 
@@ -42,7 +40,7 @@ npx wdio wdio.alternative.conf.js
 
 Now WebdriverIO will use that instead of `wdio.conf.js`.
 
-As you get into more advanced usage of the framework, you'll probably want to have custom configuration files. We won't be covering that in this book though, as it's a bit too advanced for our needs. So, let's move on and check out those options.
+As you get into more advanced usage of the framework, you'll probably want to have custom configuration files. We won't be covering that in this book though, as it's a bit too advanced for our needs. So, let's move on and explore those options.
 
 ### `Run` Options
 
@@ -85,7 +83,7 @@ That's a lot of choices! Let's look at the most useful ones...
 
 The first option you'll likely be using often is passing in a specific `spec` path. 
 
-This is quite helpful when you need to test out a specific file. Instead of having to test all the files in your test folder, you can single out a single one.
+This is quite helpful when you need to test out a specific file. Instead of having to test all the files in your test folder, you can single one out from the rest.
 
 How about a couple of examples? Say you have the following test files:
 
@@ -99,7 +97,7 @@ How about a couple of examples? Say you have the following test files:
 
 Five files total, with three of them being inside the `test/auth` folder.
 
-Assuming your `specs` setting in your configuration file is set to `./test/**/*.js`, normally you'd run all five tests on each run.
+Assuming the `specs` setting in your configuration file is set to `./test/**/*.js`, normally you'd run all five tests on each run.
 
 If you want to run just the homepage test, you could do any one of the following:
 
@@ -109,7 +107,7 @@ npx wdio --spec=homepage.js
 npx wdio --spec=home
 ```
 
-The `spec` option takes either the exact path to the file you want to test, or a filter by filename. So all three above variations work because `./test/homepage.js` matches against all three.
+The `spec` option takes either the exact path to the file you want to test, or a filter by filename. So all three variations above work because `./test/homepage.js` matches against all three.
 
 Here's a different example: I want to run just the login/logout tests. I could do any of the following:
 
@@ -128,7 +126,7 @@ As mentioned before, the `spec` option is very helpful when debugging individual
 
 One option we briefly talked about while going through the configuration file is `bail`. This will tell WebdriverIO to stop running tests after a certain number of test failures.
 
-In our configuration, we have it set to 0, which means that it will run all the tests no matter the number of failures. This is useful when we want to see how our overall test suite runs.
+In our configuration, we have it set to 0, which means that it will run all the tests no matter the number of failures. This is useful when we want to see how all of our tests run.
 
 But when debugging a set of tests, it can be useful to stop running them if there's a failure. Maybe you're uncertain if all your tests will pass, and you just want to see if there are any failures at all.
 
@@ -138,11 +136,11 @@ By passing in `--bail=1` as a command-line option, we can achieve that.
 npx wdio --bail=1
 ```
 
-Of course, we could set this to any number, but 1 is what will be used most, as you want to get back to fixing your broken tests right away.
+Of course, we could set this to any number, but 1 is what will be used most, as you'll want to get back to fixing your broken tests right away.
 
 ### Base URL
 
-Overriding the `baseUrl` can be helpful for times when you need to test the same site on a different server. Most often this occurs when you're testing a server on your local computer versus the test server. It can also be useful for one-time tests of special server spun up to run specific code.
+Overriding the `baseUrl` can be helpful for times when you need to test the same site on a different server. Most often this occurs when you're testing a server on your local computer versus the test server. It can also be useful for one-time tests of special servers spun up to run specific code.
 
 In our settings, we defined our `baseUrl` as `https://webdriver.io`. And in our test, we used that url by changing our `browser.url` call.
 
@@ -160,7 +158,7 @@ I use the `baseUrl` override only every so often, but it's certainly handy to ha
 
 ### Log Level
 
-Let's take a look at another option. We've run across the `logLevel` a couple times now, which defines how much console output to show when running your tests.
+Let's take a look at another option. We've run across the `logLevel` a couple times, which defines how much console output to show when running our tests.
 
 When you're debugging your tests, it can be helpful to see all the logs that WebdriverIO outputs. Other times you may not want any output at all. You can tweak this on a run-by-run basis by setting the `logLevel` option. 
 
@@ -190,9 +188,9 @@ worker command: run
 
 As the test continues, old messages will "scroll" off the top of the log, while new messages appear at the bottom.
 
-Notice that each log message has a 'type'. The first message in the example output above is INFO, which the last is DEBUG. These types are defined inside the core WebdriverIO code, and generally denote different types of messages. 
+Notice that each log message has a 'type.. The first message in the example output above is INFO and the last is DEBUG. These types are defined inside the core WebdriverIO code, and generally denote different types of messages. 
 
-The log level is a heirarchal setup, having five levels:
+The log level is a hierarchical setup, having five levels:
 
 - Trace
 - Debug
@@ -200,7 +198,7 @@ The log level is a heirarchal setup, having five levels:
 - Warn
 - Error
 
-When setting the log level to `trace`, you'll get all the `trace` messages, plus all the types below it (so `debug`, `info`, `warn` and `error`).
+When setting the log level to `trace`, you'll get all the `trace` messages, plus all the types below it (so `debug`, `info`, `warn`, and `error`).
 
 If you were to choose `warn`, you'd only get those messages, plus any `error` messages.
 
@@ -260,15 +258,15 @@ wser and mobile automation test framework for Node.js
 2020-07-24T22:50:24.297Z INFO @wdio/cli:launcher: Run onComplete hook
 ```
 
-Let's take a brief detour to walk through this activity. The first thing WebdriverIO does is initialize any services we requested. In this instance, we're using the `chromedriver` service, so we se log output for that. 
+Let's take a brief detour to walk through this activity. The first thing WebdriverIO does is initialize any services we requested. In this instance, we're using the `chromedriver` service, so we see log output for that. 
 
-Next, it runs any `onPrepare` hooks we have defined. We don't have any defined, but the Chromedriver service does. That's why you see output stating that Chromedriver is starting up. This is how services "hook" into the WebdriverIO flow to add functionality.
+Next, it runs any `onPrepare` hooks we have defined. We don't have any defined, but the ChromeDriver service does. That's why you see output stating that ChromeDriver is starting up. This is how services "hook" into the WebdriverIO flow to add functionality.
 
 Following that, WebdriverIO starts "workers" for our tests. These are sub-processes spun up that our test will run in. The point of doing this is to allow for multiple tests to run at the same time (they'd all be different "workers"). 
 
 It then sends the `run` command to the worker (i.e., `INFO @wdio/local-runner: Run worker command: run`), letting it know it should get to work. The worker itself then initializes the `chromedriver` service, in case it needed to run anything inside of a specific worker (which it doesn't).
 
-The next step is to get a browser running for use. These are called "sessions", and to get one WebdriverIO sends a POST request  (`INFO webdriver: [POST] http://localhost:9515/session`) with the capability data. This data is sent to chromedriver, which receives this request and initializes the session with the provided data. Combined, the two logs for this are:
+The next step is to get a browser running for use. These are called "sessions". To get one, WebdriverIO sends a POST request  (`INFO webdriver: [POST] http://localhost:9515/session`) with the capability data. This data is sent to chromedriver, which receives this request and initializes the session with the provided data. Combined, the two logs are:
 
 ```sh
 [0-0] 2020-07-24T22:50:20.599Z INFO webdriver: [POST] http://localhost:9515/session
@@ -281,13 +279,13 @@ The next step is to get a browser running for use. These are called "sessions", 
 }
 ```
 
-You'll notice this matches our capabilities settings in our config file for the most part, but has a couple of different options specified. These are WebdriverIO defaults used to start a normal browser session. We could override them via the capabilities object in our config file if we so desired, but we don't right now so we'll leave them be.
+You'll notice this matches the capabilities settings in our config file for the most part, but has a couple of different options specified. These are WebdriverIO defaults used to start a normal browser session. We could override them via the capabilities object in our config file if we so desired, but we don't right now, so we'll omit them.
 
-Understanding the relationship between WebdriverIO and Webdriver/Selenium is helpful, so I want to take a little bit of extra time to review it. WebdriverIO doesn't actually run the browser automation, Webdriver (or whatever Webdriver endpoint we're using) takes care of all of that. 
+Understanding the relationship between WebdriverIO and WebDriver/Selenium is helpful, so I want to take a little bit of extra time to review it. WebdriverIO doesn't actually run the browser automation, Webdriver (or whatever WebDriver endpoint we're using) takes care of all of that. 
 
-What WebdriverIO does provide is a JavaScript interface for sending commands to run. It does this through REST API calls, which means that it sends an HTTP request to specific endpoints on the Webdriver server (e.g., Chromedriver). Basically, WebdriverIO and Webdriver have a common language they share (defined in [the official Webdriver spec](https://w3c.github.io/webdriver/)) to send data back and forth. WebdriverIO sends commands to the Webdriver server for it to run, then the server sends the results of those commands back.
+What WebdriverIO does provide is a JavaScript interface for sending commands to run. It does this through REST API calls, which means that it sends an HTTP request to specific endpoints on the Webdriver server (e.g., ChromeDriver). Basically, WebdriverIO and Webdriver have a common language they share (defined in [the official WebDriver spec](https://w3c.github.io/webdriver/)) to send data back and forth. WebdriverIO sends commands to the Webdriver server for it to run, then the server sends the results of those commands back.
 
-Take the `getUrl` command in the next few lines. WebdriverIO sends a request to the Chromdriver instance. In the request, it passes along information about the url for the browser to go to. After Chromedriver receives and processes this request, it returns the results of the command execution (which is empty). WebdriverIO doesn't output this information, as there isn't anything to show.
+Take the `getUrl` command in the next few lines. WebdriverIO sends a request to the Chromdriver instance. In the request, it passes along information about the url for the browser to go to. After ChromeDriver receives and processes this request, it returns the results of the command execution (which is empty). WebdriverIO doesn't output this information, as there isn't anything to show.
 
 Overall, the logs for this look like:
 
@@ -302,7 +300,7 @@ Overall, the logs for this look like:
 }
 ```
 
-In the next set of logs, WebdriverIO requests the page title from the Browser. No data is sent to Chromedriver, as there isn't any information to send. Instead, Chromedriver returns data back to us, namely, the title of the page. You see this in the "result" log output and sequentially, the console output we sent in our test:
+In the next set of logs, WebdriverIO requests the page title from the browser. No data is sent to ChromeDriver, as there isn't any information to send. Instead, ChromeDriver returns data back to us, namely, the title of the page. You see this in the "result" log output and sequentially, the console output we sent in our test:
 
 ```sh
 [0-0] 2020-07-24T22:50:23.711Z INFO webdriver: COMMAND getTitle()
@@ -314,7 +312,7 @@ In the next set of logs, WebdriverIO requests the page title from the Browser. N
 
 Finally, WebdriverIO closes our browser by sending a `DELETE` request for our session endpoint. Once it gets the successful close message, it closes down the worker and runs the `onComplete` hook. With that the test is complete.
 
-That was a lot of logs. What if we want to ignore all this output and only show the basics (plus any `console.log` messages we may have added). Let's see what the log output looks like when running with `logLevel` set to `silent`:
+That was a lot of logs. What if we want to ignore all this output and only show the basics (plus any `console.log` messages we may have added). Let's see what the log output looks like when running it with `logLevel` set to `silent`:
 
 ```sh
 Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/br
@@ -327,8 +325,8 @@ ChromeDriver was started successfully.
 [0-0] PASSED in chrome - /test/specs/example.js
 ```
 
-There's still some output, but not much at all. This is helpful if you have console.log messages that you want to be able to see without any extra noise.
+There's still some output, but not much. This is helpful if you have console.log messages that you want to be able to see without extra noise.
 
-### Other options
+### Other Options
 
-That about sums it up for what I feel are the most important options. There are other settings you can configure, but that would be too in-depth and personalized for the good of this book. Feel free to experiment, and remember, you can get all the options by running `npx wdio run --help`.
+That sums it up for the most important options. There are other settings you can configure, but that would be too in-depth and personalized for the good of this book. Feel free to experiment, and remember, you can get all the options by running `npx wdio run --help`.

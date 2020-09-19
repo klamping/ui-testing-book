@@ -1,12 +1,10 @@
 ## 1.2.5 Reviewing the Standard WebdriverIO Configuration File
 
-We just used the WebdriverIO test runner to help us create a configuration file to hold all of our settings. Let's go ahead and take a look at that file.
+We just used the WebdriverIO test runner to help us create a configuration file to hold all of our settings. Let's take a look at that file.
 
-Open up the newly created `wdio.conf.js` file in your text editor of choice. The file is saved in JavaScript format, so using a text editor with JavaScript syntax highlighting is a good idea.
+Open the newly created `wdio.conf.js` file in your text editor of choice. The file is saved in JavaScript format, so using a text editor with JavaScript syntax highlighting is a good idea.
 
-In our file, the first thing we'll check out is the `exports.config` line. If you're familiar with NodeJS, you'll recognize the use of the `exports` global variable.
-
-If you're unfamiliar with it, here's a basic description: NodeJS has a predefined `exports` object available for us to attach properties to, and WebdriverIO looks at the `config` property on this `exports` object for all of our settings. 
+In our file, the first thing we'll check out is the `exports.config` line. If you're familiar with Node.js, you'll recognize the use of the `exports` global variable.
 
 Because this is just a plain JavaScript file, it gives us the ability to run normal Node.js commands. For example, at the very top of the file, add a `console.log` command to show that we're in fact using this file.
 
@@ -16,7 +14,7 @@ console.log('I am inside your configuration file, running your tests!')
 exports.config = { // rest of the file would be below
 ```
 
-There are some added benefits to being able to run Node.js code. For instance, you can customize your settings based on environmental variables, handle custom command line arguments and other logic. This is a pretty in-depth topic though, so we'll leave that alone for now. 
+There are some added benefits to being able to run Node.js code. One common usage is to customize your WebdriverIO configuration based on environmental variables. Alternatively, you can handle that through custom command line arguments. This is a pretty in-depth topic though, so we'll leave that alone for now. 
 
 Let's check out all the settings defined in our file. There are actually several more options here than just what we answered during our config step and it's good to know what those are.
 
@@ -33,7 +31,7 @@ Let's check out all the settings defined in our file. There are actually several
 runner: 'local',
 ```
 
-The first setting is `runner`, which is based on our answer to the first question in the configuration. We're going to skip pass this option as it's not much use to us right now.
+The first setting is `runner`, which is based on our answer to the first question in the configuration. We're going to skip this option as it's not much use to us right now.
 
 #### Specs and Exclude
 
@@ -76,17 +74,17 @@ Let's move on to the capabilities section, which groups the information needed b
 maxInstances: 10,
 ```
 
-WebdriverIO can run multiple capabilities at the same time, helping to saving time in your test runs. 
+WebdriverIO can run multiple capabilities at the same time, saving time in your test runs. 
 
-Say you have five test files, and each test file takes exactly 1 minute to run.
+Say you have five test files, and each test file takes exactly one minute to run.
 
 Without this ability, the total time it would take your tests to run is five minutes. As each test file finishes, the next file is started. 
 
-If you set `maxInstances` to 3, WebdriverIO will start 3 seperate sessions to run your seperate files. The first three tests would all run at the same time, taking one minute to complete overall. After the first two tests finish, WebdriverIO will automatically start running the remaining two tests. Alltogether the test suite would take 2 minutes to run (One minute for the first three tests and an additional minute for the final two).
+If you set `maxInstances` to 3, WebdriverIO will start three separate sessions to run your separate files. The first three tests would all run at the same time, taking one minute to complete overall. After the first two tests finish, WebdriverIO will automatically start running the remaining two tests. In total, the test suite would take two minutes to run (one minute for the first three tests and an additional minute for the final two).
 
 If you set `maxInstances` to 5, all five files would run at the same time, taking a total of one minute for all your tests to run. 
 
-A word of warning. While running tests in parallel can certainly save time, it also requires you have a powerful computer to process all the commands. If you find you're CPU is maxing out when running all your tests, consider lowering this number to reduce the strain on your processor. Maxing out your CPU can definitely lead to failures in your test runner as the computer isn't able to keep up with all the requests.
+A word of warning: While running tests in parallel can certainly save time, it also requires you to have a powerful computer to process all the commands. If you find your CPU is maxing out when running all your tests, consider lowering this number to reduce the strain on your processor. Maxing out your CPU can definitely lead to failures in your test runner as the computer isn't able to keep up with all the requests.
 
 #### Capabilities
 
@@ -129,9 +127,9 @@ Note that within your capabilities you can overwrite the `spec`, `exclude`, and 
 logLevel: 'info',
 ```
 
-Next in our settings file is the test configurations section. These levels correspond to common log levels in code output, and the higher on the list your choose (trace being highest), the more log output you'll get. This can be helpful for debugging later on. `silent`, on the other hand, doesn't log anything when running tests, and can be useful for avoiding a lot of noise in your test run.
+Next in our settings file is the test configurations section. These levels correspond to common log levels in code output, and the higher up the list you choose (trace being highest), the more log output you'll get. This can be helpful for debugging later on. `silent`, on the other hand, doesn't log anything when running tests, and can be useful for avoiding a lot of noise in your test run.
 
-It defaults to `info`, which is a good mix in-between the two ends of the spectrum. Feel free to change this as you see fit.
+It defaults to `info`, which is a good mix between the two ends of the spectrum. Feel free to change this as you see fit.
 
 #### Bail
 
@@ -153,7 +151,7 @@ The `bail` setting can be useful if you only want to run your tests until a spec
 baseUrl: 'http://localhost',
 ```
 
-We've also already talked about `baseUrl`, so we'll jump past that setting as well.
+We've already talked about `baseUrl`, so we'll jump past that setting as well.
 
 #### "waitFor" Timeout
 
@@ -187,7 +185,7 @@ The `connectionRetryTimeout` and `connectionRetryCount` options are useful to ad
 services: ['chromedriver'],
 ```
 
-Here's an array of services we have choosen to run when using the test runner. These services provide added features. In this instance, we've got the 'chromedriver' service enabled (assuming you chose to install it). The overall option is an array, so yes, you can have multiple services running at once.
+Here's an array of services we have chosen to run when using the test runner. These services provide added features. In this instance, we've got the 'chromedriver' service enabled (assuming you chose to install it). The overall option is an array, so yes, you can have multiple services running at once.
 
 Do note that not all services work together. For example, you wouldn't want to have the following services array:
 
@@ -195,7 +193,7 @@ Do note that not all services work together. For example, you wouldn't want to h
 services: ['selenium-standalone', 'chromedriver', 'sauce'],
 ```
 
-All three of those services do the same thing: host a WebDriver server for you to run your tests against. By having all three set, they'd have conflicts when starting up. Instead, you'd just choose one and go with it. 
+All three of those services do the same thing: host a WebDriver server for you to run your tests against. By having all three services set, they'd have conflicts when starting up. Instead, you'd just choose one and go with it. 
 
 #### Framework
 
@@ -235,13 +233,13 @@ mochaOpts: {
 
 The `mochaOpts` option is useful for passing configurations for Mocha to use. Here it defines using the `bdd` ui type, which says we want to write our tests in [the Behavior-driven Development style](https://mochajs.org/#interfaces).
 
-A `timeout` setting of 60000 is provided, which says that after 60000 milliseconds of running (or 60 seconds), our test will "timeout". Some tests can take up to three minutes to run, so updating this value to 180000 can be useful if your tests take a little longer to complete.
+A `timeout` setting of 60000 is provided, which says that after 60000 milliseconds of running (or 60 seconds), our test will time out. Some tests can take up to three minutes to run, so updating this value to 180000 can be useful if your tests take a little longer to complete.
 
 There are more options you can define here for Mocha, and you can get a full list of options to set via [the Mocha website](https://mochajs.org/#command-line-usage).
 
 #### Hooks
 
-Finally, there are several hooks we can use to add functionality in the middle of the test process. This opens up a fair amount of potential to really add-on to the default WebdriverIO test runner functionality, and we'll look at an example of that later on.
+Finally, there are several hooks we can use to add functionality in the middle of the test process. This opens up a fair amount of potential to really add on to the default WebdriverIO test runner functionality, and we'll look at an example of that later on.
 
 #### The End
 

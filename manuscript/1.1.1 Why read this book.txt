@@ -30,7 +30,7 @@ This time around, I want to focus on that second part. Yes, it's important to co
 
 In this book, I cover not only what WebdriverIO can do, but also how you'll be using it day-to-day. I've built the examples around real-world scenarios that demonstrate how you would actually set things up. It's not just "what," but also "how to get there."
 
-It takes a little more work on my part, and extra effort on your's to get started, but the payoff is there, I promise. 
+It takes a little more work on my part, and extra effort on your's to get started, but the payoff is there, I promise.
 
 With that, let's get started.
 

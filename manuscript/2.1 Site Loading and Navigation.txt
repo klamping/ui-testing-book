@@ -4,10 +4,11 @@
 
 I want to jump right in to setting up our WebdriverIO configuration, but first, a warning.
 
-One of the biggest traps I see newcomers face is their ambition. They start off over-optimistic, and use as many tools at they can get their hands on. It's easy (and kinda fun) to come up with a list of features you want your test framework to have. These tools may look easy-to-use on the outside, but getting them all to work together is a very different story. 
+One of the biggest traps I see newcomers face is their ambition. They start off over-optimistic, and use as many tools as they can get their hands on. It's easy (and kind of fun) to come up with a list of features you want your test framework to have. These tools may look easy-to-use on the outside, but getting them all to work together is a very different story. 
+
 It's not that they can't work together; they get along just fine most of the time. But when starting out, any mistake made along the way (or difference in setup), can cause errors that are difficult to understand.
 
-Take the following error I've run into in the past:
+Take the following error I've run into before:
 
 `TypeError: Cannot read property 'trim' of undefined`
 
@@ -46,13 +47,15 @@ So we're going to start out simple and introduce new tools and concepts one-by-o
 
 I'll also be introducing some concepts that won't be sticking around. They'll just be stepping stones to help you get across the scary swamp of some terrible thing that starts with an S (I don't know, it's just for alliteration purposes).
 
-For example, for our first exercise, we'll be talking about assertions. In it, I'll show four different ways to achieve the same effect. We'll only be sticking with one of them though. Hopefully it's evident at the end why we'll be foregoing the other three. If not, I've failed at my job. What's new?
+For example, in our first exercise, we'll be talking about assertions. In it, I'll show three different ways to achieve the same effect. We'll only stick with one of them though. I'll explain throughout the process the downfalls of the other options and why I chose my recommended one.
+
+I believe it's really important to know what options you have, how some of them build upon others, and why you'd choose one over the other. Expect to see a fair amount of this throughout the book!
 
 ## 2.1.2 Let's Start
 
 We've already covered installation and basic test writing, but we're going to go over it again. Hopefully a bit quicker this time.
 
-The first step we'll take is to create a new folder to store our up-and-coming tests. **This should not be inside the same folder you used for the 'testrunner' exercise**. So, create a new folder outside of that; you can call it `wdio-realworld` just for fun.
+The first step we'll take is to create a new folder to store our up-and-coming tests. **This should not be inside the same folder you used for the 'testrunner' exercise**. So, create a new folder outside of that. You can call it `wdio-realworld` just for fun.
 
 In there, do the usual NPM setup:
 
@@ -85,19 +88,22 @@ WDIO Configuration Helper
 ? What is the base url? http://localhost:8080/
 ```
 
-Almost all defaults here, except for a few items:
+Almost all of the above answers are defaults, except for a few:
 
 - We'll use the `chromedriver` service. Feel free to use `selenium-standalone` if you prefer (or neither).
-- For the base url, we use the local server you set up in the previous chapter `http://localhost:8080/`. You're welcome to use the book's demo site here if you prefer ([https://demo.learnwebdriverio.com](https://demo.learnwebdriverio.com)), but do note it may cause problems in later chapters.
+- For the base url, we use the local server you set up in the previous chapter `http://localhost:8080/`. You're welcome to use the book's demo site here if you'd prefer ([https://demo.learnwebdriverio.com](https://demo.learnwebdriverio.com)), but do note it may cause problems in later chapters.
 
-Okay, now that we have our config ready, it's time to create our test directory. Since we went with the default path, we need to create two folders, `test` and `specs` which will go inside of `test`. You can do that how you like, but here's how I do it:
+Okay, now that we have our config ready, it's time to create our test directory. Since we went with the default path, we need to create two directories, `test` and a subdirectory called `specs`. You can do that how you like, but here's how I do it:
 
 In a bash shell (Linux/Mac): `mkdir -p test/specs`
 In a Windows shell: `mkdir test\specs`
 
-Finally, create a new file inside that directory (you can call it `navigation.js`) and open it for editing.
+Finally, create a new file inside the specs directory (you can call it `navigation.js`) and open it in your preferred text editor.
 
-## 2.1.3 Writing our first real test
+In a bash shell (Linux/Mac): `touch test/specs/navigation.js`
+In a Windows shell: `echo.>test\specs\navigation.js`
+
+## 2.1.3 Writing our First Real Test
 
 In our file, we'll start things off by writing the `describe` block needed for Mocha to understand we're defining a new test:
 
@@ -105,11 +111,11 @@ In our file, we'll start things off by writing the `describe` block needed for M
 describe('Homepage', function () { });
 ```
 
-We call `describe` like a function, passing in two parameters. The first is a name for the feature we are testing. I put that we're testing the "Homepage". This name will be used in our test reporting, which you'll see in a moment.
+We call `describe` like a function, passing in two parameters. The first is a name for the feature we are testing. I put that we're testing the 'Homepage'. This name will be used in our test reporting, which you'll see in a moment.
 
 The second half of our `describe` call is a function which contains all of the code we want to associate with this feature.
 
-Inside of this function we'll be adding the `it` call. Similar to `describe`, `it` is a function call that again takes two parameters, the first being the name of the specific test (we'll say it 'should take you to the login page'), and the second is a function which contains our actual test code:
+Inside this function we'll be adding the `it` call. Similar to `describe`, `it` is a function call that takes two parameters, the first is the name of the specific test (we'll say it 'should take you to the login page'), and the second is a function which contains our actual test code. The full `it` call looks like this:
 
 ```js
 it('should load properly', function () { });
@@ -120,37 +126,37 @@ Just to recap and refresh on the Mocha syntax:
 - `describe` is used to group sets of tests by the feature they are testing.
 - `it` defines a specific test to run.
 
-And remember that `it` always goes inside of `describe`. Here's what the whole thing looks like put together:
+And remember, `it` always goes inside `describe`. Here's what the whole thing looks like:
 
 ```js
 describe('Homepage', function () {
   it('should load properly', function () {
-
+    // test code will go here
   });
 });
 ```
 
-Okay, now that we have our test structure in place, it's time to add our commands. Let's get going by loading the main page of the site. You can find a full list of commands on the WebdriverIO site in [their API docs](https://webdriver.io/docs/api.html).
+Okay, now that we have our test structure in place, it's time to add our commands. Let's start by loading the main page of the site. You can find a full list of commands on the WebdriverIO site in [their API docs](https://webdriver.io/docs/api.html).
 
-The command we'll use is [`browser.url`](https://webdriver.io/docs/api/browser/url.html). This command tells the browser to open a URL (bet you didn't guess that). It does have a trick up it's sleeve though.
+The command we'll use is [`browser.url`](https://webdriver.io/docs/api/browser/url.html). This command tells the browser to open a URL (bet you didn't guess that). It does have a trick up its sleeve though.
 
 Remember that `baseUrl` setting we provided? I mentioned this before, but in case you didn't catch it, `browser.url` will prepend that `baseUrl` value if you define a relative path. 
 
-For example, if I say `browser.url('./tag/wdio')`, it will load the full url of `http://localhost:8080/tag/wdio`.
+For example, if I say `browser.url('./tag/wdio')`, it will load the full URL of `http://localhost:8080/tag/wdio`.
 
-Here are some more complex examples, assuming the `baseUrl` is set to `http://example.com/one`:
+Here are some more complex examples, assuming the `baseUrl` is set to `http://example.com/one/`:
 
 ```js
-browser.url('./one'); // goes to 'http://example.com/one/two'
+browser.url('./two'); // goes to 'http://example.com/one/two'
 browser.url('/two');  // goes to 'http://example.com/two'
 browser.url('http://anotherexample.com/one'); // goes to 'http://anotherexample.com/one'
 ```
 
-Essentially, the `./` at the beginning of the value is used to say "keep the entire `baseUrl`". Alternatively, using just `/` at the start means that it will use only the domain of the URL, stripping off any subfolders.
+Essentially, the `./` at the beginning of the value is used to say "keep the entire `baseUrl`." Alternatively, using just `/` at the start means that it will use only the domain of the URL, stripping off any subfolders.
 
 Finally, you can have it ignore the `baseUrl` by passing your own domain.
 
-Alright, let's use a simple `browser.url('./')` in our test to load up the homepage of the site:
+All right, let's use a simple `browser.url('./')` in our test to load up the homepage of the site:
 
 ```js
 describe('Homepage', function () {
@@ -163,7 +169,7 @@ describe('Homepage', function () {
 
 To ensure the page has loaded, we're going to log out the title of the page we're on using [the `browser.getTitle()` command](https://webdriver.io/docs/api/webdriver.html#gettitle). Can you guess what that does?
 
-It gets the title of the page.
+Yes, it gets the title of the page.
 
 In our case, the title is `Conduit`, so we should see that logged out when running our test:
 
@@ -174,7 +180,7 @@ describe('Main Navigation', function () {
         browser.url('./');
         
         // Get the title of the homepage, should be 'Conduit'
-        console.log(browser.getTitle())
+        console.log(browser.getTitle());
     });
 });
 ```
@@ -185,13 +191,13 @@ Pretty exciting, I know.
 
 Now let's try clicking something, like the `Sign In` link.
 
-To do that, we're going to use [the `click` command](https://webdriver.io/docs/api/element/click.html), but it won't be `browser.click()` (which would throw an error in your face).
+To do that, we're going to use [the `click` command](https://webdriver.io/docs/api/element/click.html), but it won't be `browser.click()` which would throw an error in your face.
 
 No, in order to click an element, you need to let WebdriverIO know which element to click.
 
-If you've used jQuery, which was very popular JavaScript library from 2006 to 2016-or-so, you'd be familiar with the `$` function. If not, what it does is pick an element out of the HTML based on a "selector". Selectors are like getting someone's attention by calling their name. 
+If you've used jQuery, which was a very popular JavaScript library from 2006 to 2016-or-so, you'd be familiar with the `$` function. If not, what it does is pick an element out of the HTML based on a "Selector." Selectors are like getting someone's attention by calling their name. 
 
-Some selectors can be very specific, like getting the attention of someone named "Thisisaveryuniquenamethatnooneelsehasihope". Some are more general and might get multiple results, like yelling "John" at the store (apologies to the John's out there and the store manager for yelling in her store). We'll get into selectors more in a little bit, but know that they come in all shapes and sizes.
+Some selectors can be very specific, like getting the attention of someone named `Thisisaveryuniquenamethatnooneelsehasihope`. Some are more general and might get multiple results, like yelling "John" at the store (apologies to the Johns out there and the store manager for yelling in her store). We'll get into selectors more in a little bit, but know that they come in all shapes and sizes.
 
 So WebdriverIO has mimicked the functionality of jQuery and provides [its own `$` function](https://webdriver.io/docs/api/element/$.html). We're going to pretend you know what I mean and use a partial text based selector (we'll talk more about selectors soon).
 
@@ -219,7 +225,7 @@ What element are we getting? Well, we want to click the "Sign In" link at the to
 </ul>
 ```
 
-There are a couple of ways we can specific the 'Sign In' link, but let's go with the simplest. We're going to request an `a` element on the page that has text containing `Sign In`. We could add more to this selector, like that the link has to have a class name of `nav-link`, but this is good enough for now. As I mentioned, we'll cover this more soon. 
+There are a couple of ways we can specify the 'Sign In' link, but let's go with the simplest. We're going to request an `a` element on the page that has text containing `Sign In`. We could add more to this selector, like the link needs a class name of `nav-link`, but this is good enough for now. As I mentioned, we'll cover this more soon. 
 
 To say we want a link that has specific text in it, we write our selector like this: `$('=the text to search by')`. For our needs, we're going to do `$('=Sign In')`. 
 
@@ -227,7 +233,7 @@ By using that `$` function with our selector, we now have an element that we can
 
 ```js
 // Click the 'Sign In' navigation link
-$('=Sign In').click()
+$('=Sign In').click();
 ```
 
 This triggers a mouse click on that element, which the website will take action on and route us to the 'Sign In' page. How can we know though? 
@@ -240,7 +246,7 @@ Let's use [the `getUrl` command](https://webdriver.io/docs/api/webdriver.html#ge
 
 ```js        
 // Get the URL of the sign in page. It should include 'login'
-console.log(browser.getUrl())
+console.log(browser.getUrl());
 ```
 
 That's the end of the test. Here's what the whole file looks like:
@@ -359,7 +365,7 @@ lly
 2020-07-24T23:11:28.589Z INFO @wdio/local-runner: shutting down
 ```
 
-In the middle of all that output are two lines with the content we need. Let's hide all of those extra message so we get just those two `console.log`'s we used by passing in the `logLevel` setting: `npx wdio --logLevel=silent`. Now our log ouput will be a lot shorter:
+In the middle of all that output are two lines with the content we need. Let's hide all of those extra messages so we get just those two `console.log`'s we used by passing in the `logLevel` setting: `npx wdio --logLevel=silent`. Now our log output will be a lot shorter:
 
 ```sh
 Execution of 1 spec files started at 2020-07-24T23:12:13.610Z
@@ -391,13 +397,13 @@ ChromeDriver was started successfully.
 Spec Files:  1 passed, 1 total (100% completed) in 00:00:05
 ```
 
-As you see, the page title and url are logged out. Looks like the site functions as hoped and our test passes!
+As you see, the page title and URL are logged out. Looks like the site functions as hoped and our test passes!
 
 ## 2.1.6 Adding Assertions
 
 So far, we validated that our test successfully ran by checking the log output after execution. This is simple enough to do while we only have a test or two, but it quickly becomes tedious as more and more tests are added.
 
-Instead of us manually checking the values, what if we could tell the computer what to expect and have it check for us? This is what assertions do. They check a value and "assert" that it's a certain way. If the value is incorrect, an error is thrown and the test is marked as failing.
+Instead of us manually checking the values, what if we could tell the computer what to expect and have it check for us? This is what assertions do. They check a value and "assert" that it's a certain way (e.g., it equals another value, it doesn't equal another value, it matches part of another value). If the value isn't what's expected, an error is thrown and the test is marked as failing.
 
 Mocha watches for these assertion errors and catches them during the tests, marking the test as failed if one occurs.
 
@@ -481,9 +487,9 @@ Now our test fails because it didn't get what it was expecting. We no longer nee
 
 ## 2.1.7 Expanding Assertions
 
-To be honest, in the real world, you'll rarely see errors thrown like this. Instead, developers use "Assertion Libraries". These libraries make writing assertions and throwing errors a heck of a lot simpler. Let's spend the rest of the chapter looking at a few options.
+In the real world, you'll rarely see errors thrown like this. Instead, developers use "Assertion Libraries". These libraries make writing assertions and throwing errors a lot simpler. Let's spend the rest of the chapter looking at a few options.
 
-The first Assertion Library we'll look at comes built in to the Node.js ecosystem. The [NodeJS Assert API](https://nodejs.org/api/assert.html#assert_assert) is a standard libary in Node.js, and we can use it without any extra installations.
+The first Assertion Library we'll look at comes built in to the Node.js ecosystem. The [NodeJS Assert API](https://nodejs.org/api/assert.html#assert_assert) is a standard library in Node.js, and we can use it without any extra installations.
 
 At the top of our test file, add the following line to load this API:
 
@@ -491,7 +497,7 @@ At the top of our test file, add the following line to load this API:
 const assert = require('assert');
 ```
 
-Pay attention that this statement is outside of the `describe` block. If we were to include it inside the `describe` block, it would only be available in that section. Any other `describe` blocks would also have to include the statement. That's because variables declared inside the function block are scoped to that function. This is normal JavaScript behavior and is something to watch out for when writing tests.
+Pay attention that this statement is outside the `describe` block. If we were to include it inside the `describe` block, it would only be available in that section. Any other `describe` blocks would also have to include the statement. That's because variables declared inside the function block are scoped to that function. This is normal JavaScript behavior and is something to watch out for when writing tests.
 
 Next, we need to replace our `if` statement and thrown error with a call to the assert library. There are many ways to assert a value:
 
@@ -549,7 +555,7 @@ to be strictly equal:
 -testrunner/test/specs/navigation.js:15:16)
 ```
 
-Not only is the assertion a little less code to write, it's actually a more helpful message in that it provides the expected AND actual values. Assuming we've updated our second check as well, here's what our test now looks like:
+Not only is the assertion a little less code to write, it's actually a more helpful message in that it provides the expected and actual values. Assuming we've updated our second check as well, here's what our test now looks like:
 
 ```js
 const assert = require('assert');
@@ -754,4 +760,6 @@ Next up, we'll look in-depth at a plethora of element selectors, along with how 
 
 ## 2.1.10 Chapter Challenge
 
-In your existing test, add a check that validates that when you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.
+Over the following chapters, I'll include a "Chapter Challenge" at the end of each of them. This is a challenge for you to tackle on your own if you're interested. Brief explanations and my recommended answer (but not necessarily the only answer) are in Chapter 3.0 near the end of this book.
+
+For your first challenge, in your existing test, add a check that validates that when you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.
