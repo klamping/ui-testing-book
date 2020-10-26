@@ -2,7 +2,7 @@
 
 ## 2.8.1 Checking the Active Tab
 
-We've got our login and logout functionality worked out for our tests, now it's time to make use of that effort.
+We've got our login and logout functionality worked out for our tests. Now it's time to make use of that effort.
 
 By default, both logged in and out views should show the 'global' tab by default. Let's write a test that checks which tab is "active" on page load:
 
@@ -18,7 +18,7 @@ How do we know which is the active tab? We have a few choices:
 - get the 'Global Feed' tab and check that the 'class' attribute has an 'active' class
 - get all tabs with an 'active' class, check that only one returns, validate the text
 
-Looking over the options, I prefer the last one as it includes the chance that could be multiple 'active' tabs (which would definitely be a bug).
+Looking over the options, I prefer the last one as it includes the chance that there could be multiple 'active' tabs (which would definitely be a bug).
 
 Now, using our previous knowledge, let's update the `Home` page object to include our new `activeFeedTabText` element reference: 
 
@@ -55,7 +55,9 @@ it('should default to showing the global feed', function () {
 })
 ```
 
-With that written, there's a little bit of optimization we can do to our Home page object (I'm all about optimization if you haven't caught on). In our `feedTabsText` and `activeFeedTabText` references, we use the same `map` function (we also use it in our Article page object). Maybe it's not a bad idea to move that to a utility file (although you could convince me it's an over-optimization; I'm mainly showing this to demonstrate the concept). 
+With that written, there's a little bit of optimization we can do to our Home page object (I'm all about optimization if you haven't caught on). In our `feedTabsText` and `activeFeedTabText` references, we use the same `map` function that we used in our Article page object.
+
+Maybe it's a good idea to move that to a utility file? One could argue that this is a bit of an over-optimization, but let's continue, even just to demonstrate the concept of utility files.
 
 So, in a new file, we'll define an exported object with a single function property that acts as our mapped method:
 
@@ -95,11 +97,11 @@ class Home extends Generic {
 module.exports = new Home();
 ```
 
-Again, this isn't entirely necessary, but can reduce some of the duplication in your code.
+Again, this isn't entirely necessary, but it can reduce some of the duplication in your code.
 
 ## 2.8.2 Switching Tabs
 
-So we've validated that both tabs show, and that `Global` is the default showing tab. Now let's check that we can switch between the two tabs. We can do that with our existing page object, by finding the tab with the text we want and clicking on it:
+So we've validated that both tabs show, and that `Global` is the default tab being displayed. Now let's check that we can switch between the two tabs. We can do that with our existing page object, by finding the tab with the text we want and clicking on it:
 
 ```js
 it('should let you switch between global and personal feeds', function () {
@@ -147,7 +149,7 @@ tabs['Global Feed'].click();
 expect(home.activeFeedTabText).toEqual(['Global Feed']);
 ```
 
-The above is definitely a more complex coding example (understanding the `reduce` function is worthy of a PhD in my opinion), so I won't dive in to details here as it revolves more around JavaScript coding than testing. It also has its own drawback, especially if two tabs share the same name; I simply wanted to mention it as an alternative. 
+The above is definitely a more complex coding example (understanding the `reduce` function is worthy of a PhD in my opinion), so I won't dive into details here as it revolves more around JavaScript coding than testing. It also has its own drawback, especially if two tabs share the same name. I simply wanted to mention it as an alternative. 
 
 How about another option? We'll create a `clickTab` function on the Home page object, which looks like:
 
@@ -192,7 +194,7 @@ class Home extends Generic {
 module.exports = new Home();
 ```
 
-Notice the custom `waitUntil` function we added after the tab click. This tells WebdriverIO to wait until the active tab text has switched to our desired value. Again, this is necessary to avoid test failures when we running these on a slower network. 
+Notice the custom `waitUntil` function we added after the tab click. This tells WebdriverIO to wait until the active tab text has switched to our desired value. Again, this is necessary to avoid test failures when we run these on a slower network. 
 
 Now, to use it in our test:
 
@@ -209,33 +211,37 @@ it('should let you switch between global and personal feeds', function () {
 });
 ```
 
-Let's move forward with this solution, as it's a good mix between providing a utility method and not complicating our code too much.
+Let's move forward with this solution, as it's a good mix of providing a utility method and not complicating our code too much.
 
 ## 2.8.3 Dynamic Content Testing
 
 Now that we've validated the proper tabs exist on the page, and that we can switch between them, let's focus now on what those tabs contain. 
 
-We'll split our testing in three ways:
+We'll split our testing four ways:
 
-General feed tests (functionality common in 'Global', 'Personal' and 'Tag' tabs)
+General feed tests (functionality common in 'Global', 'Personal', and 'Tag' tabs)
+
 - should order by most recent article first
 - should allow you to follow a user
 
 Global feed tests
+
 - should show articles from all users
 
 Personal Feed
+
 - should show only articles from followed users
 
 Tag feed
-- Should only show when on a 'Tag' page
+
+- should only show when on a 'Tag' page
 - should show all articles with that tag
 
-The first set of tests we'll write are for the general/common functionality. It may not seem like it, but it's going to be a bit tricky to undertake. To explain, examine that first requirement: "should order by most recent article first".
+The first set of tests we'll write are for the general/common functionality. It may not seem like it, but it's going to be a bit tricky to undertake. To explain, examine that first requirement: "should order by most recent article first."
 
-How are we to validate this? Certainly we know how to get the content of the article preview, but how do we know that this article is the most recent? If this is a live site we're testing, the most recent article will be changing on a regular basis. Even if we were to create an article and try to quickly test that it's 'first', we still risk someone else creating a newer article in the time it takes to execute our script.
+How are we to validate this? Certainly we know how to get the content of the article preview, but how do we know that this article is the most recent? If this is a live site we're testing, the most recent article will be changing on a regular basis. Even if we were to create an article and try to quickly test that it's 'first,' we still risk someone else creating a newer article in the time it takes to execute our script.
 
-On top of that, this sort of "random" failure is likely to drive you mad, as it would be difficult to reproduce consistently, making it frustrating to debug. This is one of the many troubles with running automation against a production/live site and why I generally shy away from it (plus all these fake articles we're creating can be confusing for real users). 
+On top of that, this sort of "random" failure is likely to drive you mad, as it would be difficult to reproduce consistently, making it frustrating to debug. This is one of the many troubles with running automation against a production/live site and why I generally shy away from it. Plus, all these fake articles we're creating can be confusing for real users. 
 
 Instead, I'm going to move forward with the assumption that we're testing on the "development" server. We still may run into this same issue as testers create fake articles, but it's less likely. Regardless, I prefer alternative approaches than what I've described.
 
@@ -245,14 +251,14 @@ A. Deploy the test site with existing content that's always the same (this is go
 B. Load content via a direct database script before running tests
 C. Inject the content via an API call before/during test run
 D. Use a tool like Fiddler to intercept the requests being made by the browser to inject 'fake' content for the site to use
-E. Use a "sandbox" type site that allows you to test components individually outside of normal use.
-F. In your script, read the database/API to get the value that should be displayed on the page. I generally dislike this strategy though. 
+E. Use a "sandbox" type site that allows you to test components individually outside of normal use
+F. In your script, read the database/API to get the value that should be displayed on the page (I generally dislike this strategy though)
 
 That's a fair number of options; too many to cover in detail. When choosing from that list, think about what best fits your needs. 
 
-For example, if you go with option D, you're no longer validating that the database/server is responding with the correct data. You're now only checking that the front-end of the site is making the proper request and handling the response in the right way. This may be beneficial though, as it reduces the risks of "overtesting".
+For example, if you go with option D, you're no longer validating that the database/server is responding with the correct data. You're now only checking that the front-end of the site is making the proper request and handling the response in the right way. This may be beneficial though, as it reduces the risks of "overtesting."
 
-Think about this... if your database/API is broken for any reason (or not yet written), you're unable to run your tests even though the front-end is still ready for them. By "mocking" out this interface, you avoid that scenario. Also, the API should be independently tested and not rely on functional browser tests to validate it's behavior. 
+Think about this... if your database/API is broken for any reason (or not yet written), you're unable to run your tests even though the front-end is still ready for them. By "mocking" out this interface, you avoid that scenario. Also, the API should be independently tested and not rely on functional browser tests to validate its behavior. 
 
 There's a lot of wiggle room out there on what features WebdriverIO should be responsible for testing. After many years, I've found it best to focus on browser functionality/interaction. It's far less likely that a page title fails to appear on a page than it is to have some advanced JavaScript-based interaction broken. It's also a lot more difficult to test that JavaScript functionality, as it requires clicks and form entries and all sorts of actions.
 
@@ -264,7 +270,7 @@ So, with all that said, for now, we're going to take the first approach, which i
 
 One thing I did not mention with these tabs is that they're loaded "asynchronously" from the page itself. The HTML and text inside the feed is retrieved separately from the rest of the page, meaning that it may not be available on page load.
 
-This is beneficial for the user, as it allows them to get new tab content without having to reload the entire page. It sucks for us though as we have to write specific code to handle this unknown wait time.
+This is beneficial for the user, as it allows them to get new tab content without having to reload the entire page. It's for us though as we have to write specific code to handle this unknown wait time.
 
 This won't be too difficult, and we'll use our old friend `waitForExist()` to make it happen.
 
@@ -274,7 +280,7 @@ When the page first loads, the following loading text is shown:
 
 That text is removed from the page once the content is loaded, meaning we can use it's absence as an indicator that the content has completed loading.
 
-All that's great, except the name of the command we're going to use is `waitForExist()`, not `waitForNotExist()`. How do we do achieve the opposite effect of the name of the command?
+All that's great, except the name of the command we're going to use is `waitForExist()`, not `waitForNotExist()`. How do we achieve the opposite effect of the name of the command?
 
 Well, all `waitFor` commands allow you to switch the condition to the opposite by passing in a boolean flag via an `options` object.
 
@@ -288,7 +294,7 @@ $(selector).waitForExist({ timeout, reverse, timeoutMsg, interval })
 
 `reverse` should be set to `true` if it instead waits for the selector to not match any elements (which is what we want).
 
-We'll ignore `timeoutMsg` and `interval` as well, because we don't want those changed.
+`timeoutMsg` and `interval` will be omitted, since we don't need to change their defaults.
 
 Bringing that all together, we can wait for the "Loading Articles..." text to disappear with the following code:
 
@@ -296,9 +302,9 @@ Bringing that all together, we can wait for the "Loading Articles..." text to di
 $('div=Loading Articles...').waitForExist({ reverse: true });
 ```
 
-A quick note. It can be tricky to figure out the HTML of these loading indicators because they often disappear before you can inspect them. Thankfully, the built-in browser development tools often have a way to artificially throttle your connection speed (think back to how we did this in Chapter 2.3.3 with `browser.throttle`). Here's how to do that in Chrome: https://developers.google.com/web/tools/chrome-devtools/network/reference#throttling
+A quick note: It can be tricky to figure out the HTML of these loading indicators because they often disappear before you can inspect them. Thankfully, the built-in browser development tools often have a way to artificially throttle your connection speed (think back to how we did this in Chapter 2.3.3 with `browser.throttle`). Here's how to do that in Chrome: https://developers.google.com/web/tools/chrome-devtools/network/reference#throttling
 
-So with the network throttled to a slowed down speed, you can reload you page, then switch the setting to 'offline' and have an indefinite time to inspect the HTML. When you've figured out what you need, set the condition back to 'online' and continue with your work.
+So with the network throttled to a slow speed, you can reload the page, then switch the setting to 'offline' and have an indefinite time to inspect the HTML. When you've figured out what you need, set the condition back to 'online' and continue with your work.
 
 While I used the actual text in the previous example, there's also a `data-qa-id` attribute on that div, which is what we'll use for our updated page object:
 
@@ -327,7 +333,7 @@ class Home extends Generic {
 }
 ```
 
-Now we can ensure that when we switch tabs, we also wait for the feed content to load. This is good, but need to do this exact same thing when the page initially loads as well. But before we get there, let's take a quick detour...
+Now we can ensure that when we switch tabs, we also wait for the feed content to load. This is good, but we need to do this exact same thing when the page initially loads as well. But before we get there, let's take a quick detour...
 
 ## 2.8.5 Custom Page Components
 
@@ -337,11 +343,11 @@ But at some point (probably very early on), developers weren't happy with the li
 
 Early projects used the jQuery plugin system which allowed developers to construct common interfaces such as tabs, tooltips, dropdown menus, and more. Those individual efforts were soon morphed into the jQuery UI library, providing devs with a set of widgets for implementation across their sites.
 
-In the past ten years, we've seen major growth in this arena through the concept of Pattern Libraries (alternatively known as UI Libraries, Design Systems or Style Guides, although the pedantic will enjoy arguing the difference between all these). JavaScript frameworks have adapted and now all major libraries support the concept of components; in fact, a major effort is underway to standardize all libraries under the umbrella of "Web Components".
+In the past ten years, we've seen major growth in this arena through the concept of Pattern Libraries (alternatively known as UI Libraries, Design Systems, or Style Guides, although the pedantic readers will enjoy arguing the differences between them). JavaScript frameworks have adapted and now all major libraries support the concept of components; in fact, a major effort is underway to standardize all libraries under the umbrella of "Web Components."
 
 None of this is necessarily important to testing, but I do find it interesting. 
 
-Can we follow this pattern in our tests, building out not page objects, but page components? Can we mimic the ease-of-use and reusability of these patterns? The magic eight ball I just shook says 'Without a doubt'. (Well, actually, it said 'Reply hazy, try again' about five times until I made up the response I wanted.)
+Can we follow this pattern in our tests, building out not page objects, but page components? Can we mimic the ease-of-use and reusability of these patterns? The Magic 8-Ball I just shook says, "Without a doubt." (Well, actually, it said, "Reply hazy. Try again." about five times until I made up the response I wanted.)
 
 Let's start with the basic idea of what a page component should be: a simple reference to a page element. From that, we'll extend it to our individual needs:
 
@@ -372,15 +378,15 @@ class Component {
 module.exports = Component;
 ```
 
-This component is what we'll build all our other components off of. It's not entirely necessary, but I find it helpful to have a common starting ground. The `$origin` element reference can be changed as you see fit; some people prefer `$element` or `$container`. I go with 'origin' because it's a more flexible name than the other two examples. 
+This component is what we'll build all our other components off of. It's not entirely necessary, but I find it helpful to have a common starting point. The `$origin` element reference can be changed as you see fit; some people prefer `$element` or `$container`. I use 'origin' because it's a more flexible name than the other two examples. 
 
-Assuming you want to follow me down this path of a uber-generic page component, save this file as `Component.js` to a new `components` folder inside your `page_objects` folder.
+Assuming you want to follow me down this path of an uber-generic page component, save this file as `Component.js` to a new `components` folder inside your `page_objects` folder.
 
 ## 2.8.6 The Feed Page Component
 
 Now comes the time to build out our first real component, which will define the structure of a "Feed".
 
-In it, we'll load the component file we just created, define two article references (the 'articles' inside our feed, and the loading indicator we talked about earlier), and finally a `waitForLoad` function which we be yanked from the Home page object.
+In it, we'll load the component file we just created, define two article references (the 'articles' inside our feed, and the loading indicator we talked about earlier), and finally include a `waitForLoad` function which we moved from the Home page object.
 
 Here's how it looks:
 
@@ -401,7 +407,7 @@ class Feed extends Component {
 }
 ```
 
-A couple things:
+A few things:
 
 1. We don't need to define a constructor, as that's handled by the Component class we've extended.
 2. In `$$articles` and `$articleLoadingIndicator`, we reference `this.$origin`, which comes from the parent `Component` class.
@@ -423,7 +429,7 @@ get currentFeed () { return new Feed('[data-qa-type="article-list"]'); }
 
 How does this selector work? Well, if you were to inspect the HTML on the page as you switch tabs, you'd notice that the code for the article list is completely switched out every time a tab is clicked, meaning that there's only ever one element that matches the `'[data-qa-type="article-list"]'` selector. That's why we can use that single selector to find our feed, even though they're technically two different items.
 
-With our `currentFeed` defined, we can use it and the `waitForLoad` function on the Feed class, to make our Home page wait until the feed is loaded to continue on. 
+With our `currentFeed` defined, we can use it and the `waitForLoad` function on the Feed class, to make our Home page wait until the feed is loaded to continue.
 
 The Generic page object has a `load` function already defined that runs the `browser.url` command. We need to extend it in our Home page object to add this code: `this.currentFeed.waitForLoad();`
 
@@ -437,13 +443,13 @@ class Home extends Generic {
 }
 ```
 
-When `home.load();` is called in our test, it would fail. Instead of loading the url properly, it would just wait for the current feed to load. That's because we've overwritten the Generic load function with our own.
+When `home.load();` is called in our test, it would fail. Instead of loading the URL properly, it would just wait for the current feed to load. That's because we've overwritten the Generic load function with our own.
 
-To work around this, in our Home `load` function, we want to first call the Generic `load` function, then run our custom code. Fortunately, that's to JavaScript's Class functionality, that's as simple as calling `super.load();`. 
+To work around this, in our Home `load` function, we want to first call the Generic `load` function, then run our custom code. Fortunately, thanks to JavaScript's Class functionality, that's as simple as calling `super.load();`. 
 
-If you recall from our constructor we do something similar by calling `super()` itself. This is a similar, but different way of doing this. `super()` calls the constructor function of the parent class, whereas `super.load()` calls the `load` function of the parent class. You can use this with any function on the parent class.
+If you recall from our constructor, we do something similar by calling `super()` itself. This is a similar, but different, way of doing this. `super()` calls the constructor function of the parent class, whereas `super.load()` calls the `load` function of the parent class. You can use this with any function on the parent class.
 
-Going back to the Home page object, we'll add that `super.load()` call to our `load` function, and also add the `this.currentFeed.waitForLoad();` call to our `clickTab` function so that it as well waits for the feed content to load before continuing on:
+Going back to the Home page object, we'll add that `super.load()` call to our `load` function, and also add the `this.currentFeed.waitForLoad();` call to our `clickTab` function so that it also waits for the feed content to load before continuing on:
 
 {title="test/pageObjects/Home.page.js"}
 ```js
@@ -535,9 +541,9 @@ describe('Homepage', function () {
 
 ## 2.8.8 Testing Feed Content
 
-The next question on my mind is "How can we validate that the content, not just the length, is correct?" It could be pulling in the wrong article, and checking only the number of articles listed would give us a false positive result.
+The next question on my mind: is "How can we validate that the content, not just the length, is correct?" It could be pulling in the wrong article, and checking only the number of articles listed would give us a false positive result.
 
-We should do due diligence and check the content of the article preview, which takes us to the next component we'll create. A 'Feed' is composed of a number of Article Previews. Each preview has the following data:
+We should do due diligence and check the content of the article preview, which takes us to the next component we'll create. A 'Feed' contains a number of Article Previews. Each preview has the following data:
 
 - Author
 - Date Published
@@ -570,10 +576,10 @@ module.exports = ArticlePreview;
 
 We'll save this as `ArticlePreview.js` in our `pageObjects/components` folder. Then, in our `Feed.js` file in that same folder, we'll require it and define a list of feeds that we can reference in our tests. 
 
-To do this, we'll need to do two things:
+To do this, we'll do two things:
 
 1. Get all the container elements of each element preview using the `$$` command (which we already have defined)
-2. Map through those elements to generate a dynamic `ArticlePreview` classes, similar to how we made our `currentFeed` reference
+2. Map through those elements to generate dynamic `ArticlePreview` classes, similar to how we made our `currentFeed` reference
 
 Here's what the updated file looks like:
 
@@ -609,15 +615,15 @@ it('should show most recent article first', function () {
 So, to recap:
 
 - We have a 'Feed' component, which is used to more easily access the current feed being shown in the page
-- Inside that component, we have a reference to multiple 'ArticlePreview' components, which give us easier access to the various parts of an article preview.
+- Inside that component, we have a reference to multiple 'ArticlePreview' components, which give us easier access to the various parts of an article preview
 
 ## 2.8.9 Validating Multiple Properties Easier
 
-It's nice to know the title is correct, as it's a very positive sign that the correct data is being displayed. But if we have reference to the full article details, why not check against that as well?
+It's nice to know the title is correct, as it's a positive sign that the correct data is being displayed. But if we have reference to the full article details, why not check against that as well?
 
 While we could copy/paste the test code from before, it would be more helpful to create a helper function that gets all the article information on the page for us.
 
-In our `ArticlePreview` class, let's create a `getDetails` function that retrieves the text in a test friendly format for asserting against:
+In our `ArticlePreview` class, let's create a `getDetails` function that retrieves the text in a test-friendly format for asserting against:
 
 ```js
 getDetails() {
@@ -650,9 +656,9 @@ it('should show most recent article first', function () {
 
 ```
 
-As you see, we can dynamically create multiple page components on-the-fly for our use. Now, this is a very powerful feature, but do understand that it comes with a cost. Creating each dynamic component does take a half-second of time, so if you have hundreds of components to create, perhaps this isn't the best approach. 
+As you see, we can dynamically create multiple page components on the fly for our use. Now, this is a very powerful feature, but understand that it comes with a cost. Creating each dynamic component does take a half-second of time, so if you have hundreds of components to create, perhaps this isn't the best approach. 
 
-Also, it complicates the code a bit. Anyone new to the codebase would need to look into what the 'Feed' and 'ArticlePreview' components do in order to really understand the test. As will all things in code, by trying to reduce the complexity, you end up introducing new complexities. Sometimes you just can't win :D
+Also, it complicates the code a bit. Anyone new to the codebase would need to look into what the 'Feed' and 'ArticlePreview' components do in order to really understand the test. As will all things in code, by trying to reduce the complexity, you end up introducing new complexities. Sometimes you just can't win. :D
 
 ## 2.8.10 Chapter Challenge
 
@@ -662,6 +668,4 @@ With that data, add a test that asserts those tags are properly shown.
 
 Hint:
 The endpoint to get the tags is be `/tags/` (e.g., https://conduit-api.learnwebdriverio.com/api/tags/)
-
-
 

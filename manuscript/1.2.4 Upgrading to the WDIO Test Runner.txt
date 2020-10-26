@@ -239,7 +239,7 @@ I'm going to choose ChromeDriver, since it's a little bit faster than using Sele
 
 An important note here. You shouldn't use both services at the same time. While you technically can, since they both provide the same functionality (running a WebDriver server), it doesn't make sense to have them both running. 
 
-Another important note: You can shut down and ChromeDriver or Selenium Standalone instance running in your terminal from the previous chapter. Now that we have our service set up, it will take care of starting/stopping that for us.
+Another important note: You can shut down a ChromeDriver or Selenium Standalone instance running in your terminal from the previous chapter. Now that we have our service set up, it will take care of starting/stopping that for us.
 
 To finish off, the last question asks what `baseUrl` we want. By setting this value, we can shorten our `browser.url` calls. We'll talk about it soon, but for now just type `https://webdriver.io` and hit `enter`. 
 

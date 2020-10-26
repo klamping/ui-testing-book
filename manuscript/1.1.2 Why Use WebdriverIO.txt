@@ -68,7 +68,7 @@ Instead, WebdriverIO lets me write in a language I'm familiar with, and integrat
 
 As a developer, the mental switch from writing the functionality to writing the test code requires minimal effort (since it's all just JavaScript), and I love that.
 
-The other great thing, and this is more to credit Webdriver than WebdriverIO (there is a difference and we'll talk about it), is that I can use advanced CSS selectors to find elements.
+The other great thing, and this is more to credit WebDriver than WebdriverIO (there is a difference and we'll talk about it), is that I can use advanced CSS selectors to find elements.
 
 xPath scares me for no good reason. Something about slashes instead of spaces just chills my bones. But I don't have to learn xPath.
 

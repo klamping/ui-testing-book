@@ -1,6 +1,6 @@
 # 2.7 Managing User Sessions
 
-## 2.7.1 Thinking through a new type of test
+## 2.7.1 Thinking Through a New Type of Test
 
 Last chapter, we wrote assertions to check for content that we submitted through our Editor page.
 
@@ -12,17 +12,17 @@ The test flow was:
 
 This worked well because we knew what data to match against because we just used it. Now let's look at a situation where we're tasked with validating data that isn't something we just submitted: the homepage on our demo site.
 
-On the homepage, it lists out the latest articles from all users. How do we write a test that would validate it has the "latest" article shown first? Won't that content change on a regular basis as people create new articles?
+On the homepage, it lists out the latest articles from all users. How do we write a test that validates it has the "latest" article shown first? Won't that content change on a regular basis as people create new articles?
 
 This is the challenge we're going to tackle in this chapter. We'll get to an answer in a little bit, but first there is some setup work to do. 
 
 We already have a very basic homepage test set up, which we wrote back in Chapter 2.1 (it's the `navigation.js` file). We need to get rid of it!
 
-Why? Well, the two things it validates (page title and link functionality) aren't all that useful in terms of functional testing. While it would be helpful to know that our page title is incorrect, it's likely not worth the cost of test upkeep. Every title change will require an update to our test, and if the title is wrong... well, it's not that bad of thing.
+Why? Well, the two things it validates (page title and link functionality) aren't all that useful in terms of functional testing. While it would be helpful to know that our page title is incorrect, it's likely not worth the cost of test upkeep. Every title change will require an update to our test, and if the title is wrong... well, it's not that bad of a thing.
 
-For the links, that's likely better handled through a specific tool that checks for dead links, like [the W3C's link checker](https://validator.w3.org/checklink). It'll run much faster and be a lot easier to setup than writing tests for every single link on our site. 
+For the links, that's likely better handled through a specific tool that checks for dead links, like [the W3C's link checker](https://validator.w3.org/checklink). It'll run much faster and be a lot easier to set up than writing tests for every single link on our site. 
 
-So, let's just delete that entire `navigation.js` file and get ready to set up a new Homepage test file with a brand new page object. We'll start with the page object, saved in a new `Home.page.js` file in our `pageObjects` folder:
+So, let's just delete that entire `navigation.js` file and get ready to set up a new homepage test file with a brand new page object. We'll start with the page object, saved in a new `Home.page.js` file in our `pageObjects` folder:
 
 ```js
 const Generic = require('./Generic.page');
@@ -36,25 +36,24 @@ class Home extends Generic {
 module.exports = Home;
 ```
 
-This matches the other page objects we've created in that we extend the Generic page object and define our page url, using `./` to represent a url without any suffix (so just the `baseUrl` with nothing else). 
-
+This matches the other page objects we've created in that we extend the Generic page object and define our page URL, using `./` to represent a URL without any suffix (so just the `baseUrl` alone). 
 Now let's get our test going. The first test we'll write will validate the page has loaded correctly. How do we want to do this?
 
 In our `editor` test, we checked that certain form fields existed. What's on our homepage that we can validate?
 
 Well, several components:
 
-- The site header (Site title and global navigation)
+- The site header (site title and global navigation)
 - A 'banner' with the site name and description
 - The 'global feed' (and 'your feed' tab when logged in)
 - The 'popular tags' section
 - The site footer
 
-While the site header should appear on every page, we haven't validated it's existence in any of our tests yet (aside from the navigation test that we just deleted 😃). And I'm going to be honest with you... I'm not a huge fan of running this sort of validation.
+While the site header should appear on every page, we haven't validated its existence in any of our tests yet (aside from the navigation test that we just deleted). But, I'm not a huge fan of running this sort of validation.
 
 If the header is missing from your homepage, you're going to notice before any automation is run. It's such an important part of the site that it's likely to go missing. 
 
-Also, the code for the header of the site likely won't change that frequently. Redesign's of main navigation are often limited due to the impact these changes have. So you're going to be writing a test that will be run hundreds, likely thousands, of times for code that is never updated. 
+Also, the code for the header of the site likely won't change that frequently. Redesigns of the main navigation are often limited due to the impact these changes have. So you're going to be writing a test that will be run hundreds, likely thousands, of times for code that is never updated. 
 
 Now, on the other side of the argument, header content can be much more unique than what our demo site has going on. A basic example would be the header containing some sort of "notification" functionality. You definitely should have tests that validate those notifications are working as expected. 
 
@@ -64,13 +63,13 @@ Overall, a decision like this should be made by weighing the following:
 
 - How important is the functionality?
 - How much effort does it take to write the tests?
-- How much time will it consume keeping the tests up-to-date?
+- How much time will it consume keeping the tests up to date?
 
 Given all that, I do want to demonstrate how we can go about including site-wide functionality in our tests. So for the sake of example, we're going to test that our homepage has the following items:
 
-- Site Header (The 'bar' across the top of the page)
-- Site Footer (The 'bar' at the bottom of the page)
-- Site Navigation (The links in the site header)
+- Site header (The 'bar' across the top of the page)
+- Site footer (The 'bar' at the bottom of the page)
+- Site navigation (The links in the site header)
 
 We'll use a standard set of `toBeExisting` checks in our test file:
 
@@ -95,9 +94,9 @@ describe('Homepage', function () {
 });
 ```
 
-Now, normally, we'd add these element references to our `home` page object. But since these are elements that will be on every page, it's smarter to add them to our Generic page object. 
+Now, normally, we'd add these element references to our "`home`" page object. But since these are elements that will be on every page, it's smarter to add them to our Generic page object. 
 
-We can do this in a manner similar to how we've adding a generic 'load' method on that same object:
+We can do this in a manner similar to how we've added a generic 'load' method on that same object:
 
 {title="test/pageObjects/Generic.page.js"}
 ```js
@@ -122,11 +121,11 @@ class Generic {
 module.exports = Generic;
 ```
 
-By including these references in the Generic page object, anything that extends off of it will have those references (hence `home.$siteHeader` in the test file). This is useful for sharing common page template details across all your specific files. 
+By including these references in the Generic page object, anything that extends off of it will have those references (hence `home.$siteHeader` in the test file). This is useful for sharing common page template details across all your files. 
 
 ## 2.7.2 Checking Those Feeds
 
-In my list of "components on the homepage", I mentioned that there are two 'feeds' available. The 'Global' feed, which shows up for all visitors, and a specialized feed for users who are logged in. Let's going about getting these added to our test suite.
+In my list of "components on the homepage," I mentioned that there are two 'feeds' available. The 'Global' feed, which shows up for all visitors, and a specialized feed for users who are logged in. Let's add these to our test suite.
 
 Right now, we're only going to validate that the tab appears (and not the content inside the tab, we'll talk about that soon though). So our test will be a single line of code that validates against the 'feed' tabs:
 
@@ -148,7 +147,7 @@ get $$feedTabs () { return $$('[data-qa-id="feed-tabs"] [data-qa-type="feed-tab"
 get feedTabsText () { return this.$$feedTabs.map($tab => $tab.getText().trim()); }
 ```
 
-Add those two lines to your `Home.page.js` file, along with the updates to the homepage test file. And while you're in that test file, we should update it to include the fact that these tests are written for the "anonymous" view. Let's do that by changing updating our test file to have two nested `describe` blocks, one for the Anonymous view and the other for when you're logged in:
+Add those two lines to your `Home.page.js` file, along with the updates to the homepage test file. And while you're in that test file, update it to include the fact that these tests are written for the "anonymous" view. Let's do that by updating our test file to have two nested `describe` blocks, one for the Anonymous view, and the other for when you're logged in:
 
 {title="test/specs/home.js"}
 ```js
@@ -181,11 +180,11 @@ describe('Homepage', function () {
 });
 ```
 
-To be fair, we could have these as two separate files instead. I'm keeping them together for simplicity sake, but feel free to separate them if you wish. 
+To be fair, we could separate these two files instead. I'm keeping them together for simplicity sake, but feel free to separate them if you wish. 
 
 ## 2.7.3 Session Management
 
-For our logged in tests, we should, you know, log in. Let's copy over what we've done for our editor test to get us in to a logged in state:
+For our logged in tests, we should, you know, log in. Let's copy over what we've done for our editor test to get us into a logged in state:
 
 {title="test/specs/home.js"}
 ```js
@@ -218,7 +217,7 @@ it('should show both feed tabs', function () {
 });
 ```
 
-Now, if you were to run this test file, everything would pass (hopefully). But there's a big problem with it. WebdriverIO (really, it's Mocha behind-the-scenes), runs tests from the top of the file to the bottom. So tests at the top get executed before tests at the bottom. Thus, our test timeline would look like this:
+Now, if you were to run this test file, everything would pass (hopefully). But there's a big problem with it. WebdriverIO (really, it's Mocha behind the scenes), runs tests from the top of the file to the bottom. So tests at the top get executed before tests at the bottom. Thus, our test timeline would look like this:
 
 - Load the homepage
 - Run `Anonymous - should load properly` test
@@ -227,13 +226,13 @@ Now, if you were to run this test file, everything would pass (hopefully). But t
 - Load the homepage
 - Run `Logged In - should show both feed tabs` test
 
-If we were to re-arrange our code so that the 'logged in' tests were at the top of the file, we'd end up running our 'anonymous view' tests from a 'logged in' state. That would cause our feed tab assertion to fail, is it would show both tabs instead of just the 'global' one. 
+If we were to rearrange our code so that the 'logged in' tests were at the top of the file, we'd end up running our 'anonymous view' tests from a 'logged in' state. That would cause our feed tab assertion to fail, as it would show both tabs instead of just the 'global' one. 
 
-Why is that? Well, WebdriverIO runs each test file in a separate instance. But the individual tests in each file all share that instance. So any 'session' data you set in a test will be set in all subsequent tests for that file.
+Why is that? Well, WebdriverIO runs each test file in a separate instance. But the individual tests in each file share that instance. So any 'session' data you set in a test will be set in all subsequent tests for that file.
 
-In our original setup with the anonymous view first, this didn't matter, as the 'logged in' tests ran after everything else. But if someone were to re-arrange the order for some reason, they'd be left scratching their head as to why these tests are now failing.
+In our original setup with the anonymous view first, this didn't matter, as the 'logged in' tests ran after everything else. But if someone were to rearrange the order for some reason, they'd be left scratching their head as to why these tests are now failing.
 
-It'd be smart to try and avoid this from playing out, so we should clean up after ourselves (as anyone with good manners would agree). To accomplish that, we'll utilize the `after` hook inside our test file to logout:
+It'd be smart to avoid this, so we should clean up after ourselves (as anyone with good manners would agree). To accomplish that, we'll utilize the `after` hook inside our test file to logout:
 
 ```js
 describe('Logged In', function () {
@@ -249,26 +248,26 @@ describe('Logged In', function () {
 });
 ```
 
-With that setup, let's decide how we want to logout. I say "decide" because we have a couple of options:
+With that set up, let's decide how we want to log out. I say "decide" because we have a couple of options:
 
-- Logout via the website (click 'settings' main nav link, then the 'logout' button)
+- Logout via the website (click the 'settings' main nav link, then the 'logout' button)
 - Programmatically delete the user information from our browser session
 
 The advantage of the second choice is that it's much faster, as we don't have to wait for any page loads (which is the slowest part of functional testing). The disadvantage is that you have to figure out how to delete that user information, and it's going to be different for every site you test.
 
-That's okay, because I'm going to let you cheat here and tell you that the user logging information is stored inside [the browser's Local Storage system](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API). This is a data store built in to browsers where developers can host data specific to that user; in this case, the unique `token` used as identification for the user.
+That's okay, because I'm going to let you cheat here and tell you that the user logging information is stored inside [the browser's Local Storage system](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API). This is a data store built into browsers where developers can host data specific to that user; in this case, the unique `token` used as identification for the user.
 
-Now just how do we get rid of this thing? Well, there is [a `clearLocalStorage` command](https://webdriver.io/docs/api/jsonwp.html#clearlocalstorage) available in WebdriverIO, but unfortunately it's not fully supported (e.g. the `wdio-chromedriver-service` throws an error with that command, although running it through a Selenium server seems to work fine).
+Now just how do we get rid of this thing? Well, there is [a `clearLocalStorage` command](https://webdriver.io/docs/api/jsonwp.html#clearlocalstorage) available in WebdriverIO, but unfortunately it's not fully supported (e.g., the `wdio-chromedriver-service` throws an error with that command, although running it through a Selenium server seems to work fine).
 
 As a workaround, we're going to directly call [the browser's `Local Storage` API](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage). We'll accomplish this by using [the `execute` command](https://webdriver.io/docs/api/browser/execute.html), which is a very useful utility to know about.
 
 ## 2.7.4 Executing Arbitrary Scripts in the Browser
 
-WebdriverIO offers a lot of functionality out of the box, but there are times when our test requires running code inside the browser itself. The `execute` function allows us to run JavaScript code on the page we’re testing, from inside of the browser. It works by injecting our snippet of code into the page for execution, similar to how you would run any other JavaScript function from inside a browser window.
+WebdriverIO offers a lot of functionality out of the box, but there are times when our test requires running code inside the browser itself. The `execute` function allows us to run JavaScript code on the page we’re testing, from inside the browser. It works by injecting our snippet of code into the page for execution, similar to how you would run any other JavaScript function from inside a browser window.
 
 This is extremely useful for those cases where Selenium doesn't have a built in option for the functionality you need. For example, you can use it to change the DOM of the page, adding or removing a class on an HTML element. Or you could use it to check that a certain file has been loaded on the page, or even that a specific JavaScript variable has been set.
 
-Or in our case, to use the browser's `local storage` API to clear our session information. Here's a basic example of execute in action:
+Or in our case, to use the browser's Local Storage API to clear our session information. Here's a basic example of execute in action:
 
 ```js
 browser.execute(function () {
@@ -278,9 +277,9 @@ browser.execute(function () {
 
 Wait, where did the `window` object come from? Is that part of WebdriverIO? Nope!
 
-If you're unfamiliar with JavaScript in the browser, `window` is a global object that the browser maintains. It's similiar to how WebdriverIO gives you a `browser` object to use. We're able to access it, because the function we defined in our `execute` call is run inside the browser. 
+If you're unfamiliar with JavaScript in the browser, `window` is a global object that the browser maintains. It's similar to how WebdriverIO gives you a `browser` object to use. We're able to access it, because the function we defined in our `execute` call is run inside the browser. 
 
-It can be confusing to understand where our scripts are being run, so I’m going to add two ‘log’ statements; one will run inside of our node.js instance, and the other will run inside of the browser:
+It can be confusing to understand where our scripts are being run, so I’m going to add two ‘log’ statements; one will run inside our node.js instance, and the other will run inside the browser:
 
 ```js
 console.log('outside the browser.'); // this is run by Node.js
@@ -344,41 +343,41 @@ Now we can organize our Home test file however we'd like, knowing that the sessi
 
 ## 2.7.5 Speeding up the login via APIs
 
-If we can clear the session information to emulate a user logging out, can we programatically add session data in? Like say, perhaps, an auth token...
+If we can clear the session information to emulate a user logging out, can we programmatically add session data in? Like, perhaps an auth token...
 
 Why yes, yes we can. And we will!
 
-What I'm proposing is that we skip logging in via the UI and instead login via an API call.
+What I'm proposing is that we skip logging in via the UI and instead log in via an API call.
 
 Now, let me say that taking this approach is in no way necessary. The code will also vary greatly between different sites, sometimes being more complicated than it's worth. I'm mentioning it here for two reasons:
 
-- This will likely speed up almost every test you run by 3-5 seconds.
+- This will likely speed up almost every test you run by three to five seconds
 - It makes for a good starting example for a more complicated technique we'll be trying later
 
 We're going to do the following with our code:
 
 - Send an API request to the website's authentication service
 - The service will respond with a 'token', which is what we deleted in the previous section
-- We take that 'token' and inject it into our local storage, using the same `execute` command from before
+- We take that 'token' and inject it into our Local Storage, using the same `execute` command from before
 
-Way back at the start of this book we talked about APIs. We learned that WebdriverIO works by sending API requests to a Webdriver server and handles the responses. We're going to do a very similar thing. 
+Way back at the start of this book we talked about APIs. We learned that WebdriverIO works by sending API requests to a WebDriver server and handles the responses. We're going to do a very similar thing. 
 
-If you're unfamiliar with the concept of an API, I unfortunately won't be explaining it here. The reason is that there are many well done explanations already out there, including:
+If you're unfamiliar with the concept of an API, there are many useful explanations already out there, including:
 
-- https://dev.to/mercier_remi/what-is-an-api-4ao9
-- https://dev.to/bearer/what-is-an-api-gateway-42i6
-- https://zapier.com/learn/apis/chapter-1-introduction-to-apis/
-- https://medium.com/@perrysetgo/what-exactly-is-an-api-69f36968a41f
-- https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Introduction
+- (What is an API?)[https://dev.to/mercier_remi/what-is-an-api-4ao9]
+- (What is an API Gateway?)[https://dev.to/bearer/what-is-an-api-gateway-42i6]
+- (An Introduction to APIs)[https://zapier.com/learn/apis/chapter-1-introduction-to-apis/]
+- (What exactly IS an API?)[https://medium.com/@perrysetgo/what-exactly-is-an-api-69f36968a41f]
+- (Introduction to web APIs)[https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Introduction]
 
 The concept of an API is important to grasp, so I recommend spending some time learning about the general structure before diving into this lesson. Or maybe read through this section, then read any of those links I provided to help cement what's going on.
 
-I'm going to move forward assuming you're knowledgable about the basics of an API. I'm also going to give you the following "insider" information about authentication on our website:
+I'm going to move forward assuming you're knowledgeable about the basics of an API. I'm also going to give you the following "insider" information about authentication on our website:
 
 - Authentication requests are sent to the `users/login` endpoint
 - They are sent as a POST request, with a JSON payload of `{ user: { email: 'email@address.com', password: 'hunter2' } }`
-- In the JSON response, you'll recieve a user object with a `token` property
-- That `token` is added to the browser's local storage under the `id_token` key
+- In the JSON response, you'll receive a user object with a `token` property
+- That `token` is added to the browser's Local Storage under the `id_token` key
 
 These details vary from site to site, so keep that in mind if you want to try this technique out on a different website. You'll need to figure out how to authenticate and where to store your token.
 
@@ -389,7 +388,7 @@ WebdriverIO does not have a built-in way to make POST API requests, but that's o
 - [Axios](https://github.com/axios/axios)
 - [Request](https://github.com/request/request)
 
-Whichever one you use is your choice. Figure out what fits best for your needs (or just try one and see how it goes). We're going to use 'Got', which is what WebdriverIO uses behind-the-scenes for its own needs.
+Whichever one you use is fine. Figure out what fits best for your needs (or just try one and see how it goes). We're going to use 'Got', which is what WebdriverIO uses behind the scenes for its own needs.
 
 First thing, install Got as a dependency in your local project folder by running `npm i got`.
 
@@ -422,8 +421,9 @@ module.exports = Api;
 ```
 
 A brief overview of the file is this:
-- It exports an "Api" class, which can be constructed with a `prefixUrl` which should match our root API endpoint ('http://localhost:3000').
-- The class has a `getAuthToken`, which will accept user credentials and return a promise which will resolve with the token data.
+
+- It exports an "Api" class, which can be constructed with a `prefixUrl` which should match our root API endpoint ('http://localhost:3000')
+- The class has a `getAuthToken`, which will accept user credentials and return a promise which will resolve with the token data
 
 Here's an example of a basic Node.js script using this new file:
 
@@ -441,7 +441,7 @@ const Api = require('./utils/Api');
 })();
 ```
 
-Now we need to convert this script to something WebdriverIO can use. Back in our `home.js` test file, where going to update the 'Logged In' `before` function. For reference, this is what the function currently runs:
+Now we need to convert this script to something WebdriverIO can use. Back in our `home.js` test file, we're going to update the 'Logged In' `before` function. For reference, this is what the function currently runs:
 
 ```js
 before(function () {
@@ -455,7 +455,7 @@ before(function () {
 Instead, we need to:
 
 1. Require our Api file
-2. Instantiate a new Api instance with the url of our Api: `const api = new Api('http://localhost:3000/api/');`
+2. Instantiate a new Api instance with the url of our API: `const api = new Api('http://localhost:3000/api/');`
 3. Call the `getAuthToken` function via `browser.call` (since that function is promise-based and we need to wait for it to complete)
 4. Load the page in an unauthorized state (we can't set `localStorage` until after we have the page loaded)
 5. Set the token via `browser.execute` and [the `window.localStorage.setItem` function](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem)
@@ -489,23 +489,23 @@ before(function () {
 });
 ```
 
-Now if you're to run this test, you'd see everything load basically the same, except it skips the login page step. Because we're retrieving our token via the API, we don't need to go through the login page steps.
+Now, if you were to run this test, you'd see everything load basically in the same way, except it would skip the login page step. Because we're retrieving our token via the API, we don't need to go through the login page steps.
 
-The next step in this is to move all of that Api/token business to a common area, so that we can re-use it in our other files. We could add it to our Auth page object (similar to how we added the `clearSession` function, but I want to propose an alternative location: the `wdio.conf.js` file.
+The next step is to move all of that API/token business to a common area, so that we can re-use it in our other files. We could add it to our Auth page object (similar to how we added the `clearSession` function), but I want to propose an alternative location: the `wdio.conf.js` file.
 
 ## 2.7.6 Global Custom Commands
 
 Start things off in the configuration file by adding the  `const Api = require('./utils/Api');` require statement to the top of the file. This can go before or after the `Chance` code. 
 
-Then, scoot on down to our `before` hook, which if you recall from earlier, we used to store a global reference to our `chance` instance. 
+Then, scoot on down to our `before` hook, which if you recall from earlier, we used to store a global reference to our Chance instance. 
 
-After the `global.chance = new Chance(process.env.SEED + specs[0]);` line in that hook, let's store the instantiated `Api` object to the global scope:
+After the `global.chance = new Chance(process.env.SEED + specs[0]);` line in that hook, let's store the instantiated API object to the global scope:
 
 ```js
 global.api = new Api('http://localhost:3000/api/');
 ```
 
-That's nice, in case we need to reference this Api instance in other tests. But it still doesn't get the token retrieval and storage functionality out of our test.
+That's nice, in case we need to reference this API instance in other tests. But it still doesn't get the token retrieval and storage functionality out of our test.
 
 What we're going to do to achieve this is use [the `browser.addCommand` command](https://webdriver.io/docs/customcommands.html). If you want to extend the browser instance with your own set of commands, this is the method to use. 
 
@@ -529,7 +529,7 @@ browser.addCommand('loginViaApi', function (user) {
 });
 ```
 
-Add that right after your `global.api` line and save the configuation file. Then jump back over to `home.js` and update the `before` hook we were previously editing to use this new command:
+Add that right after your `global.api` line and save the configuration file. Then jump back over to `home.js` and update the `before` hook we were previously editing to use this new command:
 
 ```js
 before(function () {
@@ -539,9 +539,9 @@ before(function () {
 })
 ```
 
-That sure is a lot less code in our hook than what we had! And we can use this command anywhere in our tests, without having to specifically load it, making our tests a bit cleaner than before.
+That sure is a lot less code in our hook than before! And we can use this command anywhere in our tests, without having to specifically load it, making our tests a bit cleaner than before.
 
-The `addCommand` command is something I don't use too often, but it definitely comes in handy when necessary.
+The `addCommand` command is something I don't use often, but it definitely comes in handy when necessary.
 
 To recap, using an API to login does take extra knowledge about how API's work, including specifics surrounding how the API and authentication of the site you're testing works. But, it can really come in handy, not only for authenticating users, but adding, editing and deleting data, which is something we'll take a deeper look into soon.
 

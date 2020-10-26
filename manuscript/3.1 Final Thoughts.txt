@@ -1,0 +1,13 @@
+# 3.1 Final Thoughts
+
+First off, if you've made it here, a huge thank you for your efforts. I really do appreciate the time you've taken to read what I have to say about WebdriverIO, and to learn the technology behind so many automated test suites available today. I hope the content has been informative, and helped you to evaluate new ways that you can write better tests.
+
+While there is more content I'd love to cover (e.g., Visual Regression Testing), it simply won't fit within the bounds of this book. I do post regular articles to my blog, and videos to [my Front-end Testing channel.](https://youtube.com/user/medigerati), so check those out if you're looking to continue learning.
+
+Although the book is "complete", I do welcome any and all feedback on this book. You can reach out through [the contact form on my website](https://blog.kevinlamping.com/contact-me/), send a private note via [the Leanpub contact form](https://leanpub.com/webapp-testing-guidebook/email_author/new), or email me at kevin@learnwebdriverio.com. I really hope to hear from you (even just to say, "Hi!").
+
+Finally, a huge thanks to the entire WebdriverIO community, but especially the maintainers and project committers who make WebdriverIO possible. Their contributions are used around the world by the community to make websites better, and I can't thank everyone who contributes enough.
+
+I also want to give a special thanks to Michael Gilbert for his tireless efforts in editing this book. He has found countless typos and grammar mistakes and this book is much better because of it. Thank you so much!
+
+I hope you've found this journey helpful and have learned new skills to put to use. I'm honored to have you as a reader and thank you for taking the time to read through these chapters. And always remember, have fun testing!

@@ -4,7 +4,7 @@ We normally use browsers by clicking with our mouse and typing with our keyboard
 
 Instead of building some sort of physical robot that can control a mouse and type on a keyboard, we invented software that mimics these actions. Selenium RC was one of the original tools to do this. WebDriver, which was also developed around the same time as Selenium RC, became a popular alternative. In 2009, the two teams combined forces to create Selenium WebDriver.
 
-Over the years, standardization on the Selenium WebDriver commands occurred, and now there is [an official W3C spec for WebDriver](https://w3c.github.io/webdriver/). The teams behind the browsers we use have also started to implement that spec (e.g. chromedriver), allowing the use of WebDriver commands outside of Selenium. 
+Over the years, standardization on the Selenium WebDriver commands occurred, and now there is [an official W3C spec for WebDriver](https://w3c.github.io/webdriver/). The teams behind the browsers we use have also started to implement that spec (e.g., ChromeDriver), allowing the use of WebDriver commands outside of Selenium. 
 
 Recently, Chrome has released support for their own protocol called "Chrome DevTools". WebdriverIO has added support for this protocol through [the devtools package](https://www.npmjs.com/package/devtools). The industry has evolved its tooling over the years and WebdriverIO has kept up giving you the flexibility to pick what works best.
 
@@ -15,7 +15,7 @@ Now, it's important not to confuse terms, so to be clear, the following list con
 - **WebDriver**: A technical specification defining how tools should work.
 - **The Selenium Project**: An organization providing tools used for automated testing.
 - **Selenium/Selenium WebDriver**: Language-specific bindings for the WebDriver spec that are officially supported by the Selenium project, like the NPM package [selenium-webdriver](https://www.npmjs.com/package/selenium-webdriver).
-- **Browser Driver**: Browser specific implementations of the WebDriver spec (e.g. ChromeDriver, GeckoDriver, etc).
+- **Browser Driver**: Browser specific implementations of the WebDriver spec (e.g., ChromeDriver, GeckoDriver, etc).
 - **Selenium Server**: A proxy server used to assist a variety of browser drivers.
 - **Chrome Devtools Protocol**: A protocol that allows for tools to instrument, inspect, debug and profile Chromium, Chrome and other Blink-based browsers. ([Project Homepage](https://chromedevtools.github.io/devtools-protocol/))
 - **Puppeteer** A Node.js library which provides a high-level API to control Chrome or Chromium over the DevTools Protocol.
@@ -57,7 +57,7 @@ Here are the drivers for each major browser:
 
 To see how your favorite browser driver stacks up in regards to WebDriver support, check out [the Web Platform Tests page](https://wpt.fyi/results/webdriver/tests). This site runs regular tests against clients implementing the WebDriver spec, and provides the results showing how well they support it.
 
-There are drivers available for mobile testing (e.g. Appium), but they won't be covered in this book. 
+There are drivers available for mobile testing (e.g., Appium), but they won't be covered in this book. 
 
 ### Installing and Running ChromeDriver
 

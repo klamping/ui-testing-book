@@ -2,15 +2,15 @@
 
 ## 2.3.1 Is This Thing Working?
 
-In our first test, we ran some basic commands to validate our Conduit site loaded correctly and that you could navigate to the "Sign In" page. While it's a good start, the test doesn't provide much value. It would be much easier to just use a Website Uptime Monitoring service if that's all you're really checking.
+In our first test, we ran some basic commands to validate that our Conduit site loaded correctly and that you could navigate to the "Sign In" page. While it's a good start, the test doesn't provide much value. It would be much easier just to use a Website Uptime Monitoring service if that's all you're really checking.
 
 But that's not the only thing we want to do with our tests. Website monitoring is important, but we know many bugs lurk deep inside the pages themselves. These nefarious bugs hide out in the corners of closets at the end of long, dark hallways. To get there, you've got to do more than just check that the building is still standing.
 
 Hopefully writing these tests won't be as spooky as I've alluded to (although I have seen some scary looking code in my life). In fact, writing our next set of tests will only take a few commands, so let's get into it!
 
-I always like starting my test writing by writing out the names of the tests I'm going to run, then commenting in what each step will be. That way I don't have to worry about specific code to use, but still get a good idea for how the test will be setup.
+I always like starting my test writing by listing the names of the tests I'm going to run, then commenting on what each step will be. That way I don't have to worry about specific code to use, but still get a good idea of how the test will be set up.
 
-For our login page, create a new file called `login.js` that goes inside the same `test\specs` folder that your navigation file went in to. Then, build out the file with our comments:
+For our login page, create a new file called `login.js` that goes inside the same `test/specs` folder that your navigation file went into. Then, build out the file with our comments:
 
 ```js
 // Login Page:
@@ -19,13 +19,13 @@ For our login page, create a new file called `login.js` that goes inside the sam
 // should error with a missing password
 ```
 
-We can certainly add more test cases, but these three are a good start for us. And don't worry about how to test those error scenarios, all we're thinking about right now is that first one.
+We can certainly add more test cases, but these three are a good start. Don't worry about how to test those error scenarios; all we're thinking about right now is that first one.
 
-One more thing about commenting like this. I really like this approach, as it let's me focus on brainstorming all the page requirements. While it would be ideal to get an official list of requirements for every page you're testing, too often testers are left on their own.
+One more thing about commenting like this. I really like this approach, as it lets me focus on brainstorming all the page requirements. While it would be ideal to get an official list of requirements for every page you're testing, too often testers are left on their own.
 
-By ignoring the code specifics at the start, you allow your mind to really think about the page itself. Conversely, once you start writing the code for your tests, your brain narrows its focus to the test specifics, restricting your view of the overall page. Keep this in mind when you're in the middle of a project and feel your wheels spinning trying to get your tests working. Maybe you need to step back and look at the bigger picture of what you're really trying to acheive. 
+By ignoring the code specifics at the start, you allow your mind to really think about the page itself. Conversely, once you start writing the code for your tests, your brain narrows its focus to the test specifics, restricting your view of the overall page. Keep this in mind when you're in the middle of a project and feel your wheels spinning, trying to get your tests working. Maybe you need to step back and look at the bigger picture of what you're really trying to achieve. 
 
-Back to our test. With our comments laid, out, let's start translating them into code. First, we'll set up our describe/it block:
+Let's go back to our test. With our comments laid out, let's start translating them into code. First, we'll set up our describe/it block:
 
 ```js
 describe('Login Page', function () {
@@ -36,17 +36,17 @@ describe('Login Page', function () {
 });
 ```
 
-I took the text straight from the comments and turned them into the structure for my first test. But don't think we're done with comments! In fact, that's our next step.
+I took the text straight from the comments and turned them into the structure for my first test. Don't think we're done with comments! In fact, that's our next step.
 
 Similar to how we wrote the comments for the overall test scenarios, we want to do the same thing with our individual test steps. Let's think through what this "should log in" test will do:
 
 - go to the login page
-- enter a valid username into the "email" input
-- enter a valid password into the "password" input
+- enter a valid username in the "email" input
+- enter a valid password in the "password" input
 - click the 'Sign In' button
 - assert that we're logged in
 
-Notice how I'm not specific on what username we're using, what the input selectors are going to be, or how we're going to assert we're logged in. Again, right now, it's all about brainstorming how the test will run, ignoring any specifics that may narrow your vision.
+Notice how I'm not specific on what username we're using, what the input selectors are going to be, or how we're going to assert that we're logged in. Again, right now, it's all about brainstorming how the test will run, ignoring any specifics that may narrow your vision.
 
 Let's throw those comments into the file:
 
@@ -55,8 +55,8 @@ Let's throw those comments into the file:
 describe('Login Page', function () {
     it('should let you log in', function () {
       // go to the login page
-      // enter a valid username into the "email" input
-      // enter a valid password into the "password" input
+      // enter a valid username in the "email" input
+      // enter a valid password in the "password" input
       // click the 'Sign In' button
       // assert that we're logged in
     });
@@ -66,19 +66,19 @@ describe('Login Page', function () {
 });
 ```
 
-With out outline made, let's turn this into real code.
+With the outline made, let's turn this into real code.
 
-### Step 1: Go to the login page
+### Step 1: Go to the Login Page
 
 In our navigation test, we already achieved the effect of going to the sign in page, so we could just copy that code over and re-use it for this step. But I think that's a bad idea.
 
-First, it's going to take extra time to load the homepage, then find the 'Sign In' link, then click it. Webdriver tests are already slower than most other testing out there, so let's not waste time taking unnecessary steps. 
+First, it's going to take extra time to load the homepage, then find the 'Sign In' link, then click it. WebDriver tests are already slower than most other tests, so let's not waste time taking unnecessary steps. 
 
-Second, if the 'Sign In' link changes or altered, it could easily break this entire set of tests. Even if the 'Sign In' page was working entirely fine, your entire file would be failing due to outside circumstances.
+Second, if the "Sign In" link changes or altered, it could easily break this entire set of tests. Even if the "Sign In" page was working entirely fine, your whole file would be failing due to outside circumstances.
 
-Finally, if you do want to validate that your links work as expected, make that it's own set of tests. Don't mix responsibilities here. This step is better saved for and individual "links" test, maybe even one that doesn't rely on WebdriverIO to run (and therefore may execute faster). 
+Finally, if you do want to validate that your links work as expected, have that be it's own separate tests. Don't mix responsibilities here. This step is better saved for an individual "links" test, maybe even one that doesn't rely on WebdriverIO to run (and therefore may execute faster). 
 
-With those reasons in mind, the best approach here is to use a simple `browser.url` call to load the `login` url we referenced in our previous assertion. Adding that to the code, it looks like:
+With those reasons in mind, the best approach is to use a simple `browser.url` call to load the `login` url we referenced in our previous assertion. Adding that to the code, it looks like:
 
 ```js
 it('should let you log in', function () {
@@ -92,9 +92,9 @@ it('should let you log in', function () {
 });
 ```
 
-Remember that we prepend our page url with `./`, so that WebdriverIO knows to add the `baseUrl` to the start of the url. 
+Remember that we prepend our page URL with `./`, so that WebdriverIO knows to add the `baseUrl` to the start of the URL. 
 
-### Step 2: Enter a valid username into the "email" input
+### Step 2: Enter a Valid Username in the "email" Input
 
 Now that we're on the login page, it's time to fill out our form. There are two fields to enter: email and password.
 
@@ -105,11 +105,10 @@ WebdriverIO gives us four ways to interact with the value of text fields:
 - clearValue
 - getValue
 
-The names define what they do to the value of the input, which is the text entered into the field. You might be asking though, what's the difference between `addValue` and `setValue`? `addValue`, as stated, adds a text value to the input. This means that it appends your value to the end of any text that's already there. So if you have a field with a value of 'do', and run the `addValue` command with text of `nut`, you'd get 'donut' (yum). 
+The names define what they do to the value of the input, which is the text entered into the field. You might be asking though; What's the difference between `addValue` and `setValue`? `addValue`, as you might guess, adds a text value to the input. This means that it appends your value to the end of any text that's already there. So if you have a field with a value of "do", and run the `addValue` command with text of "nut", you'd get "donut" (yum). 
+`setValue`, on the other hand, won't do this (so you'd just get "nut"). Instead, it will set the value to the exact text you specify. It does this by combining the `clearValue` and `addValue` command, running them in that order. 
 
-`setValue`, on the other hand, won't do this (so you'd just get 'nut'). Instead, it will set the value to the exact text you specify. It does this by combining the `clearValue` and `addValue` command, running them in that order. 
-
-Typically, I stick with using the `setValue` command, as it's less likely to cause test issues. However, it does run an extra command, which adds just a little bit of time to your tests, so there is benefit to sticking with only `addValue`.
+Typically, I use the `setValue` command, as it's less likely to cause test issues. However, it does run an extra command, which adds just a little bit of time to your tests, so there is benefit to using `addValue` by itself.
 
 Those are the commands, now let's learn how to use them. `clearValue` and `getValue` are called as such:
 
@@ -130,13 +129,13 @@ Altogether, we can modify the form input value again and again:
 ```js
 $('#inputId').addValue('do'); // value is 'do'
 $('#inputId').addValue('nut'); // value is 'donut'
-const theValue = $('#inputId').getValue(); // theValue is 'donut'
+const theValue = $('#inputId').getValue(); // 'theValue' is 'donut'
 $('#inputId').clearValue(); // value is empty
 $('#inputId').addValue('do'); // value is 'do'
 $('#inputId').setValue('nut'); // value is 'nut'
 ```
 
-Now that we've covered these actions, let put them to use. We're only going to be using `setValue` for our needs. 
+Now that we've covered these actions, let's put them to use. We're only going to be using `setValue` for our needs. 
 
 {title="test/specs/login.js"}
 ```js
@@ -150,7 +149,7 @@ describe('Login Page', function () {
 });
 ```
 
-For our element selectors, we're using a combo of element type (`input`) with a CSS attribute selector (`name`).  For reference, here's what the HTML on the page looks like:
+For our element selectors, we're using a combination of element type (`input`) with a CSS attribute selector (`name`).  For reference, here's what the HTML on the page looks like:
 
 ```html
 <form>
@@ -176,7 +175,7 @@ For our element selectors, we're using a combo of element type (`input`) with a 
 
 We tell WebdriverIO what value we want in that input field by passing it as the lone argument in the `setValue` command. First we pass in the email address, then we send over the password.
 
-### Step 3: Clicking the 'Sign in' button
+### Step 3: Clicking the 'Sign in' Button
 
 The last step we take is to click the `Sign In` button. We need to be able to select the button to process the click on. We've done this before, by clicking on the 'Sign In' link in the site head. Let's do something similar here. 
 
@@ -200,23 +199,23 @@ describe('Login Page', function () {
 });
 ```
 
-### Running our test
+### Running Our Test
 
-We're still missing a piece of our test (the assertion), but it's a good idea to try out what we have so far. Writing code is always prone to errors, so running your tests as soon as reasonable is a good way to catch issues before you get too deep into an approach. 
+We're still missing a piece of our test (the assertion), but it's a good idea to try out what we have so far. Writing code is always prone to errors, so running your tests early is a good way to catch issues before you get too deep into an approach. 
 
-To run our test, we could use the normal `npx wdio` command, however this would run both test files. We're only interested in running the login file though.
+To run our test, we could use the normal `npx wdio` command, however this would run both test files. We're only interested in running the login file.
 
-If you recall from Chapter 1.2.7, there was a special argument you could provide to the `npx wdio` command that allows you to run a specific file. That argument was called `spec`, and it allowed you to override the spec files run during your testing.
+If you recall from Chapter 1.2.6, there was a special argument you could provide to the `npx wdio` command that allows you to run a specific file. That argument was called `spec`, and it allowed you to override the spec files run during your testing.
 
 To use it, append it to your command like `npx wdio --spec=myFile`. Remember the `myFile` can be either the exact path to the file you want to test, or a filename filter. So even though we've named our file `login.js`, we can type just `npx wdio --spec=login`. 
 
 If you took the time right now to run this command, you'll see your browser pop up, open the login page, fill in the values, then submit and close the browser. Looking at the logs, you'll notice it says that our tests have passed.
 
-Well, they certainly didn't error out, but did they really pass? The test closed before we could see the login actually complete. Thats because the test ends the moment the `Sign in` button is clicked. It doesn't wait for anything else to happen, so the form still could have failed and we wouldn't know. 
+Well, they certainly didn't error out, but did they really pass? The test closed before we could see the login actually complete. That's because the test ends the moment the `Sign in` button is clicked. It doesn't wait for anything else to happen, so the form still could have failed and we wouldn't know. 
 
 Let's fix that with an assertion!
 
-### Step 4: Asserting that we're logged in
+### Step 4: Asserting That We're Logged In
 
 As always with testing, we can assert any number of details:
 
@@ -231,7 +230,7 @@ As always with testing, we can assert any number of details:
 
 All of these conditions potentially demonstrate that we're successfully logged in. Which one should we choose, or should we choose all of them? Honestly, it's up to you and your team to decide. While additional assertions ensure you're in the valid state, they also add complexity and dependencies to the test.
 
-What happens if the redirect after login changes to go to a different URL than the homepage? Or what if the 'settings' link is purposefully removed from the navigation? These are all alterations that will break our test, requiring upkeep to maintain that green checkmark status. A little bit of upkeep should be expected with automation, but it's smart not to tie yourself down to too many requirements that don't really add value.
+What happens if the redirect after login changes to go to a different URL than the homepage? Or what if the 'settings' link is purposefully removed from the navigation? These are both alterations that will break our test, requiring upkeep to maintain that green checkmark status. A little bit of upkeep should be expected with automation, but it's smart not to tie yourself down to too many requirements that don't really add value.
 
 For this example, we're going to check the first item in that list, that no error messages should show. If you were to inspect the HTML of the login page after trying to login with invalid credentials, you might see this:
 
@@ -277,17 +276,17 @@ Nope! It passes just fine, even though we shouldn't be logged in and an error sh
 
 Why is this?
 
-## 2.3.2 Slow it Down
+## 2.3.2 Slow It Down
 
-The reason it still passed has to do with how the site was built and the assertion we're making. Normally a form button submission triggers a standard page load, which Webdriver knows how to handle. But in this case (and this is true for many web apps out there), the form submission is handled through a special VueJS route, which doesn't go through the normal browser methods. Webdriver isn't aware of this action and thinks everything is ready to go immediately, so runs the check.
+The reason it still passed has to do with how the site was built and the assertion we're making. Normally a form button submission triggers a standard page load, which WebDriver knows how to handle. But in this case (and this is true for many web apps out there), the form submission is handled through a special VueJS route, which doesn't go through the normal browser methods. WebDriver isn't aware of this action and thinks everything is ready to go immediately, so runs the check.
 
 The problem is, the form is still processing the submission when the check is run, and no error messages are shown yet. So the test thinks all is fine because of this and happily passes. 
 
-How do we work around this fact? Teach Webdriver how to wait!
+How do we work around this fact? Teach WebDriver how to wait!
 
-The simplest type of wait out there, and the one I **least** recommend, is a `pause`. A `pause` is an abritrary time delay that stops execution of your test until said amount of time passes. 
+The simplest type of wait available, and the one I **least** recommend, is a `pause`. A `pause` is an arbitrary time delay that stops execution of your test until said amount of time passes. 
 
-In this situation, we could add a 1 second pause to our code between clicking the button and running our assertion. Because the server should have responded with the login result by then, our assertion should pass (or fail if there's a bug).
+In this situation, we could add a one second pause to our code between clicking the button and running our assertion. Because the server should have responded with the login result by then, our assertion should pass (or fail if there's a bug).
 
 Let's try it out:
 
@@ -311,25 +310,24 @@ describe('Login Page', function () {
 
 Note: I commented out the 'password' line to make the login fail.
 
-The command we use is `browser.pause` and we pass in the total number of milliseconds we want to wait (1000 milliseconds = 1 seconds, you math nerds).
+The command we use is `browser.pause` and we pass in the total number of milliseconds we want to wait (1000 milliseconds = 1 second for you math nerds).
 
 If you run the test again, you'll notice it takes a bit, but it does fail. With our pause in place, when the `expect($('.error-messages li')).not.toBeExisting();` is run, that element does exist. The `expect-webdriverio` library keeps retrying for this element to disappear, but it's not going anywhere, so the wait ends up timing out and failing the test.
 
-That is, unless you're on a very slow connection. If your internet provider really sucks, you may have noticed that it still passes.
+That is, unless you're on a very slow connection. If your internet service isn't super speedy, you may have noticed that it still passes.
 
-But if you have a decent provider then things seem a-okay. You feel no pain right now, and that's just not right. Let's resolve that.
+But if you have a decent provider then things seem fine. You feel no pain right now, and that's just not right. Let's resolve that.
 
-## 2.3.3 Network throttling
+## 2.3.3 Network Throttling
 
 Yes, we're going to take a quick detour in our test writing to learn about how to slow down our internet. Why would we ever want to do that? 
 
 Well, aside from torturing unruly kids, slowing your connection down is great practice to help catch issues that users without great service providers may face. And it's not that difficult to do.
 
-In our `wdio.conf.js` file, scroll down to the `before` hook section. It's about 150 lines down, commented out and looks like:
+In our `wdio.conf.js` file, scroll down to the `before` hook section. It's about 150 lines down, commented out, and looks like:
 
 ```js
-/*
- * Gets executed before test execution begins. At this point you can access to 
+/* Gets executed before test execution begins. At this point you can access to 
  * all global variables like `browser`. It is the perfect place to define custom
  * commands.
  * @param {Array.<Object>} capabilities list of capabilities details
@@ -382,41 +380,41 @@ before: function (capabilities, specs) {
 
 Save the file and run your test again. Suddenly the `browser.pause` statement isn't so effective. The site still takes too long to process the login request and we're stuck checking an assertion a bit too early (and have a test passing when it shouldn't). 
 
-What to do now? Well, it's unfortunately common practice to just increase that `pause` amount a little bit more, increasing the length of the test but preventing problems due to slow connections. But you're always stuck playing this game of "am I waiting long enough", usually losing.
+What to do now? Well, it's unfortunately common practice to just increase that `pause` amount a little bit more, increasing the length of the test but preventing problems due to slow connections. But you're always stuck playing this game of "am I waiting long enough," usually losing.
 
-Plus, every pause you add to your test slows it down just a little bit more. If you've got to do this for every page load, you can easily have test that take 30 minutes to run due to all the unnecessary waiting.
+Plus, every pause you add to your test slows it down just a little bit more. If you've got to do this for every page load, you can easily have tests that take 30 minutes to run due to all the unnecessary waiting.
 
 What we really want to do is wait just the right amount of time and not a second more. 
 
 ## 2.3.4 Waiting With Waits
 
-The reason `browser.pause` is ineffecient is that it ignores anything the page does during that time. Until that timer has gone off, it's not listening. 
+The reason `browser.pause` is inefficient is that it ignores anything the page does during that time. Until that timer has gone off, it's not listening. 
 
 It would be much more intelligent if we kept an eye on the page and reacted to its updates. With WebdriverIO, we can do that very effectively.
 
-WebdriverIO comes with four commands built around this idea. They are:
+WebdriverIO comes with five commands built around this idea. They are:
 
-A. waitForExist
-B. waitForEnabled
-C. waitForDisplayed
-D. waitForClickable
-E. waitUntil
+1. waitForExist
+2. waitForEnabled
+3. waitForDisplayed
+4. waitForClickable
+5. waitUntil
 
 The `waitFor` commands do as they say, and wait for an element to: 
 
-A. Exist on the page
-B. Be enabled (for inputs that have a `disabled` HTML attribute)
-C. Be "displayed", which is a property that we'll put a definition to in a bit
-D. Be "clickable" (element exists, is visible, is within viewport (if not try to scroll to it), its center is not overlapped with another element, is not disabled)
+1. Exist on the page
+2. Be enabled (for inputs that have a `disabled` HTML attribute)
+3. Be "displayed", which is a property that we'll put a definition to in a bit
+4. Be "clickable" (element exists, is visible, is within viewport (if not try to scroll to it), its center is not overlapped with another element, is not disabled)
 
 Sidenote: These commands are actually used under the hood by the `expect-webdriverio` library to help with our assertions.
 
-The last command, `waitUntil`, is a generic function used to define custom waits. For example, a common scenario is to wait until an element has specific text before moving on. We'll get in to real code examples in a little bit, but for now we're going to jump back to the `waitForExist` command.
+The last command, `waitUntil`, is a generic function used to define custom waits. For example, a common scenario is to wait until an element has specific text before moving on. We'll get into real code examples in a little bit, but for now we're going to jump back to the `waitForExist` command.
 
-As mentioned, the `waitForExist` command will run until one of two things happen:
+As mentioned, the `waitForExist` command will run until one of two things happens:
 
 - The element being searched for is found in the DOM
-- The `waitForTimeout` timeout amount is met (this amount is defined in your `wdio.conf.js` file).
+- The `waitForTimeout` timeout amount is met (this amount is defined in your `wdio.conf.js` file)
 
 If the latter happens, an error will be thrown and your test will fail, as this likely means something is wrong with the website. Hopefully though, the element is found and your test will continue.
 
@@ -464,7 +462,7 @@ Now the test passes if we do login successfully and fails if we don't.
 
 Oh, it's a good idea to go back to your `wdio.conf.js` file and comment out that `browser.throttle` line. There's no reason to keep our tests running slow anymore. 
 
-## 2.3.5 Waiting with Inverse Waits
+## 2.3.5 Waiting With Inverse Waits
 
 Let's look at an alternative approach we can take, just to learn a little bit more about these `wait` commands.
 
@@ -507,7 +505,7 @@ One thing to notice: I stored the `Sign in` button element for better re-use. Th
 
 Also note the `$` prefix of our variable name. That's not required in any way, but I find it helpful to differentiate between WebdriverIO element references and other variables that might be stored. For example, if you were to see `$message` and `message`, it's not a stretch to guess that `$message` is a WebdriverIO element reference, while the other has to do with actual text.
 
-Well, it took a little bit of trial and error, but eventually we got to a good solution! You should get to use this if you're going to continue down the path of testing. Nothing is as simple as it seems.
+Well, it took a little bit of trial and error, but eventually we achieved a good solution! You should get to use this if you're going to continue down the path of testing. Nothing is as simple as it seems.
 
 We still have two more tests that we want to write for our login page, but we're going to save that for the next chapter.
 

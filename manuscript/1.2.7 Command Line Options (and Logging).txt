@@ -142,9 +142,9 @@ Of course, we could set this to any number, but 1 is what will be used most, as 
 
 Overriding the `baseUrl` can be helpful for times when you need to test the same site on a different server. Most often this occurs when you're testing a server on your local computer versus the test server. It can also be useful for one-time tests of special servers spun up to run specific code.
 
-In our settings, we defined our `baseUrl` as `https://webdriver.io`. And in our test, we used that url by changing our `browser.url` call.
+In our settings, we defined our `baseUrl` as `https://webdriver.io`. And in our test, we used that URL by changing our `browser.url` call.
 
-Let's say we want to test the old version of the WebdriverIO website. That url is `http://v4.webdriver.io`. So to pass it in via the command line, we'd run:
+Let's say we want to test the old version of the WebdriverIO website. That URL is `http://v4.webdriver.io`. So to pass it in via the command line, we'd run:
 
 ```sh
 npx wdio --baseUrl=http://v4.webdriver.io
@@ -281,11 +281,11 @@ The next step is to get a browser running for use. These are called "sessions". 
 
 You'll notice this matches the capabilities settings in our config file for the most part, but has a couple of different options specified. These are WebdriverIO defaults used to start a normal browser session. We could override them via the capabilities object in our config file if we so desired, but we don't right now, so we'll omit them.
 
-Understanding the relationship between WebdriverIO and WebDriver/Selenium is helpful, so I want to take a little bit of extra time to review it. WebdriverIO doesn't actually run the browser automation, Webdriver (or whatever WebDriver endpoint we're using) takes care of all of that. 
+Understanding the relationship between WebdriverIO and WebDriver/Selenium is helpful, so I want to take a little bit of extra time to review it. WebdriverIO doesn't actually run the browser automation, WebDriver (or whatever WebDriver endpoint we're using) takes care of all of that. 
 
-What WebdriverIO does provide is a JavaScript interface for sending commands to run. It does this through REST API calls, which means that it sends an HTTP request to specific endpoints on the Webdriver server (e.g., ChromeDriver). Basically, WebdriverIO and Webdriver have a common language they share (defined in [the official WebDriver spec](https://w3c.github.io/webdriver/)) to send data back and forth. WebdriverIO sends commands to the Webdriver server for it to run, then the server sends the results of those commands back.
+What WebdriverIO does provide is a JavaScript interface for sending commands to run. It does this through REST API calls, which means that it sends an HTTP request to specific endpoints on the WebDriver server (e.g., ChromeDriver). Basically, WebdriverIO and WebDriver have a common language they share (defined in [the official WebDriver spec](https://w3c.github.io/webdriver/)) to send data back and forth. WebdriverIO sends commands to the WebDriver server for it to run, then the server sends the results of those commands back.
 
-Take the `getUrl` command in the next few lines. WebdriverIO sends a request to the Chromdriver instance. In the request, it passes along information about the url for the browser to go to. After ChromeDriver receives and processes this request, it returns the results of the command execution (which is empty). WebdriverIO doesn't output this information, as there isn't anything to show.
+Take the `getUrl` command in the next few lines. WebdriverIO sends a request to the Chromdriver instance. In the request, it passes along information about the URL for the browser to go to. After ChromeDriver receives and processes this request, it returns the results of the command execution (which is empty). WebdriverIO doesn't output this information, as there isn't anything to show.
 
 Overall, the logs for this look like:
 

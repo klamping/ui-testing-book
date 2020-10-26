@@ -9,7 +9,7 @@ While WebdriverIO is a Node.js based system, there are a few other tools needed 
 - A terminal/command line tool (I use [iTerm](https://iterm2.com/) with [Oh My Zsh](https://ohmyz.sh/) thrown on top)
 - A Webdriver-compliant browser for testing (Chrome is what we'll be using)
 
-Optionally, you may also want to install [Java 8](https://java.com/en/download/). This will allow you to run [selenium-standalone](https://github.com/vvo/selenium-standalone), which gives you the ability to test on different browsers in the same test run (e.g. both Firefox AND Chrome). 
+Optionally, you may also want to install [Java 8](https://java.com/en/download/). This will allow you to run [selenium-standalone](https://github.com/vvo/selenium-standalone), which gives you the ability to test on different browsers in the same test run (e.g., both Firefox AND Chrome). 
 
 ### Installing Node.js
 
@@ -19,7 +19,7 @@ Overall though, there are two common ways to install Node.js.
 
 #### Install via official site:
 
-Go to [nodejs.org](https://nodejs.org/) and download the release labelled "Recommended For Most Users". This will start with an even number (e.g. 10.19.0). Be aware that releases starting with odd numbers (e.g. 11.10.0) are not supported long term, so while they may have the latest features, they will stop recieving support and updates after 6 months. For more information on this, have a read through [the Node.js release plan](https://github.com/nodejs/Release#release-plan).
+Go to [nodejs.org](https://nodejs.org/) and download the release labelled "Recommended For Most Users". This will start with an even number (e.g., 10.19.0). Be aware that releases starting with odd numbers (e.g., 11.10.0) are not supported long term, so while they may have the latest features, they will stop recieving support and updates after 6 months. For more information on this, have a read through [the Node.js release plan](https://github.com/nodejs/Release#release-plan).
 
 #### Install via a 'version manager'
 
@@ -53,8 +53,8 @@ The commands you use in the default Windows terminal (cmd.exe) are different fro
 Some examples:
 
 - Instead of using `ls` to print the contents of a directory, you need to use `dir`
-- Windows uses a back slash `\` instead of a forward slash `/` for path commands (e.g. `node_modules\.bin\` versus `node_modules/.bin/`)
-- Windows users are also required to enter `.\` before every function call that involes a path (e.g. `dir .\node_modules\.bin\` instead of `ls node_modules/.bin/`)
+- Windows uses a back slash `\` instead of a forward slash `/` for path commands (e.g., `node_modules\.bin\` versus `node_modules/.bin/`)
+- Windows users are also required to enter `.\` before every function call that involes a path (e.g., `dir .\node_modules\.bin\` instead of `ls node_modules/.bin/`)
 - The way you define environment variables is different (we'll go into detail on this later)
 
 For a more comprehensive list of differences, [RedHat has put together a comparison chart](https://web.archive.org/web/20170715114407/https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Step_by_Step_Guide/ap-doslinux.html).

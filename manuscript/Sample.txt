@@ -4,7 +4,3 @@
 1.2.1 Software Requirements.txt
 1.2.2 Browsers and Driving Them.txt
 1.2.3 Installing WebdriverIO and Basic Usage.txt
-1.2.4 Upgrading to the WDIO Test Runner.txt
-1.2.5 Reviewing the Standard WebdriverIO Configuration File.txt
-1.2.6 Running the Example Test Runner Test.txt
-1.2.7 Command Line Options (and Logging).txt

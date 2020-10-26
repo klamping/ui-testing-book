@@ -26,7 +26,7 @@ Let's check out all the settings defined in our file. There are actually several
 // Runner Configuration
 // ====================
 //
-// WebdriverIO allows it to run your tests in arbitrary locations (e.g. locally
+// WebdriverIO allows it to run your tests in arbitrary locations (e.g., locally
 // or on a remote machine).
 runner: 'local',
 ```

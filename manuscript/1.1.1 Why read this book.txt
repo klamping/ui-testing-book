@@ -2,11 +2,19 @@
 
 ## 1.1.1 Why Read This Book?
 
-While I'd love to start things off by diving deep into technical details, it would be good to explain a few things first.
+This may sound a little odd...
 
-Before investing time on a new tool, it's good to know why you'd want to learn how to use it.
+While WebdriverIO is in this book's title, this isn't a book *about* WebdriverIO.
 
-Over the past decade, website complexity has grown substantially, requiring much more effort when it comes to testing. While test automation is certainly not a recent development, it has grown in popularity lately due to the increased complexity of the sites we build.
+Yes, it does cover the popular test automation framework in-depth. More importantly though, this book is about teaching you how to effectively use UI Test Automation to validate Web App functionality.
+
+The lessons here focus less on how specific WebdriverIO commands work and more on how specific approaches to testing are beneficial or harmful.
+
+And yet, while any test framework would work for this, I did choose WebdriverIO for a specific reason: It's a mature framework that allows us to spend less time on code and more time on important testing concepts.
+
+Why do I start off the book saying all of this?
+
+Well, over the past decade, website complexity has grown substantially, requiring much more effort when it comes to testing. While test automation is certainly not a recent development, it has grown in popularity lately due to the increased complexity of the sites we build.
 
 In fact, many organizations have full teams dedicated just to testing their site. Quality Assurance (QA) is an important role for any company that wants to take its technology seriously.
 
@@ -20,15 +28,15 @@ Unfortunately, that's not the reality.
 
 I've seen, heard, and have been part of many teams that set out after this ideal, only to realize months later that all the effort has provided them little benefit. Yes, they have test automation in place, but it's constantly breaking and causing endless headaches. It seems they either have tests that run well but don't validate much or have tests that check for everything but report false errors.
 
-In 2017, I spent the year recording screencasts covering WebdriverIO, a test automation framework that we'll be learning in this book. While I covered the details of the framework quite well (or so I was told), I was left with nagging questions of "is knowing the tool valuable enough?"
+In 2017, I spent the year recording screencasts covering WebdriverIO in-depth. While I covered the details of the framework quite well (or so I was told), I was left with nagging questions of "is knowing the tool valuable enough?"
 
 Is knowing how to mix colors and hold a paintbrush enough to be able to paint beautiful art?
 
 Does knowing what the 'addValue' command does in WebdriverIO teach you enough to write tests that are effective?
 
-This time around, I want to focus on that second part. Yes, it's important to cover the details of commands and code. More importantly though, you need to see how you can combine all that technology to create a test suite that provides actual value.
+This time around, I'm focusing on that second part. Yes, it's important to cover the details of commands and code. More importantly though, you need to see how you can combine all that technology to create a test suite that provides actual value.
 
-In this book, I cover not only what WebdriverIO can do, but also how you'll be using it day-to-day. I've built the examples around real-world scenarios that demonstrate how you would actually set things up. It's not just "what," but also "how to get there."
+In this book, I cover not just what WebdriverIO can do, but specifically how you'll be using it day-to-day. I've built the examples around real-world scenarios that demonstrate how you would actually set things up. I'm not here to only teach you what WebdriverIO does. I'm here to teach you how to approach problems from various angles and come to the right solution.
 
 It takes a little more work on my part, and extra effort on your's to get started, but the payoff is there, I promise.
 

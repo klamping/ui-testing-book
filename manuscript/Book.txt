@@ -19,4 +19,4 @@
 2.8 Creating Page Components.txt
 2.9 Generating Data for Testing via APIs.txt
 3.0 Chapter Challenge Code Solutions.txt
-3.1 A (Temporary) Conclusion.txt
+3.1 Final Thoughts.txt

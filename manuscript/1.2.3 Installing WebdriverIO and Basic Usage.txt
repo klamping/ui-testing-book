@@ -232,7 +232,7 @@ _Note: Selenium Standalone is **not** the same thing as WebdriverIO Standalone m
 
 If you already have your Selenium server running from before, great! If not, open up a new terminal window and run `selenium-standalone start`. 
 
-Aside from seeing the server running in your terminal, you can check that you have a Selenium instance up and running by visiting the following url in your browser: [http://localhost:4444/wd/hub](http://localhost:4444/wd/hub)
+Aside from seeing the server running in your terminal, you can check that you have a Selenium instance up and running by visiting the following URL in your browser: [http://localhost:4444/wd/hub](http://localhost:4444/wd/hub)
 
 You should see a website looking a lot like this:
 

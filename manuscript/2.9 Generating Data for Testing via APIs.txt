@@ -2,22 +2,22 @@
 
 In our last set of tests, I mentioned how difficult it can be to test the content on a page if that content isn't static. If we're testing a shared website, someone may change the content we're meaning to validate against, causing our tests to fail.
 
-While much of this pain can be avoided by running all tests against a local server, we still faced with some problems:
+While much of this pain can be avoided by running all tests against a local server, we will still be faced with some problems:
 
 1. Getting a local server set up is not always an option
-2. Testing on staging/shared development servers will likely be required, as we need to know the code deployed to it correctly
+2. Testing on staging/shared development servers will likely be required, as we need to know that the code deployed to it correctly
 3. When you have a large test suite, the content created during test runs can cause conflicts between your tests
 
 I can't say I have a solution for all of this, but I do have some strategies to address it. To recap the options I provided in the last chapter, here are some options:
 
-A. Deploy the test site with existing content that's always the same (this is good if you can easily deploy your site, so you can create individual servers for your specific test run)
-B. Load content via a direct database script before running tests
-C. Inject the content via an API call before/during test run
-D. Use a tool like Fiddler to intercept the requests being made by the browser to inject 'fake' content for the site to use
+A. Deploy the test site with existing content that's always the same (this is good if you can easily deploy your site, so you can create individual servers for your specific test run).
+B. Load content via a direct database script before running tests.
+C. Inject the content via an API call before/during test run.
+D. Use a tool like Fiddler to intercept the requests being made by the browser to inject 'fake' content for the site to use.
 E. Use a "sandbox" type site that allows you to test components individually outside of normal use.
-F. In your script, read the database/API to get the value that should be displayed on the page. I generally dislike this strategy though. 
+F. In your script, read the database/API to get the value that should be displayed on the page. I generally dislike this strategy though.
 
-In this chapter, we're going to look at Option C, which has us creating content before our test run via the website's API. We did something similar to this for our API login strategy, but this time we'll be creating new data, instead of retrieving information for an already existing user. 
+In this chapter, we're going to look at Option C, which has involves creating content before our test run via the website's API. We did something similar to this for our API login strategy, but this time we'll be creating new data, instead of retrieving information for an already existing user. 
 
 ## 2.9.1 The 'Tag' Page
 
@@ -25,7 +25,7 @@ When an article is created, a user can add 'tags' to that article to mark it as 
 
 ![Example 'WebdriverIO' Tag page](images/22ACB8AF3534C2579BDFCF04FE17088A.jpg)
 
-To represent this page in our code, let's create a new "tag" page. If you look at this page, you'll notice that it's almost exactly the same as the home page, just with an extra tab for the specific tag. What we can do is instead of duplicating the Home page object, instead just extend off of it. 
+To represent this page in our code, let's create a new "tag" page. If you look at this page, you'll notice that it's almost exactly the same as the homepage, just with an extra tab for the specific tag. What we can do is, instead of duplicating the Home page object, just extend off of it. 
 
 {title="test/pageObjects/Tag.page.js"}
 ```js
@@ -40,11 +40,11 @@ class Tag extends Home {
 module.exports = Tag;
 ```
 
-In this file, we require the 'Home' page object, create a new 'Tag' class that extends home, then update our constructor to build out the proper URL. There's one issue with this code though. 
+In this file, we require the 'Home' page object, create a new 'Tag' class that extends home, then update our constructor to build out the proper URL.
 
-Back in our Home page, the constructor hard-codes the URL passed in: `super('./')`
+There's one issue with this code though. In our Home page object, the constructor hard-codes the URL passed in: `super('./')`
 
-In order for our Tag page to work, we need to update this code to allow for a different URL to be passed in. Thanks to optional parameters in JavaScript, making this update requires only a couple of small changes in our `Home.page.js` file:
+In order for our Tag page object to work, we need to update this code to allow for a different URL to be passed in. Thanks to optional parameters in JavaScript, making this update requires only a couple of small changes in our `Home.page.js` file:
 
 ```js
 // set default URL to homepage, but allow for a custom URL to be passed in
@@ -59,17 +59,17 @@ With our page objects updated, let's move on to our next step.
 
 ## 2.9.2 Creating a New Article/Tag via the API
 
-A "Tag" page doesn't exist by default. To view this page, you must have a tag defined to search with. We could do this for our test in multiple ways:
+There isn't a singular "Tag" page, but rather, it's a type of page. To view one, you must have a tag defined to search with. We could do this for our test in multiple ways:
 
-1. Have a pre-defined tag, similar to how we have a pre-defined user
+1. Have a predefined tag, similar to how we have a predefined user
 2. Go to the "Create Article" page and generate a new article with a specific tag via UI automation
 3. Create an article with a specific tag via the API
 
-Option #1 is decent, but requires that all test sites (e.g., local and staging) have the same data on them. It also is difficult to document, and someone may change this data not knowing they're breaking tests.
+Option #1 is decent, but requires that all test sites (e.g., local and staging) have the same data. It's also difficult to document, and someone may change this data not knowing they're breaking tests.
 
 Option #2 is the slowest approach and burdens our test code with unnecessary steps. I avoid this option whenever possible.
 
-Option #3 is the method we're going to try now. By generating the data "just in time", we ensure that it's always ready to go for our test.
+Option #3 is the method we're going to try now. By generating the data "just in time," we ensure that it's always ready to go for our test.
 
 To tackle this, we need to update our API file to add a new `createArticle` function. This function will accept user and article details (the post will be attributed to that specific user). 
 
@@ -113,25 +113,27 @@ module.exports = Api;
 
 We define our `createArticle` function as an `async` function, as it will use the `await` keyword to more easily handle the promise returned from the `getAuthToken` function.
 
-But why do we need to use `async` here instead of letting WebdriverIO handle it? Well, there are limitations to the WebdriverIO's `sync` module, namely that it only works for WebdriverIO specific functions. Any asyncronous functions that we create outside of WebdriverIO need to be handled in more traditional ways (e.g., async/await). 
+But why do we need to use `async` here instead of letting WebdriverIO handle it? Well, there are limitations to the WebdriverIO's `sync` module, namely that it only works for WebdriverIO-specific functions. Any asynchronous functions that we create outside WebdriverIO need to be handled in more traditional ways (e.g., async/await). 
 
 Moving forward, the first step in our function is to get the proper Authorization token to use when we make our API post. We'll await the response from the internal `getAuthToken` function call.
 
-Once that returns, we make a new request, this time POSTing to the `articles` API endpoint. We pass along a json body following the format of the API (a single `article` property with a json representation (`details`) of the desired article). We also pass along authorization headers using the token we recieved. This will let the API know which user to associate this article with.
+Once that returns, we make a new request, this time POSTing to the `articles` API endpoint. We pass along a JSON body following the format of the API (a single `article` property with a JSON representation – `details` – of the desired article). We also pass along authorization headers using the token we received. This will let the API know which user to associate this article with.
 
 Finally, we'll return just the `body.article` from the response. This isn't necessary, but will make our test code a little bit cleaner. 
 
-## 2.9.3 Writing our Tag Page Test
+## 2.9.3 Writing Our Tag Page Test
 
 Speaking of the test code, now it's time to write our test. It will consist of the following:
 
 Before hook:
+
 1. Dynamically create a new article (including the tag we're going to test) using ChanceJS
 2. Post that article to the API using the function we just wrote
 3. Create a new Tag page object based on the tag we just generated
 4. Load the page for our tests
 
 Tests:
+
 - check that we're on the tag tab
 - check that it loaded only articles with that tag (should be just the one since it's a unique tag)
 - check that it loaded the correct article preview details
@@ -191,7 +193,7 @@ describe('Tag Feed', function () {
 
 Hopefully this is starting to look familiar by now. The one idea we haven't covered before is dynamically generating the `Tag` page in our `before` hook. But there's nothing too special about this approach; we're merely changing where we create it. 
 
-## 2.9.4 Cleaning up our mess
+## 2.9.4 Cleaning Up Our Mess
 
 One drawback to this "on the fly" approach to creating test data is that every test run generates new content. Over time, after many test runs, our website will be flooded with random articles. This isn't always a negative, as it can inadvertently help test that the site works well even with a lot of data on it. But, there are likely much better ways to validate that.
 
@@ -207,7 +209,7 @@ async deleteArticle(user, slug) {
 }
 ```
 
-Again, I won't get into the details on the Conduit API much, because it's specific to this instance. The exact code you'll need to write will depend heavily on the website that you're testing. We also could do better than retrieving the user token every time we need it (e.g., store it somewhere), but again I didn't want to get too bogged down with technical implementations here. 
+Again, I won't get into the details on the Conduit API much, because it's specific to this instance. The exact code you'll need to write will depend heavily on the website that you're testing. We also could do better than retrieving the user token every time we need it (e.g., store it somewhere), but again, I didn't want to get too bogged down with technical implementations here. 
 
 Now to call this `deleteArticle` function. We only want to delete the article after all our tests are completed, so we'll make that call in the `after` Mocha hook:
 
@@ -221,7 +223,7 @@ after(function () {
 
 Note that we get the generated slug from the API response, which was stored back in our `before` hook.
 
-With that added, we now have a set of tests that generate the needed data via API calls, then delete that data after running to ensure no artifacts are left existing. This is just one small example, but hopefully you find this pattern of data management useful.
+With that added, we now have a set of tests that generate the needed data via API calls, then delete that data after running, to ensure no artifacts are left. This is just one small example, but hopefully you find this pattern of data management useful.
 
 ## 2.9.5 Exercises
 

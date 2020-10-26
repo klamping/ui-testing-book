@@ -225,6 +225,8 @@ What element are we getting? Well, we want to click the "Sign In" link at the to
 </ul>
 ```
 
+Note: If you're unfamiliar with HTML syntax structure, I recommend having a watch through [this video tutorial teaching HTML basics](https://www.youtube.com/watch?v=UB1O30fR-EE) before moving on.
+
 There are a couple of ways we can specify the 'Sign In' link, but let's go with the simplest. We're going to request an `a` element on the page that has text containing `Sign In`. We could add more to this selector, like the link needs a class name of `nav-link`, but this is good enough for now. As I mentioned, we'll cover this more soon. 
 
 To say we want a link that has specific text in it, we write our selector like this: `$('=the text to search by')`. For our needs, we're going to do `$('=Sign In')`. 

@@ -1,12 +1,12 @@
 # 2.6 Testing Complex Inputs
 
-## 2.6.1 Testing the publish action
+## 2.6.1 Testing the Publish Action
 
 It's nice that we can now confirm that our post editor page is loading correctly with all the proper form fields available. That said, it would be a lot more useful to confirm that those form fields actually work.
 
-It's not difficult to manually load a page and validate fields exist, but it takes effort and time to fill out the fields and check the submission functionality. That "little bit of effort" can be just enough to make devs say "my change shouldn't have broken that" and not actually regression test their work. 
+It's not difficult to manually load a page and validate fields exist, but it takes effort and time to fill out the fields and check the submission functionality. That "little bit of effort" can be just enough to make developers say "my change shouldn't have broken that" and not regression test their work. 
 
-I'm honestly not criticizing this "lazy" behavior; just admitting that I've been that dev, and anything I can do to make up for that laziness is appreciated. Maybe that's why I like test automation so much.
+I'm honestly not criticizing this "lazy" behavior; just admitting that I've been that developer, and anything I can do to make up for that laziness is appreciated. Maybe that's why I like test automation so much.
 
 That idea brings us to our next test, which is that the Editor page `should let you publish a new post`. In the test, we'll do three things:
 
@@ -14,7 +14,7 @@ That idea brings us to our next test, which is that the Editor page `should let 
 - Set a value for the 'Description'
 - Set a value for the 'Body'
 
-There are is a tags field we can fill out as well, but we'll save that for later, as it requires a little bit of extra knowledge that I don't want to get into just yet. 
+There is a "Tags" field we can fill out as well, but we'll save that for later, as it requires a little bit of extra knowledge that I don't want to get into just yet. 
 
 Using our `editor` page object, we can set all three values calling the `setValue` command we used before:
 
@@ -28,11 +28,11 @@ it('should let you publish a new post', function () {
 
 Except we can't. While the `setValue` command works for the first two fields, the 'Body' field throws an error: `invalid element state: Element must be user-editable in order to clear it.`
 
-The reason it's mad is that we can only call `setValue` on 'editable' elements (e.g. `<input>` or `<textarea>` elements). But our selector is for the `<div>` that contains that textarea. 
+The reason it's mad is that we can only call `setValue` on 'editable' elements (e.g., `<input>` or `<textarea>` elements). But our selector is for the `<div>` that contains that textarea. 
 
 This is an example of how complex form fields (in this case, a custom Markdown editor), can increase the complexity of our tests. Here, we're using [the third-party `mavon-editor` component](https://www.npmjs.com/package/mavon-editor) available for Vue-based applications. 
 
-And because it's a third-party component, we're unable to access the HTML for that `<textarea>` element, keeping us from attaching our `qa-id` attribute directly to it. If you're curious, this is what the Vue "html" looks like:
+And because it's a third-party component, we're unable to access the HTML for that `<textarea>` element, keeping us from attaching our `qa-id` attribute directly to it. If you're curious, this is what the Vue "HTML" looks like:
 
 ```html
 <mavon-editor
@@ -57,9 +57,9 @@ get $body () { return $('[data-qa-id="editor-body"] textarea'); }
 
 Update this selector and our test now passes. 
 
-Many web apps face a similar issue with popular third-party tools like ACE editor or CodeMirror. Working with them will require investigating underlying the HTML and finding the correct input field. There's no one-size-fits all solution here, you just have to handle it by each specific instance. 
+Many web apps face a similar issue with popular third-party tools like ACE editor or CodeMirror. Working with them will require investigating the underlying HTML and finding the correct input field. There's no one-size-fits-all solution here, you just have to handle it one instance at a time.
 
-If you're unfamiliar with using the Chrome Dev Tools to inspect the generated HTML of a website, have a read through [their documentation](https://developers.google.com/web/tools/chrome-devtools/dom) to become familiar with the very useful functionality it provides.
+If you're unfamiliar with using the Chrome DevTools to inspect the generated HTML of a website, have a read through [their documentation](https://developers.google.com/web/tools/chrome-devtools/dom) to become familiar with the very useful functionality it provides.
 
 ## 2.6.2 Key Commands
 
@@ -70,13 +70,13 @@ I mentioned before that we can add tags to our posts, but that it's also more co
 
 We have yet to cover keyboard actions, so let's tackle that right now.
 
-At any point in your automation, you can send a 'key' event to the browser by using the `browser.keys` command. For example, if I wanted to trigger the keyboard shorcut for the `?` character, I would use `browser.keys('?')`. (This would be useful for testing if typing the `?` in the browser triggered a "keyboard shortcuts" popup to appear).
+At any point in your automation, you can send a 'key' event to the browser by using the `browser.keys` command. For example, if I wanted to trigger the keyboard shortcut for the `?` character, I would use `browser.keys('?')`. This would be useful for testing if typing the `?` in the browser triggered a "keyboard shortcuts" popup to appear.
 
 We're going to use this command to send an `enter` key event. But that's a bit different from a normal alphanumeric key. You wouldn't just say `browser.keys('Enter')`, would you?
 
 Yes, you would!
 
-You can use characters like "Left arrow" or "Back space", or in our instance "Enter", and WebdriverIO takes care of translating them into the unicode characters needed to represent those keys. The W3C has [a list of all supported keywords](https://w3c.github.io/webdriver/#keyboard-actions) available for your reference. 
+You can use characters like "Left arrow" or "Backspace", or in our instance "Enter", and WebdriverIO takes care of translating them into the unicode characters needed to represent those keys. The W3C has [a list of all supported keywords](https://w3c.github.io/webdriver/#keyboard-actions) available for your reference. 
 
 So, to get back to our tags field, this is what the code will look like:
 
@@ -97,9 +97,9 @@ Tackling the clicking of the button is a simple command:
 editor.$publish.click();
 ```
 
-Asserting the article was submitted correctly is a whole different story, all together (_Airplane!_ fans respond: "it's a whole different story").
+Asserting the article was submitted correctly is a whole different story, all together (_Airplane!_ fans respond: "It's a whole different story").
 
-There are many levels of validation we can take; one being to validate the generated URL matches the title of our post. So if the title we set was `Test Title`, then we'd expect the url to contain `articles/test-title` (as it would be converted to a url-friendly format).
+There are many levels of validation we can take; one being to validate the generated URL matches the title of our post. So if the title we set was `Test Title`, then we'd expect the URL to contain `articles/test-title` (as it would be converted to a URL-friendly format).
 
 Next, we'll run our assertion that the URL is correct:
 
@@ -109,11 +109,11 @@ expect(browser).toHaveUrl('articles/test-title', { containing: true });
 
 This is similar to the assertion we used in our Login test.
 
-While we could end here, our test has "polluted" the data on the site and we should take care to clean that up. We created an artifact in our test, that being a new article. If we were to run this test a second time, the URL would actually be something like `articles/test-title-dpywzg`. That extra bit at the end was added to avoid conflicting URLs. 
+While we could end here, our test has "polluted" the data on the site and we should take care to clean that up. We created an artifact in our test: a new article. If we were to run this test a second time, the URL would actually be something like `articles/test-title-dpywzg`. That extra bit at the end was added to avoid conflicting URLs. 
 
-While this is good that the website handles duplicate post titles, it's probably best we delete our article at the end of our test to avoid unwanted side-effects. Thankfully, that's pretty simple to do, considering the site offers us a 'delete' button on the article page itself.
+While this is good that the website handles duplicate post titles, it's a good idea to delete the article at the end of our test to avoid unwanted side effects. Thankfully, that's pretty simple to do, considering the site offers us a 'delete' button on the article page itself.
 
-So, let's add one last command to our test to delete our newly created article, just to be good stewards of the site:
+So, let's add one last command to our test to delete the newly created article, just to be good stewards of the site:
 
 ```js
 $('button*=Delete Article').click()
@@ -135,8 +135,8 @@ it('should let you publish a new post', function () {
     // expect to be on new article page
     expect(browser).toHaveUrl('articles/test-title', { containing: true });
 
-    // to avoid making a ton of articles, let's just click the delete button to
-    // clean ourselves up. We'll talk about a better way to clean later on.
+    // to avoid making a lot of articles, let's just click the delete button to
+    // clean it up. We'll talk about a better way to clean it later on.
     $('button*=Delete Article').click();
 });
 ```
@@ -145,7 +145,7 @@ Yes, we should move our article page selectors to a separate page object, but le
 
 ## 2.6.4 Form Submission Functions
 
-Recall back in for our Login page object, we wrote a function inside it to handle the login flow for us. Let's do the same thing for our article submission. This way, we have a common function to call when we want to test anything related to the editor page. 
+Recall back in our Login page object, we wrote a function inside it to handle the login flow. Let's do the same thing for our article submission. This way, we have a common function to call when we want to test anything related to the editor page. 
 
 Similar to our login function, we'll create a `submitArticle` function which will take an object with the following properties:
 
@@ -156,7 +156,7 @@ Similar to our login function, we'll create a `submitArticle` function which wil
 
 The code inside our function will look almost entirely the same as what we already have in our test. However, we want to make one small adjustment. 
 
-For the tag field, it would be nice to allow for multiple tags. We can accomplish this using the `forEach` function available on arrays. This means the `tags` property will need to be passed in as an array, so our function call would look like:
+For the tag field, it would be nice to allow for multiple tags. We can accomplish this by using the `forEach` function available in arrays. This means the `tags` property will need to be passed in as an array, so our function call would look like:
 
 ```js
 editor.submitArticle({
@@ -167,7 +167,7 @@ editor.submitArticle({
 });
 ```
 
-In that example, we only pass in a single tag, but still use an array for it. This way our function does not need to handle mutliple data types. Here is what that function is going to look like:
+In that example, we only pass in a single tag, but still use an array for it. This way our function does not need to handle multiple data types. Here is what that function is going to look like:
 
 ```js
 submitArticle({ title, description, body, tags }) {
@@ -190,7 +190,7 @@ Inside this loop, we tag the specific tag text we want to use, set the value of 
 
 Finally, we end the function by clicking the publish button, which submits the form. 
 
-Combined into our page object, here's how the entire thing looks:
+Combined with our page object, here's how the entire thing looks:
 
 {title="test/specs/Editor.page.js"}
 ```js
@@ -236,15 +236,15 @@ it('should let you publish a new post', function () {
     // expect to be on new article page
     expect(browser).toHaveUrl('articles/test-title', { containing: true });
 
-    // to avoid making a ton of articles, let's just click the delete button to
-    // clean ourselves up. We'll talk about a better way to clean later on
+    // to avoid making a lot of articles, let's just click the delete button to
+    // clean it up. We'll talk about a better way to clean it later on.
     $('button*=Delete Article').click();
 });
 ```
 
 Great, things are a bit cleaner in our test, and any updates/improvements to the editor form can all be handled from inside the Editor page object.
 
-## 2.6.5 ChanceJS to create data
+## 2.6.5 ChanceJS to Create Data
 
 While not required, it can be useful (and a little fun) to mix in some random generation into our tests. When working with data entry, using the same data is simpler, but very restricted in scope of testing.
 
@@ -252,18 +252,18 @@ In our previous test, we're only validating those four pieces of data. It would 
 
 One quick way to introduce some randomization to your tests is to use [the `Date.now()` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now) available natively in NodeJS. This function returns the current number of milliseconds elapsed since January 1, 1970. Every time you run your test, you'll get a larger number, as more milliseconds have elapsed since that last run.
 
-While that's helpful, it's really only testing a simple numerical input. The numbers may change, but the data format doesn't. What we need is a full-features utility that allows us to request random types of data. That's where a tool like [ChanceJS](https://chancejs.com/) can help out.
+While that's helpful, it's really only testing a simple numeric input. The numbers may change, but the data format doesn't. What we need is a full-featured utility that allows us to request random types of data. That's where a tool like [ChanceJS](https://chancejs.com/) can help out.
 
-Honestly, this may be overkill, and more for fun than anything else, but it's a good example of how we can use the NodeJS ecosystem to extend our test functionality, so let's get into it. 
+Honestly, this may be overkill, and more for fun than anything else, but it's a good example of how we can use the NodeJS ecosystem to extend our test functionality. 
 
-To use Chance, we need to do several of things. 
+To use ChanceJS, we need to do several things. 
 
 1. Install the library via `npm i chance`
 2. Require the library
 3. Instantiate it
-4. Call the specific function we want to generate the random data we're seeking.
+4. Call the specific function needed to generate the random data
 
-Assuming you've done the first step, the next two we'll add to the top of our test file:
+Assuming you've done the first step, we'll add the next two to the top of our test file:
 
 ```js
 const Auth = require('../pageObjects/Auth.page');
@@ -291,9 +291,9 @@ editor.submitArticle({
 });
 ```
 
-Actually, this won't work. In our URL assertion, we test the URL of the page with the assumption that our title will be `Test Title` (the generated URL of the post page is based off of the title). With a randomized title, we won't know what to change against. 
+Actually, this won't work. In our URL assertion, we test the URL of the page with the assumption that our title will be `Test Title` (the generated URL of the post page is based off of the title). With a randomized title, we won't know what to assert against.
 
-What we need to do is store the article information as a separate object and send it in to `submitArticle`. That's easy enough to do:
+What we need to do is store the article information as a separate object and send it into `submitArticle`. That's easy enough to do:
 
 ```js
 const articleDetails = {
@@ -344,9 +344,9 @@ module.exports = Article;
 
 We honestly don't need to extend the Generic page object, as we're not using any of its functionality. But I'm going to keep it just for consistency sake.
 
-We'll have to look at that 'tags' element reference in a bit, because it's actually multiple tags and not a single string. When we go to test that, we'll want to handle a single tag or multiple, but for now let's ignore that little detail.
+We'll have to look at that 'tags' element reference in a bit, because it's actually multiple tags, not a single string. When we test that, we'll handle a single tag or multiple, but for now let's ignore that little detail.
 
-Save that file in your `pageObjects` folder as `Article.page.js` and load it into your `editor` test file the same as the Editor page object:
+Save that file in your `pageObjects` folder as `Article.page.js` and load it into your `editor` test file along with the Editor page object:
 
 {title="test/specs/editor.js"}
 ```js
@@ -376,23 +376,23 @@ it('should let you publish a new post', function () {
     expect(article.$title).toHaveText(articleDetails.title);
     expect(article.$body).toHaveText(articleDetails.body);
 
-    // to avoid making a ton of articles, let's just click the delete button to
-    // clean ourselves up. We'll talk about a better way to clean later on
+    // to avoid making a lot of articles, let's just click the delete button to
+    // clean it up. We'll talk about a better way to clean it later on.
     article.$delete.click();
 });
 ```
 
-Now we're not dependent on some tricky logic to use the URL for validation of our post contents. Plus, it's more important for the information on the page to be correct than the URL be some specific format. I'd much rather know that our title isn't saving correctly than if our URL isn't right. 
+Now we're not dependent on some tricky logic to use the URL for validation of our post contents. Plus, it's more important for the information on the page to be correct than the URL be in some specific format. I'd much rather know that our title isn't saving correctly than if our URL isn't right. 
 
 ## 2.6.7 Testing Multiple Tags
 
-I talked early about how the 'tags' element reference wasn't quite usable in its current state. This is due to the fact that we can have multiple tags, but are targeting a single reference. So if we run `getText` on that element, we'd get all the tags in a single string (e.g. 'tag1 tag2'). 
+I talked early about how the 'tags' element reference wasn't quite usable in its current state. This is due to the fact that we can have multiple tags, but are targeting a single reference. So if we run `getText` on that element, we'd get all the tags in a single string (e.g., 'tag1 tag2'). 
 
 Instead, let's update our selector to target each tag individually, that way we can run the `getText` function on each separate tag, and save them all as an array for later comparison.
 
-(On a side note, you can still do the assertion using this combined string. It would look something like: `expect(article.$tags).toHaveText(articleDetails.tags.join(' '));`).
+On a side note, you can still do the assertion using this combined string. It would look something like: `expect(article.$tags).toHaveText(articleDetails.tags.join(' '));`.
 
-So first thing is to add a new element reference, which looks like:
+So the first thing is to add a new element reference, which looks like:
 
 ```js
 get $tags () { return $('[data-qa-id="article-tags"]'); }
@@ -401,11 +401,11 @@ get $$tags () {
 }
 ```
 
-So we use `$$` to target all elements that match (not just the first), and we add a second bit of information to our selector to match the specific tag (not just the container of the tags). 
+We use `$$` to target all elements that match (not just the first), and we add a second bit of information to our selector to match the specific tag (not just the container of the tags). 
 
-Now we need to get the text out of those elements returned. We **can't** run `article.$$tags.getText()`, because that function only works on single element reference (`article.$$tags[0].getText()` would work, since it's a single element, but then we'd only be getting that single bit of information when we really want all of it). 
+Now we need to extract the text out of the returned elements. We **can't** run `article.$$tags.getText()`, because that function only works on a single element reference. `article.$$tags[0].getText()` would work, since it's a single element, but then we'd only be getting that single bit of information when we really want all of it. 
 
-If you recall, we used the built-in `forEach` array functionality to add our tags to the editor page. In a similar way, we can use the built-in `map` function to pull information out of our array. `map` is very similar to `forEach`, the main difference being that `map` allows you to take the data in the array and return something else from it. 
+If you recall, we used the built-in `forEach` array functionality to add our tags to the editor page. In a similar way, we can use the built-in `map` function to pull information out of our array. `map` is very similar to `forEach`. The main difference is that `map` allows you to take the data in the array and return something else from it. 
 
 Let's look at an example using some simple math. Say we have an array of numbers:
 
@@ -413,7 +413,7 @@ Let's look at an example using some simple math. Say we have an array of numbers
 const myAwesomeNumbers = [3, 4, 7];
 ```
 
-Now we want to double each of those numbers (e.g. 3 -> 6).
+Now we want to double each of those numbers (e.g., 3 -> 6).
 
 Using `forEach`, we could `console.log` out the information:
 
@@ -431,7 +431,7 @@ This would log out the following three lines:
 14
 ```
 
-But that's not very useful if we want to use those doubled numbers in our code. That's were `map` comes in. If we replace `forEach` with `map`, and then return the result instead of logging it out, we'll get ourselves a new array of our doubled amounts:
+But that's not very useful if we want to use those doubled numbers in our code. That's where `map` comes in. If we replace `forEach` with `map`, and then return the result instead of logging it out, we'll get a new array of our doubled amounts:
 
 ```js
 const myAwesomeNumbersDoubled = myAwesomeNumbers.map(awesomeNumber => {
@@ -439,7 +439,7 @@ const myAwesomeNumbersDoubled = myAwesomeNumbers.map(awesomeNumber => {
 });
 ```
 
-With this, `myAwesomeNumbersDoubled` is `[ 6, 8, 14 ]` (and `myAwesomeNumbers` stays the same).
+With this, `myAwesomeNumbersDoubled` is `[ 6, 8, 14 ]` and `myAwesomeNumbers` stays the same.
 
 Instead of working with numbers, we can work with element references. Using this same technique, let's take our array of `tag` elements, and return the result of calling `getText` on them:
 
@@ -449,7 +449,7 @@ const tags = article.$$tags.map($tag => {
 });
 ```
 
-Now tags will be an array of whatever text is there (e.g. ['tag1', 'tag2']), which is going to match what we have defined in `articleDetails.tags` and make for a handy assertion:
+Now tags will be an array of whatever text is there (e.g., ['tag1', 'tag2']), which is going to match what we have defined in `articleDetails.tags` and create a handy assertion:
 
 ```js
 const tags = article.$$tags.map($tag => {
@@ -531,27 +531,27 @@ describe('Post Editor', function () {
         expect(article.$body).toHaveText(articleDetails.body);
         expect(article.tags).toEqual(articleDetails.tags);
 
-        // to avoid making a ton of articles, let's just click the delete button to
-        // clean ourselves up. We'll talk about a better way to clean later on
+        // to avoid making a lot of articles, let's just click the delete button to
+        // clean it up. We'll talk about a better way to clean it later on.
         article.$delete.click();
     });
 });
 ```
 
-## 2.6.8 Checking alerts when leaving with unsaved changes
+## 2.6.8 Checking Alerts When Leaving With Unsaved Changes
 
-One of the most frustrating experiences on a website for a user occurs when they've spent a valuable amount of time typing up content, only to have that content viciously erased by an errant page navigation. Whether it's accidentally hitting the back button, unintentionally refreshing the page, or inadvertendly going to another site, nothing will fill your user's eyes with tears quick like them losing their work.
+One of the most frustrating experiences on a website for a user occurs when they've spent a valuable amount of time typing up content, only to have that content viciously erased by an errant page navigation. Whether it's accidentally hitting the back button, unintentionally refreshing the page, or inadvertently going to another site, nothing will fill your user's eyes with tears quicker than causing them losing their work.
 
-To avoid this tragic outcome, website owners now implement "alerts" that pop-up when you try leaving certain pages. These alerts will inquire about your intentions and whether they were purposeful or not:
+To avoid this tragic outcome, website owners now implement "alerts" that pop up when you try leaving certain pages. These alerts will inquire about your intentions and whether they were purposeful or not:
 
 ![Screenshot of Alert box appearing upon page navigation](images/7E1FF58355D214AF24C266B8EBD5BF0C.jpg)
 
-It's a minor annoyance for those content to destroy whatever content they've created, but a lifesaver for clumsier folks like me. What we're going to do is write a few tests checking that these alerts appear on our editor page.
+It's a minor annoyance for users who don't mind losing their work, but appreciated by clumsier folks like me. We're going to write a few tests checking that these alerts appear on our editor page.
 
 There are two scenarios we want to test:
 
-1. An action is performed outside the page, causing a page navigation event (e.g. clicking the 'refresh' button)
-2. An action is performed inside the page, causing a page navigation event (e.g. clicking a link)
+1. An action is performed outside the page, causing a page navigation event (e.g., clicking the 'refresh' button)
+2. An action is performed inside the page, causing a page navigation event (e.g., clicking a link)
 
 Since these two tests are related, we're going to group them under a specific `describe` block:
 
@@ -566,21 +566,21 @@ describe('Post Editor', function () {
 
 We'll have two tests:
 
-- it should alert you when using browser navigation
-- it should alert you when clicking a link
+1. it should alert you when using browser navigation
+2. it should alert you when clicking a link
 
 In the first test, we'll need to trigger a browser navigation event. We can do this using any of the following commands:
 
 - `browser.url('someotherurl')`
 - `browser.back()`
-- `browser.forward()` (although this will only work if we've just navigated "back" from a page
+- `browser.forward()` (although this will only work if we've just navigated "back" from a page)
 - `browser.refresh()`
 
-The one I'll use is the `refresh` command. (By the way, these commands come as part of [the standard Webdriver library](https://webdriver.io/docs/api/webdriver.html) and are not specific to WebdriverIO.)
+The one I'll use is the `refresh` command. By the way, these commands come as part of [the standard WebDriver library](https://webdriver.io/docs/api/webdriver.html) and are not specific to WebdriverIO.
 
 Before doing that though, I need to edit one of the fields to trigger the "unsaved changes" state to exist (we'll do that in the `beforeEach` hook since it'll be needed for both tests).
 
-Here's what all that looks like:
+Here's what it looks like now:
 
 ```js
 describe('"Unsaved Changes" alerts', function () {
@@ -598,7 +598,7 @@ describe('"Unsaved Changes" alerts', function () {
 });
 ```
 
-Pretty basic; now let's figure out how to check for the alert. There are four "alert" related commands availabe in the Webdriver standard:
+Pretty basic. Now let's figure out how to check for the alert. There are four "alert" related commands available in the WebDriver standard:
 
 - dismissAlert
 - acceptAlert
@@ -607,9 +607,9 @@ Pretty basic; now let's figure out how to check for the alert. There are four "a
 
 For this test, we're just going to try accepting the alert. If you were to read the documentation for that command, you would see that it throws an error if the alert doesn't exist: "The Accept Alert command accepts a simple dialog if present, otherwise error."
 
-We can use that error to validate that the alert is shown (if no error is thrown when calling `acceptAlert`, then an alert was shown and accepted). Normally, code throwing errors would trigger a complete failure condition and halt any other execution. But `expect-webdriverio` (and other assertion libraries) comes with the ability to handle errors thrown in a gracious manner.
+We can use that error to validate that the alert is shown (if no error is thrown when calling `acceptAlert`, then an alert was shown and accepted). Normally, code throwing errors would trigger a complete failure condition and halt any other execution. But `expect-webdriverio`, and other assertion libraries, come with the ability to handle errors thrown in a gracious manner.
 
-There is [a `toThrow` method](https://jestjs.io/docs/en/using-matchers#exceptions) available in ExpectJS that works like this: You call `expect()` and pass in a function to run which may or may not throw an error. You finish your assertion with `toThrow()` or `not.toThrow`, depending on what you expect. When the time comes, ExpectJS (which is what `expect-webdriverio` is built off of) runs this function (handling any thrown errors with grace) and asserts your expected outcome. All-in-all, it looks like this:
+There is [a `toThrow` method](https://jestjs.io/docs/en/using-matchers#exceptions) available in ExpectJS that works like this: You call `expect()` and pass in a function to run which may or may not throw an error. You finish your assertion with `toThrow()` or `not.toThrow`, depending on what you expect. When the time comes, ExpectJS (which is what `expect-webdriverio` is built off of) runs this function (handling any thrown errors with grace) and asserts your expected outcome. All in all, it looks like this:
 
 ```js
 expect(() => browser.acceptAlert()).not.toThrow();
@@ -635,7 +635,7 @@ describe('"Unsaved Changes" alerts', function () {
 });
 ```
 
-One thing to know about our assertion is that, since we are actually calling the `browser.acceptAlert()` command, it accepts the alert and our `browser.refresh()` command is fully executed. If we were to have called `browser.dismissAlert()` instead, the `refresh` would not have occurred (it would have been rejected), leaving our page in an "unsaved changes" state. This could cause trouble if a follow-on test tried reloading the page (which is does as part of the `before` hook in our parent `describe` block). If you try to navigate via WebdriverIO when an alert is showing, you'll get this error: `unexpected alert open: {Alert text : }`
+One thing to know about our assertion is that, since we are actually calling the `browser.acceptAlert()` command, it accepts the alert and our `browser.refresh()` command is fully executed. If we were to have called `browser.dismissAlert()` instead, the `refresh` would not have occurred (it would have been rejected), leaving our page in an "unsaved changes" state. This could cause trouble if a follow-on test tried reloading the page (which it does as part of the `before` hook in our parent `describe` block). If you try to navigate via WebdriverIO when an alert is showing, you'll get this error: `unexpected alert open: {Alert text : }`
 
 Okay, on to our second test. In it, we're going to click a link ('Home'), then get the alert text (using `getAlertText`) and validate it's correct.
 
@@ -667,11 +667,13 @@ it('should warn you when trying to change URL', function () {
 });
 ```
 
-Handling alerts isn't a common part of testing work in my experience, but it is needed from time-to-time, so good to know about.
+Handling alerts isn't a common part of testing work in my experience, but it is needed from time to time, so it's good to know about.
 
-One final note on this is that you can't use these commands to to enter "basic auth" credentials. To do that, you need to pass in the credentials via your `browser.url` call: `browser.url('http://username:password@example.com/');`.
+One final note: you can't use these commands to enter "basic auth" credentials. To do that, you need to pass in the credentials via your `browser.url` call:
 
-## 2.6.9 A Not So Random Chance
+`browser.url('http://username:password@example.com/');`.
+
+## 2.6.9 A Not-So-Random Chance
 
 After all this work, there's one last bit of optimization we should do to prepare ourselves for future testing. Earlier we imported the Chance library to add some randomness to our tests. But what happens when that randomness causes a failure due to some specific data. If you ran the test again, you'd use different data which may not cause the error to occur. 
 
@@ -691,7 +693,7 @@ chance2.integer(); // will also always output '2055889922031616' since it's usin
 
 Since both copies of Chance had the same seed ('webdriverio'), they will both generate the same random number sequence each time they're called.
 
-So now we can repeat our data used in our tests, except how now we've removed the randomness by running the same data through each time.
+So now we can repeat our data used in our tests, except now we've removed the randomness by running the same data through each time.
 
 Instead, let's set up a system where we create a Chance instance using a random seed, log that seed out to our console, then allow us to pass in that seed in the next test. 
 
@@ -705,7 +707,7 @@ const chance = new Chance(seed);
 
 Now when our test is run, it will log something out like `ChanceJS Seed: 0.023341019330085366`
 
-Next, we need to be able to pass in a previously used seed. There are a couple ways of doing that, but I prefer environment variables since they're easy to access and set. Let's add in a check for the `SEED` environment variable being set, and have it use that instead if set:
+Next, we need to be able to pass in a previously used seed. There are a couple ways of doing that, but I prefer to use environment variables since they're easy to access and set. Let's add in a check for the `SEED` environment variable being set, and have it use that instead, if set:
 
 ```js
 if (!process.env.SEED) {
@@ -740,7 +742,7 @@ So long as that `SEED` value is set and stays the same, the editor test will alw
 
 Okay, that's some nice functionality, but I'd hate to have to copy/paste it into every test file that I want to use Chance in. I'd rather have a Chance instantiation set up automatically for all my test files in a single location.
 
-This is where WebdriverIO configuration hooks can help out. These are defined at the bottom of our `wdio.conf.js` file and can be used to step in to the test process in order to enhance it and/or build services around it.
+This is where WebdriverIO configuration hooks can help out. These are defined at the bottom of our `wdio.conf.js` file and can be used to step into the test process in order to enhance it and/or build services around it.
 
 We already touched on this with our `browser.throttle` call in the `before` hook. The `before` hook function gets called right before test execution begins (hence the name). This is right about the time we want to define our Chance instance. But if we used our normal `const chance = new Chance(process.env.SEED);` code, that `chance` constant would only be available inside the `before` function and not in our tests.
 
@@ -759,7 +761,7 @@ before: function (capabilities, specs) {
     
     // store Chance globally so all tests can use it with the specific seed
     // In order to avoid chance re-using the same seed for each test file,
-    // we create a chance instance using the base seed,
+    // we create a Chance instance using the base seed,
     // plus the path of the file (specs[0])
     global.chance = new Chance(process.env.SEED + specs[0]);
 }
@@ -784,7 +786,7 @@ exports.config = {
 }
 ```
 
-Finally, make sure you clean up the `editor.js` file to remove the Chance configuration at the top of it. You can leave the chance data calls the same (Node looks on the `global` object by default if it doesn't find `chance` in the local scope. Alternatively, if you want to self-document that `chance` is coming from the `global` object, update your code to look like this:
+Finally, make sure you clean up the `editor.js` file to remove the Chance configuration at the top. You can leave the chance data calls the same (Node looks on the `global` object by default if it doesn't find `chance` in the local scope. Alternatively, if you want to self-document that `chance` is coming from the `global` object, update your code to look like this:
 
 ```js
 const articleDetails = {
@@ -799,7 +801,7 @@ That wraps up all our work for the Editor page. Form inputs are one of the bigge
 
 ## 2.6.11 Chapter Challenge
 
-We have a test for how to create an article, but what about editing one? Write a new set of tests to validate you can edit an article, ensure that:
+We have a test for how to create an article, but what about editing one? Write a new set of tests to validate you can edit an article. Ensure that:
 
 - The fields populate with the existing article contents
 - The article page shows the updated contents after saving the edits
