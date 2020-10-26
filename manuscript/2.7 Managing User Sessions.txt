@@ -364,11 +364,11 @@ Way back at the start of this book we talked about APIs. We learned that Webdriv
 
 If you're unfamiliar with the concept of an API, there are many useful explanations already out there, including:
 
-- (What is an API?)[https://dev.to/mercier_remi/what-is-an-api-4ao9]
-- (What is an API Gateway?)[https://dev.to/bearer/what-is-an-api-gateway-42i6]
-- (An Introduction to APIs)[https://zapier.com/learn/apis/chapter-1-introduction-to-apis/]
-- (What exactly IS an API?)[https://medium.com/@perrysetgo/what-exactly-is-an-api-69f36968a41f]
-- (Introduction to web APIs)[https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Introduction]
+- [What is an API?](https://dev.to/mercier_remi/what-is-an-api-4ao9)
+- [What is an API Gateway?](https://dev.to/bearer/what-is-an-api-gateway-42i6)
+- [An Introduction to APIs](https://zapier.com/learn/apis/chapter-1-introduction-to-apis/)
+- [What exactly IS an API?](https://medium.com/@perrysetgo/what-exactly-is-an-api-69f36968a41f)
+- [Introduction to web APIs](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Introduction)
 
 The concept of an API is important to grasp, so I recommend spending some time learning about the general structure before diving into this lesson. Or maybe read through this section, then read any of those links I provided to help cement what's going on.
 
@@ -455,7 +455,7 @@ before(function () {
 Instead, we need to:
 
 1. Require our Api file
-2. Instantiate a new Api instance with the url of our API: `const api = new Api('http://localhost:3000/api/');`
+2. Instantiate a new Api with the correct url: `const api = new Api('http://localhost:3000/api/');`
 3. Call the `getAuthToken` function via `browser.call` (since that function is promise-based and we need to wait for it to complete)
 4. Load the page in an unauthorized state (we can't set `localStorage` until after we have the page loaded)
 5. Set the token via `browser.execute` and [the `window.localStorage.setItem` function](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem)

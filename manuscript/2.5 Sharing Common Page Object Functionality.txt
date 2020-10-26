@@ -114,13 +114,9 @@ While the idea may seem simple from the outside, there are a lot of questions th
 
 And here's my opinion:
 
-1: We should only test what we're going to interact with in our other tests, as we want to ensure they're on the page before interacting with them. I admit this isn't the strongest argument, but I like it as a guideline.
-
-The counter argument to that is: if the elements are missing, WebdriverIO will throw errors about the element not existing in our other tests. My reply is that we can quickly identify the problem by having a specific test to check that our page elements exist.
-
-2: We can use page objects to reduce future maintenance, but yes, it still exists. We always need to be careful of testing too much.
-
-3: While these 'element check' tests are certainly something WebdriverIO can do, it might not be the best way to do it. Since you're looking at the page when it initially loads, you don't need a tool that interacts with the page, just one that reads it.
+1. We should only test what we're going to interact with in our other tests, as we want to ensure they're on the page before interacting with them. I admit this isn't the strongest argument, but I like it as a guideline. The counter argument to that is: if the elements are missing, WebdriverIO will throw errors about the element not existing in our other tests. My reply is that we can quickly identify the problem by having a specific test to check that our page elements exist.
+2. We can use page objects to reduce future maintenance, but yes, it still exists. We always need to be careful of testing too much.
+3. While these 'element check' tests are certainly something WebdriverIO can do, it might not be the best way to do it. Since you're looking at the page when it initially loads, you don't need a tool that interacts with the page, just one that reads it.
 
 An alternative to WebdriverIO is to use [a "snapshot" testing tool like Jest](https://jestjs.io/docs/en/snapshot-testing). It works with web frameworks like React to render specific components and ensure they render correctly. 
 
@@ -636,11 +632,11 @@ That means we can't change our `path` property definition, because it would brea
 2. Create a second property that doesn't have a period: `this.path = '/editor';`
 3. Use the NodeJS `URL` module to parse the path
 
-I don't like option 1 because our test now needs to "do work." It's not just consuming information, it's modifying it to be in a specific format. I heavily shy away from this, as it can easily introduce bugs into your test code, which we want to avoid at all costs. No one wants to write tests for their tests.
+I don't like Option #1 because our test now needs to "do work." It's not just consuming information, it's modifying it to be in a specific format. I heavily shy away from this, as it can easily introduce bugs into your test code, which we want to avoid at all costs. No one wants to write tests for their tests.
 
-Option 2 isn't great as it redefines the same information. It adds an extra line of code that offers very little value.
+Option #2 isn't great as it redefines the same information. It adds an extra line of code that offers very little value.
 
-Instead, let's try out option 3 and see if we can get some added benefit from the work. 
+Instead, let's try out Option #3 and see if we can get some added benefit from the work. 
 
 ## 2.5.11 Taking Advantage of NodeJS's URL Utility
 

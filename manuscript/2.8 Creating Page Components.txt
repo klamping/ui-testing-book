@@ -302,7 +302,7 @@ Bringing that all together, we can wait for the "Loading Articles..." text to di
 $('div=Loading Articles...').waitForExist({ reverse: true });
 ```
 
-A quick note: It can be tricky to figure out the HTML of these loading indicators because they often disappear before you can inspect them. Thankfully, the built-in browser development tools often have a way to artificially throttle your connection speed (think back to how we did this in Chapter 2.3.3 with `browser.throttle`). Here's how to do that in Chrome: https://developers.google.com/web/tools/chrome-devtools/network/reference#throttling
+A quick note: It can be tricky to figure out the HTML of these loading indicators because they often disappear before you can inspect them. Thankfully, the built-in browser development tools often have a way to artificially throttle your connection speed (think back to how we did this in Chapter 2.3.3 with `browser.throttle`). [Here's how to do that in Chrome](https://developers.google.com/web/tools/chrome-devtools/network/reference#throttling).
 
 So with the network throttled to a slow speed, you can reload the page, then switch the setting to 'offline' and have an indefinite time to inspect the HTML. When you've figured out what you need, set the condition back to 'online' and continue with your work.
 

@@ -4,7 +4,7 @@ Now that we've created and reviewed our configuration file, it's time to write a
 
 Since this is the first time we're creating a test, we need to create our folders for the test files to go into.
 
-During setup, we defined out specs path as `./test/specs/\*\*/\*.js`. But we don't have a test folder, nor a specs folder inside it.
+During setup, we defined out specs path as `./test/specs/**/*.js`. But we don't have a test folder, nor a specs folder inside it.
 
 Let's create those folders by running the following command from our `wdio-testrunner` project path:
 

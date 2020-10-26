@@ -85,7 +85,7 @@ editor.$tags.setValue('Tag1');
 editor.$tags.keys('Enter');
 ```
 
-Notice that, in this instance, we use `editor.$tags.keys(['Enter']);`. While we could do `browser.keys(['Enter']);` and it would work the same, specifying the element we want to type in helps clarify the goal of our code. 
+Notice that, in this instance, we use `editor.$tags.keys('Enter')`. While `browser.keys('Enter')` would work the same, specifying the element we want to type in helps clarify the goal of our code. 
 
 ## 2.6.3 Submitting and Validating the Result
 

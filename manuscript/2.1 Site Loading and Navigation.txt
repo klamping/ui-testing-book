@@ -100,8 +100,8 @@ In a Windows shell: `mkdir test\specs`
 
 Finally, create a new file inside the specs directory (you can call it `navigation.js`) and open it in your preferred text editor.
 
-In a bash shell (Linux/Mac): `touch test/specs/navigation.js`
-In a Windows shell: `echo.>test\specs\navigation.js`
+- In a bash shell (Linux/Mac): `touch test/specs/navigation.js`
+- In a Windows shell: `echo.>test\specs\navigation.js`
 
 ## 2.1.3 Writing our First Real Test
 
@@ -147,9 +147,14 @@ For example, if I say `browser.url('./tag/wdio')`, it will load the full URL of 
 Here are some more complex examples, assuming the `baseUrl` is set to `http://example.com/one/`:
 
 ```js
-browser.url('./two'); // goes to 'http://example.com/one/two'
-browser.url('/two');  // goes to 'http://example.com/two'
-browser.url('http://anotherexample.com/one'); // goes to 'http://anotherexample.com/one'
+browser.url('./two');
+// goes to 'http://example.com/one/two'
+
+browser.url('/two');
+// goes to 'http://example.com/two'
+
+browser.url('http://anotherexample.com/one');
+// goes to 'http://anotherexample.com/one'
 ```
 
 Essentially, the `./` at the beginning of the value is used to say "keep the entire `baseUrl`." Alternatively, using just `/` at the start means that it will use only the domain of the URL, stripping off any subfolders.
@@ -197,7 +202,7 @@ No, in order to click an element, you need to let WebdriverIO know which element
 
 If you've used jQuery, which was a very popular JavaScript library from 2006 to 2016-or-so, you'd be familiar with the `$` function. If not, what it does is pick an element out of the HTML based on a "Selector." Selectors are like getting someone's attention by calling their name. 
 
-Some selectors can be very specific, like getting the attention of someone named `Thisisaveryuniquenamethatnooneelsehasihope`. Some are more general and might get multiple results, like yelling "John" at the store (apologies to the Johns out there and the store manager for yelling in her store). We'll get into selectors more in a little bit, but know that they come in all shapes and sizes.
+Some selectors can be very specific, like getting the attention of someone named "Averyuniquenamethatnooneelsehas". Some are more general and might get multiple results, like yelling "John" at the store (apologies to the Johns out there and the store manager for yelling in her store). We'll get into selectors more in a little bit, but know that they come in all shapes and sizes.
 
 So WebdriverIO has mimicked the functionality of jQuery and provides [its own `$` function](https://webdriver.io/docs/api/element/$.html). We're going to pretend you know what I mean and use a partial text based selector (we'll talk more about selectors soon).
 
@@ -649,7 +654,8 @@ Received: "Incorrect Page Title"
 [chrome 83.0.4103.106 mac os x #0-0]
 [chrome 83.0.4103.106 mac os x #0-0] Expected: "Conduit"
 [chrome 83.0.4103.106 mac os x #0-0] Received: "The Wrong Title"
-[chrome 83.0.4103.106 mac os x #0-0]     at Context.<anonymous> (/Users/klamping/Sites/temp/wdio-v6/test/specs/home.js:5:25)
+[chrome 83.0.4103.106 mac os x #0-0]     at Context.<anonymous> 
+(/Users/klamping/Sites/wdio/test/specs/home.js:5:25)
 ```
 
 Now our message provides not just what the two conflicting values are, but where they came from (the window title). Small improvements like this can really help speed along debugging efforts, as you're able to more quickly understand what is failing. You don't have to look through the code to understand that it's the page title that's wrong.
@@ -723,9 +729,8 @@ Received: "http://localhost:8080/login"
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] Expected: "/other-login"
 [chrome 84.0.4147.89 mac os x #0-0] Received: "http://localhost:8080/login"
-[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/Users/klamping/wdio
--testrunner/test/specs/navigation.js:13:25)
-
+[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> 
+(/Users/klamping/wdio-testrunner/test/specs/navigation.js:13:25)
 
 Spec Files:  0 passed, 1 failed, 1 total (100% completed) in 00:00:14
 ```

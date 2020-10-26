@@ -230,6 +230,7 @@ With that added, we now have a set of tests that generate the needed data via AP
 Create a set of tests for the user profile page (e.g., https://demo.learnwebdriverio.com/@singlearticleuser/). These tests should be responsible for creating a unique profile with a article that shows on the "My Article" feed.
 
 The test should validate that:
+
 - Username is shown at top of the page
 - You can follow/unfollow the user if you are logged in
 - Two tabs are shown: 'My Articles' and 'Favorited Articles'

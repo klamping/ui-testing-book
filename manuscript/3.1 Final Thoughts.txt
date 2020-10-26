@@ -10,4 +10,4 @@ Finally, a huge thanks to the entire WebdriverIO community, but especially the m
 
 I also want to give a special thanks to Michael Gilbert for his tireless efforts in editing this book. He has found countless typos and grammar mistakes and this book is much better because of it. Thank you so much!
 
-I hope you've found this journey helpful and have learned new skills to put to use. I'm honored to have you as a reader and thank you for taking the time to read through these chapters. And always remember, have fun testing!
+I hope you've found this journey helpful and have learned new skills to put to use. I'm honored to have had you as a reader and thank you for taking the time to read through these chapters. And always remember, have fun testing!

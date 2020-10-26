@@ -58,7 +58,11 @@ This last one was the trickiest by far, and requires some XPath magic. First, we
 
 From there, we need to navigate over to the links. We can use the `following-sibling` modifier to move over to the `div` (`following-sibling::div`). From there, we can get all the links using the `a` tag.
 
-All together, this is what your selector may look like: `$$('//p[contains(text(), "Popular Tags")]/following-sibling::div//a')`
+All together, this is what your selector may look like:
+
+```js
+$$('//p[contains(text(), "Popular Tags")]/following-sibling::div//a')
+```
 
 ## Chapter 2.3: Waiting Another Way
 
@@ -381,7 +385,7 @@ To be honest, this isn't the prettiest of code samples, but it gets the job done
 
 There are two steps to this change:
 
-1. Move the function from the `wdio.conf.js` file `before` hook to a new function inside the Auth.page.js file:
+- Move the function from the `wdio.conf.js` file `before` hook to a new function inside the Auth.page.js file:
 
 {title="test/pageObjects/Auth.page.js"}
 ```js
@@ -404,7 +408,7 @@ class Auth extends Generic {
 }
 ```
 
-2. Update references in the test to switch `browser.loginViaApi` to `Auth.loginViaApi`.
+- Update references in the test to switch `browser.loginViaApi` to `Auth.loginViaApi`.
 
 Personally, I prefer the custom command style, but I did want to demonstrate another way you can make this happen. 
 
@@ -458,6 +462,7 @@ It's also difficult to add a proper wait here, since there is no "loading" indic
 Create a set of tests for the user profile page (e.g., https://demo.learnwebdriverio.com/@singlearticleuser/). These tests should be responsible for creating a unique profile with a article that shows on the "My Article" feed.
 
 The test should validate that:
+
 - Username is shown at top of the page
 - You can follow/unfollow the user
 - Two tabs are shown: 'My Articles' and 'Favorited Articles'
@@ -719,6 +724,7 @@ describe('Tag Feed', function () {
 Okay, with all that written, let's focus back on writing the actual tests. 
 
 In our profile test, we need to set up some data:
+
 - A user profile to validate
 - That user should have an article published for us to check out
 
