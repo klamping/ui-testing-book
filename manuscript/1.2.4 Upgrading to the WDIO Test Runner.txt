@@ -61,8 +61,10 @@ The test runner is part of the WDIO CLI package. CLI stands for "Command Line In
 We install this interface using NPM:
 
 ```sh
-npm install @wdio/cli
+npm install @wdio/cli@7.7.3
 ```
+
+_Note: Recall from before, we include the version number so that the version you install is compatible with the examples in this book. We use a very specific version here due to an incompatibility with the examples in this book. An update to the books example is being worked on._
 
 All the official WebdriverIO packages are namespaced under the `@wdio` scope. This makes it easier to distinguish between officially supported packages and third-party work contributed by the WebdriverIO community (the `webdriver` and `webdriverio` packages are officially supported, even though they don't use the `@wdio` namespace). 
 

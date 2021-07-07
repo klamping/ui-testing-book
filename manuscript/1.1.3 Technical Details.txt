@@ -7,8 +7,10 @@ Because technology changes fast, it's good to cover what versions of software I 
 %% [TODO update with latest versions upon book completion]
 
 - Node.js: v12.16.1
-- WebdriverIO: 6.3.5
+- WebdriverIO: 7.7.3
 - Java 8 (optional)
+
+**Important: Node v16 includes a breaking change which causes 'sync' mode to malfunction. The examples in the book are therefore not compatible with Node v16. (An update to the book is currently in progress to address this)**
 
 ### Git Repository
 

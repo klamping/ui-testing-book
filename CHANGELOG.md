@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 7-7-2021
+
+### Chapters 1.1.2 through 1.2.4
+
+Add disclaimers to version of Node.js required, as Node.js v16 no longer supports 'sync' mode.
+
 ## 11-14-2020
 
 ### Chapter 1.2.3

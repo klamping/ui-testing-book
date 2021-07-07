@@ -37,8 +37,10 @@ The `-y` will answer 'yes' to all the prompts, giving us a standard NPM project.
 With that out of the way, let's install WebdriverIO:
 
 ```sh
-npm install webdriverio
+npm install webdriverio@7
 ```
+
+_Note: We include the `@7` version number so that the version you install is compatible with the examples in this book. If you'd like, you can leave the `@7` part off, but be warned that some code may not work._
 
 Now is a good time to mention that WebdriverIO is split into multiple NPM packages. We'll be looking at those packages in detail later on, but note that installing `webdriverio` via the command above does not give you everything.
 

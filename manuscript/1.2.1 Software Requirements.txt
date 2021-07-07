@@ -4,7 +4,7 @@
 
 While WebdriverIO is a Node.js based system, there are a few other tools needed to run the tests. You'll want:
 
-- A recent version of Node.js (8+)
+- A recent version of Node.js (12+, but not version 16)
 - A text-editor (I use [Sublime Text 3](https://www.sublimetext.com/3), but [Atom](https://atom.io/), [Webstorm](https://www.jetbrains.com/webstorm) and [VSCode](https://code.visualstudio.com/) are other great options)
 - A terminal/command line tool (I use [iTerm](https://iterm2.com/) with [Oh My Zsh](https://ohmyz.sh/) thrown on top)
 - A Webdriver-compliant browser for testing (Chrome is what we'll be using)
@@ -12,6 +12,8 @@ While WebdriverIO is a Node.js based system, there are a few other tools needed 
 Optionally, you may also want to install [Java 8](https://java.com/en/download/). This will allow you to run [selenium-standalone](https://github.com/vvo/selenium-standalone), which gives you the ability to test on different browsers in the same test run (e.g., both Firefox AND Chrome). 
 
 ### Installing Node.js
+
+**Important: As mentioned in 'Technical Requirements', Node v16 includes a breaking change which causes 'sync' mode to malfunction. The examples in the book are therefore not compatible with Node v16. Please ensure you install an earlier version of Node than v16.**
 
 There are many great tutorials for how to install Node.js on a variety of systems. A quick search should bring up many results should you need additional help with this installation.
 
