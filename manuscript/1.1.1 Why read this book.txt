@@ -30,9 +30,11 @@ I've seen, heard, and have been part of many teams that set out after this ideal
 
 In 2017, I spent the year recording screencasts covering WebdriverIO in-depth. While I covered the details of the framework quite well (or so I was told), I was left with nagging questions of "is knowing the tool valuable enough?"
 
-Is knowing how to mix colors and hold a paintbrush enough to be able to paint beautiful art?
+Can you paint beautiful art while only knowing how to mix colors and hold a paintbrush?
 
-Does knowing what the 'addValue' command does in WebdriverIO teach you enough to write tests that are effective?
+Is understanding WebdriverIO's 'addValue' command enough to write tests that are effective?
+
+I don't think so.
 
 This time around, I'm focusing on that second part. Yes, it's important to cover the details of commands and code. More importantly though, you need to see how you can combine all that technology to create a test suite that provides actual value.
 

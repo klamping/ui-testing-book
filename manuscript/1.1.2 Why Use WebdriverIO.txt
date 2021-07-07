@@ -22,7 +22,7 @@ It was dumb, but boy was it fun to play around with.
 
 Most JavaScript usage for the next decade revolved around either cheesy browser effects, or useful add-ons like drop-down menus and browser-based form field validation. As a front-end developer, learning JavaScript was an important part of your job, although not a critical part like it is today.
 
-In 2009, Ryan Dahl combined Chrome's JavaScript engine (called V8) with a few new tricks, and have it run entirely outside the browser [2]([https://en.wikipedia.org/wiki/Node.js#History](https://en.wikipedia.org/wiki/Node.js#History)). While the initial idea was to use JavaScript and Node.js to create servers that could better handle high-traffic sites, developers across the globe saw even more power in the tool.
+In 2009, Ryan Dahl combined Chrome's JavaScript engine (called V8) with a few new tricks, and have it run entirely outside the browser [2](https://en.wikipedia.org/wiki/Node.js#History). While the initial idea was to use JavaScript and Node.js to create servers that could better handle high-traffic sites, developers across the globe saw even more power in the tool.
 
 From 2009 to 2019, Node.js has grown tremendously. While development of the tool did stagnate around 2014, a fork of Node.js called io.js kicked those in charge back into gear, and eventually the two tools were combined to create a better future.
 

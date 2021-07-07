@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 11-14-2020
+
+### Chapter 1.2.3
+
+Update ChromeDriver and Selenium Standalone instructions to remove unneeded information regarding changing the path and hostname information.
+
 ## 10-26-2020
 
 ### Chapter 2.5
