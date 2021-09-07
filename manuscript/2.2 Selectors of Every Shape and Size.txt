@@ -49,7 +49,7 @@ If we use `$$('li')`, we'll get an array with two elements in it. We can use Jav
 
 Link text selectors and partial link text selectors are also pretty simple. To get the first link, we could do `$('=Projects')`. To get the second `li` using a partial link text selector, we can do `$('*=chive')`. By adding an asterisk (i.e., `*`), WebdriverIO will look for a partial text match, not a full one. 
 
-Also worth noting... while WebDriver officially only supports link based text selectors, WebdriverIO takes it one step further and provides support for any type of element to be checked. It does this by converting what looks like a text selector into an XPath one (more on XPath in a second). So we could also do `$('li*=chice')` as well and it would still work (since there is an `<li>` element which contains the text `chive`). That's pretty neat!
+Also worth noting... while WebDriver officially only supports link based text selectors, WebdriverIO takes it one step further and provides support for any type of element to be checked. It does this by converting what looks like a text selector into an XPath one (more on XPath in a second). So we could also do `$('li*=chive')` as well and it would still work (since there is an `<li>` element which contains the text `chive`). That's pretty neat!
 
 ## 2.2.2 CSS Selectors
 
