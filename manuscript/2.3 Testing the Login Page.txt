@@ -478,7 +478,7 @@ $('button*=Sign in').waitForExist({ reverse: true });
 
 1. An override to the default `timeout` amount. Since we don't want to override it, we can just leave it out and WebdriverIO will stick with the default.
 2. A boolean flag that will reverse how the `waitFor` command works. In this case, if that flag is `true`, it instead waits for the selector to **not** match any elements (the default value is `false`). We want this, so we add it as an option
-3. A `timeoutMsg` to show if the `timeout` is met, which whill be logged out upon that error showing.
+3. A `timeoutMsg` to show if the `timeout` is met, which will be logged out upon that error showing.
 4. An `interval` to wait between checking for the element to exist. The `waitForExist` command run the `isExisting` command multiple times if necessary, and this `interval` defines how long to wait until running that `isExisting` command again if the previous one failed.
 
 Here it is in the full test:
