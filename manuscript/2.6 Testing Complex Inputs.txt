@@ -18,11 +18,12 @@ There is a "Tags" field we can fill out as well, but we'll save that for later, 
 
 Using our `editor` page object, we can set all three values calling the `setValue` command we used before:
 
+{title="test/specs/editor.js"}
 ```js
-it('should let you publish a new post', function () {
-    editor.$title.setValue('Test Title');
-    editor.$description.setValue('Test Description');
-    editor.$body.setValue('Test Body');
+it('should let you publish a new post', async function () {
+    await editor.$title.setValue('Test Title');
+    await editor.$description.setValue('Test Description');
+    await editor.$body.setValue('Test Body');
 });
 ```
 
@@ -81,8 +82,8 @@ You can use characters like "Left arrow" or "Backspace", or in our instance "Ent
 So, to get back to our tags field, this is what the code will look like:
 
 ```js
-editor.$tags.setValue('Tag1');
-editor.$tags.keys('Enter');
+await editor.$tags.setValue('Tag1');
+await editor.$tags.keys('Enter');
 ```
 
 Notice that, in this instance, we use `editor.$tags.keys('Enter')`. While `browser.keys('Enter')` would work the same, specifying the element we want to type in helps clarify the goal of our code. 
@@ -94,7 +95,7 @@ The last steps in our test are to click the submit button, then validate our res
 Tackling the clicking of the button is a simple command:
 
 ```js
-editor.$publish.click();
+await editor.$publish.click();
 ```
 
 Asserting the article was submitted correctly is a whole different story, all together (_Airplane!_ fans respond: "It's a whole different story").
@@ -104,7 +105,7 @@ There are many levels of validation we can take; one being to validate the gener
 Next, we'll run our assertion that the URL is correct:
 
 ```js
-expect(browser).toHaveUrl('articles/test-title', { containing: true });
+await expect(browser).toHaveUrl('articles/test-title', { containing: true });
 ```
 
 This is similar to the assertion we used in our Login test.
@@ -116,28 +117,28 @@ While this is good that the website handles duplicate post titles, it's a good i
 So, let's add one last command to our test to delete the newly created article, just to be good stewards of the site:
 
 ```js
-$('button*=Delete Article').click()
+await $('button*=Delete Article').click()
 ```
 
 Let's take a look at the entire test now:
 
 ```js
-it('should let you publish a new post', function () {
-    editor.$title.setValue('Test Title');
-    editor.$description.setValue('Test Description');
-    editor.$body.setValue('Test Body');
+it('should let you publish a new post', async function () {
+    await editor.$title.setValue('Test Title');
+    await editor.$description.setValue('Test Description');
+    await editor.$body.setValue('Test Body');
 
-    editor.$tags.setValue('Tag1');
-    editor.$tags.keys('Enter');
+    await editor.$tags.setValue('Tag1');
+    await editor.$tags.keys('Enter');
 
-    editor.$publish.click();
+    await editor.$publish.click();
 
     // expect to be on new article page
-    expect(browser).toHaveUrl('articles/test-title', { containing: true });
+    await expect(browser).toHaveUrl('articles/test-title', { containing: true });
 
     // to avoid making a lot of articles, let's just click the delete button to
     // clean it up. We'll talk about a better way to clean it later on.
-    $('button*=Delete Article').click();
+    await $('button*=Delete Article').click()
 });
 ```
 
@@ -159,7 +160,7 @@ The code inside our function will look almost entirely the same as what we alrea
 For the tag field, it would be nice to allow for multiple tags. We can accomplish this by using the `forEach` function available in arrays. This means the `tags` property will need to be passed in as an array, so our function call would look like:
 
 ```js
-editor.submitArticle({
+await editor.submitArticle({
     title: 'Test Title',
     description: 'Test Description',
     body: 'Test Body',
@@ -170,29 +171,30 @@ editor.submitArticle({
 In that example, we only pass in a single tag, but still use an array for it. This way our function does not need to handle multiple data types. Here is what that function is going to look like:
 
 ```js
-submitArticle({ title, description, body, tags }) {
-    this.$title.setValue(title);
-    this.$description.setValue(description);
-    this.$body.setValue(body);
-    tags.forEach((tag) => {
-        this.$tags.setValue(tag);
-        this.$tags.keys('Enter');
-    });
-    this.$publish.click();
+async submitArticle({ title, description, body, tags }) {
+    await this.$title.setValue(title);
+    await this.$description.setValue(description);
+    await this.$body.setValue(body);
+    for (const tag of tags) {
+        await this.$tags.setValue(tag);
+        await this.$tags.keys('Enter');
+    };
+
+    await this.$publish.click();
 }
 ```
 
 Reviewing it, we accept a single object as an argument, which has the four required properties we mentioned. Then, we use the `setValue` command three times for our text fields. 
 
-Next, we use the `forEach` function to loop through the tags passed in. If you're unfamiliar with this method, check out [the MDN documentation on `forEach`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach).
+Next, we use a `for ... of` loop to iterate through the tags passed in. If you're unfamiliar with this method, check out [the MDN documentation on it](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in). Note that we don't use a [`forEach`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach) loop, as the asynchronous nature of WebdriverIO makes using such functions a little more complicated than what it's worth.
 
 Inside this loop, we tag the specific tag text we want to use, set the value of the form field to that, then press enter to trigger the tag being formed.
 
 Finally, we end the function by clicking the publish button, which submits the form. 
 
-Combined with our page object, here's how the entire thing looks:
+Combined with the rest of our page object, here's how the entire thing looks:
 
-{title="test/specs/Editor.page.js"}
+{title="test/pageObjects/Editor.page.js"}
 ```js
 const Generic = require('./Generic.page');
 
@@ -207,15 +209,16 @@ class Editor extends Generic {
     get $tags () { return $('[data-qa-id="editor-tags"]'); }
     get $publish () { return $('[data-qa-id="editor-publish"]'); }
 
-    submitArticle({ title, description, body, tags }) {
-        this.$title.setValue(title);
-        this.$description.setValue(description);
-        this.$body.setValue(body);
-        tags.forEach((tag) => {
-            this.$tags.setValue(tag);
-            this.$tags.keys('Enter');
-        });
-        this.$publish.click();
+    async submitArticle({ title, description, body, tags }) {
+        await this.$title.setValue(title);
+        await this.$description.setValue(description);
+        await this.$body.setValue(body);
+        for (const tag of tags) {
+            await this.$tags.setValue(tag);
+            await this.$tags.keys('Enter');
+        };
+
+        await this.$publish.click();
     }
 }
 
@@ -224,9 +227,10 @@ module.exports = Editor;
 
 And to update our test, we'll replace the relevant lines of code with our new function call:
 
+{title="test/specs/editor.js"}
 ```js
-it('should let you publish a new post', function () {
-    editor.submitArticle({
+it('should let you publish a new post', async function () {
+    await editor.submitArticle({
         title: 'Test Title',
         description: 'Test Description',
         body: 'Test Body',
@@ -234,11 +238,11 @@ it('should let you publish a new post', function () {
     });
 
     // expect to be on new article page
-    expect(browser).toHaveUrl('articles/test-title', { containing: true });
+    await expect(browser).toHaveUrl('articles/test-title', { containing: true });
 
     // to avoid making a lot of articles, let's just click the delete button to
     // clean it up. We'll talk about a better way to clean it later on.
-    $('button*=Delete Article').click();
+    await $('button*=Delete Article').click()
 });
 ```
 
@@ -283,7 +287,7 @@ const chance = new Chance();
 Then, in our `editor.submitArticle` function call, update our static strings to Chance function calls:
 
 ```js
-editor.submitArticle({
+await editor.submitArticle({
     title: chance.sentence({ words: 3 }),
     description: chance.sentence({ words: 7 }),
     body: chance.paragraph({ sentences: 4 }),
@@ -303,7 +307,7 @@ const articleDetails = {
     tags: [chance.word(), chance.word()]
 };
 
-editor.submitArticle(articleDetails);
+await editor.submitArticle(articleDetails);
 ```
 
 Then in our URL assertion, reference the `title` property stored in our `articleDetails` object. Except... we need to convert the title to the URL version. Here's what that looks like:
@@ -315,7 +319,7 @@ const slug = articleDetails.title
     .replace(/[^\w-]+/g, '');
 
 // expect to be on new article page
-expect(browser).toHaveUrl(`articles/${slug}`, { containing: true });
+await expect(browser).toHaveUrl(`articles/${slug}`, { containing: true });
 ```
 
 Yuck. Not only do we need to run two `replace` calls, we're also introducing "logic" into our tests, and having to match code functionality between our site and our tests. All things I generally shy away from, as they can quickly introduce bugs into our tests, which is never fun. 
@@ -363,7 +367,7 @@ const article = new Article();
 Then we're going to update our test to reference our new page object, including replacing the URL check with a couple element text checks:
 
 ```js
-it('should let you publish a new post', function () {
+it('should let you publish a new post', async function () {
     const articleDetails = {
         title: chance.sentence({ words: 3 }),
         description: chance.sentence({ words: 7 }),
@@ -371,14 +375,14 @@ it('should let you publish a new post', function () {
         tags: [chance.word(), chance.word()]
     };
 
-    editor.submitArticle(articleDetails);
+    await editor.submitArticle(articleDetails);
 
-    expect(article.$title).toHaveText(articleDetails.title);
-    expect(article.$body).toHaveText(articleDetails.body);
+    await expect(article.$title).toHaveText(articleDetails.title);
+    await expect(article.$body).toHaveText(articleDetails.body);
 
     // to avoid making a lot of articles, let's just click the delete button to
     // clean it up. We'll talk about a better way to clean it later on.
-    article.$delete.click();
+    await article.$delete.click();
 });
 ```
 
@@ -405,7 +409,7 @@ We use `$$` to target all elements that match (not just the first), and we add a
 
 Now we need to extract the text out of the returned elements. We **can't** run `article.$$tags.getText()`, because that function only works on a single element reference. `article.$$tags[0].getText()` would work, since it's a single element, but then we'd only be getting that single bit of information when we really want all of it. 
 
-If you recall, we used the built-in `forEach` array functionality to add our tags to the editor page. In a similar way, we can use the built-in `map` function to pull information out of our array. `map` is very similar to `forEach`. The main difference is that `map` allows you to take the data in the array and return something else from it. 
+Instead, we can use [the built-in array `map` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) to pull information out of our array. `map` is very similar to `forEach`, if you've used that function before. The main difference is that `map` allows you to take the data in the array and return something else from it. 
 
 Let's look at an example using some simple math. Say we have an array of numbers:
 
@@ -444,7 +448,7 @@ With this, `myAwesomeNumbersDoubled` is `[ 6, 8, 14 ]` and `myAwesomeNumbers` st
 Instead of working with numbers, we can work with element references. Using this same technique, let's take our array of `tag` elements, and return the result of calling `getText` on them:
 
 ```js
-const tags = article.$$tags.map($tag => {
+const tags = await article.$$tags.map($tag => {
     return $tag.getText();
 });
 ```
@@ -452,11 +456,13 @@ const tags = article.$$tags.map($tag => {
 Now tags will be an array of whatever text is there (e.g., ['tag1', 'tag2']), which is going to match what we have defined in `articleDetails.tags` and create a handy assertion:
 
 ```js
-const tags = article.$$tags.map($tag => {
+const tags = await article.$$tags.map($tag => {
     return $tag.getText();
 });
 expect(tags).toEqual(articleDetails.tags);
 ```
+
+Note that in this instance, we don't use an `await` for our assertion. The reason we can do this is that `tags` is not a WebdriverIO command, but rather the returned strings from our `map` call.
 
 Since this tags text information is likely to be used in other tests, let's move the mapping function to our `Article` page object. We'll store it as `tags`, but you could use `tagsText` if you prefer to be explicit about its contents. Here's what our fully updated Article looks like:
 
@@ -481,7 +487,21 @@ class Article extends Generic {
 module.exports = Article;
 ```
 
-And here's how the entire Editor test looks with all our changes:
+Note that the `tags` property will be `async` (even though we don't use that in our function definiton). So to get the value of this, we need to use `await` in our call:
+
+```
+const tags = await article.tags;
+expect(tags).toEqual(articleDetails.tags);
+```
+Again, we don't have to use `await` in our assertion, because `tags` is already "awaited".
+
+Alternative, we can skip storing our tags as a constant, and instead just reference the page object directly:
+
+```
+expect(await article.tags).toEqual(articleDetails.tags);
+```
+
+Here's how the entire Editor test looks with all our changes:
 
 {title="test/specs/editor.js"}
 ```js
@@ -501,23 +521,26 @@ const Chance = require('chance');
 const chance = new Chance();
 
 describe('Post Editor', function () {
-    before(function () {
-        auth.load();
-        auth.login(user1);
+    before(async function () {
+        // Load the login page
+        await auth.load();
+        // Login with a valid user
+        await auth.login(user1);
     });
-    beforeEach(function () {
-        editor.load();
+    beforeEach(async function () {
+        // Load the Post Editor page
+        await editor.load();
     });
-    it('should load page properly', function () {
-        expect(browser).toHaveUrl(editor.url.href);
-        expect(editor.$title).toExist();
-        expect(editor.$description).toExist();
-        expect(editor.$body).toExist();
-        expect(editor.$tags).toExist();
-        expect(editor.$publish).toExist();
+    it('should load page properly', async function () {
+        await expect(browser).toHaveUrl(editor.url.href);``
+        await expect(editor.$title).toBeExisting();
+        await expect(editor.$description).toBeExisting();
+        await expect(editor.$body).toBeExisting();
+        await expect(editor.$tags).toBeExisting();
+        await expect(editor.$publish).toBeExisting();
     });
 
-    it('should let you publish a new post', function () {
+    it('should let you publish a new post', async function () {
         const articleDetails = {
             title: chance.sentence({ words: 3 }),
             description: chance.sentence({ words: 7 }),
@@ -525,17 +548,25 @@ describe('Post Editor', function () {
             tags: [chance.word(), chance.word()]
         };
 
-        editor.submitArticle(articleDetails);
+        await editor.submitArticle(articleDetails);
 
-        expect(article.$title).toHaveText(articleDetails.title);
-        expect(article.$body).toHaveText(articleDetails.body);
-        expect(article.tags).toEqual(articleDetails.tags);
+        await expect(article.$title).toHaveText(articleDetails.title);
+        await expect(article.$body).toHaveText(articleDetails.body);
+        expect(await article.tags).toEqual(articleDetails.tags);
 
         // to avoid making a lot of articles, let's just click the delete button to
         // clean it up. We'll talk about a better way to clean it later on.
-        article.$delete.click();
+        await article.$delete.click();
     });
 });
+```
+
+One weird thing with this code is that the `await` statement in the last assertion is in a different spot. This can be a little confusing for people who aren't familiar with the nuances of `await/async`, so you might want to put a comment in there explaing that this is indeed correct.
+
+Alternatively, you could just include an unneeded `await` to (hopefully) avoid confusion:
+
+```
+await expect(await article.tags).toEqual(articleDetails.tags);
 ```
 
 ## 2.6.8 Checking Alerts When Leaving With Unsaved Changes
@@ -559,7 +590,7 @@ Since these two tests are related, we're going to group them under a specific `d
 describe('Post Editor', function () {
     ... other tests and such here ...
     
-    describe('"Unsaved Changes" alerts', function () {
+    describe('"Unsaved Changes" alerts', async function () {
     });
 });
 ```
@@ -583,14 +614,14 @@ Before doing that though, I need to edit one of the fields to trigger the "unsav
 Here's what it looks like now:
 
 ```js
-describe('"Unsaved Changes" alerts', function () {
-    beforeEach(function () {
-        editor.$title.setValue('Unsaved Change');
+describe('"Unsaved Changes" alerts', async function () {
+    beforeEach(async function () {
+        await editor.$title.setValue('Unsaved Change');
     });
 
-    it('should alert you when using browser navigation', function () {
+    it('should alert you when using browser navigation', async function () {
         // try refreshing the page
-        browser.refresh();
+        await browser.refresh();
 
         // validate alert is showing
         // ??
@@ -612,66 +643,74 @@ We can use that error to validate that the alert is shown (if no error is thrown
 There is [a `toThrow` method](https://jestjs.io/docs/en/using-matchers#exceptions) available in ExpectJS that works like this: You call `expect()` and pass in a function to run which may or may not throw an error. You finish your assertion with `toThrow()` or `not.toThrow`, depending on what you expect. When the time comes, ExpectJS (which is what `expect-webdriverio` is built off of) runs this function (handling any thrown errors with grace) and asserts your expected outcome. All in all, it looks like this:
 
 ```js
-expect(() => browser.acceptAlert()).not.toThrow();
+await expect(browser.acceptAlert()).resolves.not.toThrow();
 ```
 
-Remember, we can't do: `expect(browser.acceptAlert()).not.toThrow();` because if `browser.acceptAlert()` did throw an error, it would happen before ExpectJS is ready to handle it. That's why we need to wrap our command in a function.
+One very important part here is the addition of [`resolves`](https://jestjs.io/docs/expect#resolves) to our chain. This is necessary to tell ExpectJS that `browser.acceptAlert` is an asynchronous function and that it should wait for the promise to resolve before moving forward. 
 
 Here's what our entire test looks like:
 
 ```js
 describe('"Unsaved Changes" alerts', function () {
-    beforeEach(function () {
-        editor.$title.setValue('Unsaved Change');
+    beforeEach(async function () {
+        await editor.$title.setValue('Unsaved Change');
     });
 
-    it('should alert you when using browser navigation', function () {
+    it('should alert you when using browser navigation', async function () {
         // try refreshing the page
-        browser.refresh();
+        await browser.refresh();
 
         // validate alert is showing
-        expect(() => browser.acceptAlert()).not.toThrow();
+        await expect(browser.acceptAlert()).resolves.not.toThrow();
     });
 });
 ```
 
-One thing to know about our assertion is that, since we are actually calling the `browser.acceptAlert()` command, it accepts the alert and our `browser.refresh()` command is fully executed. If we were to have called `browser.dismissAlert()` instead, the `refresh` would not have occurred (it would have been rejected), leaving our page in an "unsaved changes" state. This could cause trouble if a follow-on test tried reloading the page (which it does as part of the `before` hook in our parent `describe` block). If you try to navigate via WebdriverIO when an alert is showing, you'll get this error: `unexpected alert open: {Alert text : }`
+There's one thing to know about our assertion: By calling the `browser.acceptAlert()` command in it, the alert dialog is accepted and our `browser.refresh()` command is fully executed.
+
+If we were to have called `browser.dismissAlert()` instead, the `refresh` would not have occurred (it would have been cancelled), leaving our page in an "unsaved changes" state.
+
+This could cause trouble if a follow-on test tried reloading the page (which it does as part of the `before` hook in our parent `describe` block). If you try to navigate via WebdriverIO when an alert is showing, you'll get this error: `unexpected alert open: {Alert text : }`. So just keep that in mind if it comes up during your testing. 
 
 Okay, on to our second test. In it, we're going to click a link ('Home'), then get the alert text (using `getAlertText`) and validate it's correct.
 
-Why didn't we get the alert text in the previous test? Well, to oversimplify, it was a different type of alert, and running `getAlertText` on it would result in a useless empty string. It's a quirk in how this website works. One type of navigation triggers a `confirm` alert to show (which `getAlertText` can return a valid string from), and the other hooks into [BeforeUnloadEvent](https://developer.mozilla.org/en-US/docs/Web/API/BeforeUnloadEvent), which causes a dialog box to appear which cannot be read by `getAlertText`. 
+Why didn't we get the alert text in the test we just wrote? Well, to oversimplify, it was a different type of alert, and running `getAlertText` on it would result in a useless empty string. 
 
-So, we'll trigger our link navigation through a simple click `$('=Home').click();`
+There's a quirk in how this website works in that one type of navigation triggers a `confirm` alert to show (which `getAlertText` can return a valid string from), and the other hooks into [BeforeUnloadEvent](https://developer.mozilla.org/en-US/docs/Web/API/BeforeUnloadEvent), which causes a dialog box to appear that cannot be read by `getAlertText`. 
 
-Then we'll get the alert text: `const alertText = browser.getAlertText();`
+For our new test, we'll trigger our link navigation through a simple click `$('=Home').click();`
+
+Then we'll get the alert text: `const alertText = await browser.getAlertText();`
 
 With that text, we can run our assertion: `expect(alertText).toEqual('Do you really want to leave? You have unsaved changes!');`
+
+Again, we don't need to `await` the assertion because that's already done with our `const` assignment.
 
 And as a final clean-up step, we'll accept the alert: `browser.acceptAlert();`
 
 All together, it looks like:
 
 ```js
-it('should warn you when trying to change URL', function () {
+it('should warn you when trying to change URL', async function () {
     // try going to the homepage
-    $('=Home').click();
+    await $('=Home').click();
 
-    const alertText = browser.getAlertText();
+    const alertText = await browser.getAlertText();
 
     expect(alertText).toEqual(
         'Do you really want to leave? You have unsaved changes!'
     );
 
     // accept the alert to avoid it from preventing further tests from executing
-    browser.acceptAlert();
+    await browser.acceptAlert();
 });
 ```
 
 Handling alerts isn't a common part of testing work in my experience, but it is needed from time to time, so it's good to know about.
 
-One final note: you can't use these commands to enter "basic auth" credentials. To do that, you need to pass in the credentials via your `browser.url` call:
+One final note: you can't use these `alert` commands to enter "basic auth" credentials. To do that, you need to pass in the credentials via your `browser.url` call:
 
-`browser.url('http://username:password@example.com/');`.
+`await browser.url('http://username:password@example.com/');`
 
 ## 2.6.9 A Not-So-Random Chance
 
@@ -751,8 +790,8 @@ It turns out [there's a `global` object in NodeJS](https://nodejs.org/api/global
 In this case, we'll set `global.chance` to our seeded Chance instance:
 
 ```js
-before: function (capabilities, specs) {
-    // browser.throttle({
+before: async function (capabilities, specs) {
+    // await browser.throttle({
     //     latency: 1000,
     //     offline: false,
     //     downloadThroughput: 1000000,

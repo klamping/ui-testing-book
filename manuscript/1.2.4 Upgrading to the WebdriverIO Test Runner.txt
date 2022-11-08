@@ -1,4 +1,4 @@
-## 1.2.4 Upgrading to the WDIO Test Runner
+## 1.2.4 Upgrading to the WebdriverIO Test Runner
 
 There are a plethora of test automation tutorials out there. Many of them cover the basics of installing and running a specific tool, but lack the depth to teach you how to test on a larger scale. 
 
@@ -31,7 +31,7 @@ It also simplifies a lot of the complexity introduced when trying to solve the p
 
 Here are some other benefits of the test runner:
 
-- **Implicit async/await usage**: WebDriver commands are 'asynchronous' by nature. Your code needs a way to handle that. In JavaScript, you do that with the `async` & `await` keywords. Unfortunately, that concept can be a bit complex to understand. But if you aren't familiar with the terms `async` & `await`, that's perfectly fine, the test runner allows you to not worry about it. This lowers the barrier to entry in writing your first real test (it's one less thing to learn). And we will cover what async/await means at a later point in time.
+- **Configuration Files for Managing Setups**: There are many different ways you can run your tests. You can set up various browsers, services, reporters and configure dozens of options. The Test Runner uses a standard configuration file format, which we'll look at in the next chapter, to allow you change how your tests run depending on your specific needs. 
 - **Extra hooks**: Hooks allow you to run code during specific parts of your test flow. Fourteen separate hooks let you integrate code into different parts of your test run, giving you full control on how things execute.
 - **Parallel test runs**: UI tests can certainly be slow. By running your tests in parallel (i.e., multiple tests at one time), you're able to reduce the time needed to run your test suite. The test runner takes care of the details. 
 - **Suites**: Chances are, on a site large enough, you're going to have multiple groups of functionality to test. With suites, you're able to divide sections of your test suite and run them individually. This is especially useful when debugging or developing new tests.
@@ -64,7 +64,7 @@ We install this interface using NPM:
 npm install @wdio/cli@7.7.3
 ```
 
-_Note: Recall from before, we include the version number so that the version you install is compatible with the examples in this book. We use a very specific version here due to an incompatibility with the examples in this book. An update to the books example is being worked on._
+_Note: Recall from before, we include the `@7.7.3` version number so that the version you install is compatible with the examples in this book._
 
 All the official WebdriverIO packages are namespaced under the `@wdio` scope. This makes it easier to distinguish between officially supported packages and third-party work contributed by the WebdriverIO community (the `webdriver` and `webdriverio` packages are officially supported, even though they don't use the `@wdio` namespace). 
 
@@ -78,7 +78,7 @@ Having installed the tool, you now have access to the `wdio` command in your ter
 - Run test suites using said configuration files
 - Run commands through a REPL, which is an interactive terminal utility for running one-off WebdriverIO commands
 
-We'll take a look at the third option later, but for now, let's check out the first two.
+We'll won't be getting to the third option, but let's check out the first two now.
 
 ### Setting Up Our Configuration
 
@@ -88,6 +88,7 @@ In our original example, we defined a few options when initializing our Webdrive
 const browser = await remote({
     // port: 9515, // used for chromedriver
     // path: '/wd/hub', // used for selenium standalone
+    logLevel: 'trace',
     capabilities: {
         browserName: 'chrome'
     }
@@ -102,6 +103,7 @@ Well, the test runner figures you'd probably want to go the route of sharing the
 exports.config = {
     // port: 9515, // used for chromedriver
     // path: '/wd/hub', // used for selenium standalone
+    logLevel: 'trace',
     capabilities: {
         browserName: 'chrome'
     }
@@ -112,7 +114,7 @@ The main difference from before is the `exports.config` part. That gives us the 
 
 One thing missing from the previous code sample is that there are a lot more options in the `wdio.conf.js` file. The test runner provides support for many different utilities (e.g., custom reporters and services), so the file is usually over 200 lines long. That's a lot of options to set!
 
-To help you with this, a configuration utility was provided through the CLI interface. This utility is run either when you specifically ask for it using `wdio config`, or if you try to run the `wdio` command and it can't find an existing configuration file.
+To help you with this, a configuration utility is provided through the CLIs. This utility is run either when you specifically ask for it using `wdio config`, or if you try to run the `wdio` command and it can't find an existing configuration file.
 
 That's enough talk, let's give it a shot.
 
@@ -132,21 +134,21 @@ Either way works, and they both do basically the same thing. Personally, I prefe
 
 If you haven't done so already, run either of those two commands we just looked at.
 
-Even though we're not passing in the `config` flag to that command (although you certain can), it will notice that we don't have a `wdio.conf.js` file available and ask to start the config utility for us (`? Error: Could not execute "run" due to missing configuration. Would you like to create one? (y/N)`). 
+Even though we're not passing in the `config` flag to that command (although you certainly can), it will notice that we don't have a `wdio.conf.js` file available and ask to start the config utility for us (`? Error: Could not execute "run" due to missing configuration. Would you like to create one? (y/N)`). 
 
 Enter `y` and press enter, and you should see a screen like this:
 
-![Terminal Output from running `npx wdio` command with no config file available](images/EC7A419A118391E3528E0065E194DE37.jpg)
+![Terminal Output from running `npx wdio` command with no config file available](images/EC7A419A118391E3528E0065E194DE37.jp)
 
 This configuration utility will ask you a series of questions in regards to how you want to run your tests. 
 
 ### Stepping Through the Configuration Utility
 
-_Important: This section was written using the latest version of the configuration utility. However, this utility is regularily updated and the questions asked are frequently changed/improved based on feedback. This means that what's written next may not match exactly what you see. I'll try and keep this section up-to-date, but expect to see some difference._
+_Important: This section was written using the latest version of the configuration utility. However, this utility is regularly updated and the questions asked are frequently changed and improved based on feedback. This means that what's written next may not match exactly what you see. I'll try and keep this section up-to-date, but expect to see some differences._
 
 The first question the utility asks us is `Where is your automation backend located?`. 'Automation Backend' refers to the computer that hosts either your Chrome DevTools-capable browser, or your WebDriver server.
 
-There are many instances where you'd want to customize this, but for us, we're going to be running it locally using Chrome DevTools, so we'll stick with the first choice and hit 'enter' on `❯ On my local machine`.
+There are many instances where you'd want to customize this, but for us, we're going to be running everything locally, so we'll stick with the first choice and hit 'enter' on `On my local machine`.
 
 Next up, it asks `Which framework do you want to use?`. We have three options: Mocha, Jasmine and Cucumber. All are popular JavaScript test frameworks that have been around for years, but why do we need a test framework? Isn't that the role of WebdriverIO?
 
@@ -161,47 +163,9 @@ While the Jasmine framework is more than capable of meeting our needs, all the e
 
 With that said, hit that `enter` button again to choose Mocha.
 
-You should now be prompted with the question `Do you want to run WebdriverIO commands synchronous or asynchronous?` with the choices `sync` and `async`.
+Next, it asks "Are you using a compiler?". Compilers are useful utilities for improved code support, but are more complicated than I want to get into. We're going to stick with the default emphatic answer of `No!`.
 
-If you recall in our first test script, there were `async` and `await` keywords scattered throughout the file:
-
-```js
-(async () => {
-    const browser = await remote(...);
-
-    await browser.url('https://webdriver.io');
-
-    const title = await browser.getTitle();
-
-    await browser.deleteSession();
-})().catch((e) => console.error(e));
-```
-
-I also mentioned `async/await` earlier in this chapter. Why is this all needed?
-
-When commands are issued to an automation server, they don't happen immediately. There is a variable amount of time between sending the command and the browser actually running it. Usually it only takes a few milliseconds, but in some cases it can take a second or two.
-
-What this means for our script is that we need to wait for that command to finish before moving on to the next step. That's done through these `await` keywords (`async` is needed to tell Node.js that we'll be using these keywords.)
-
-While helpful, they clutter up the code of our test. Wouldn't it be nicer if we didn't have to type all that out, so that it looked more like this:
-
-```js
-const browser = remote(...);
-
-browser.url('https://webdriver.io');
-
-const title = browser.getTitle();
-
-browser.deleteSession();
-```
-
-That's a lot cleaner and easier to scan. Well, that's a feature the test runner gives you. It modifies the code you're running to automatically include those `await` statements, without having to do the work yourself.
-
-Going back to our options, if you wanted to, you could stick with the `async` style of writing all your `await` keywords yourself. But I'm lazy, so I'll take any chance I can to do less work. 
-
-I'm going to assume you're like me and want to go with WebdriverIO handling the `async/await` nature of our tests (although you probably have better reasons than "I'm lazy"). To do that, choose `sync` as your option and hit `enter`. We'll still have a way to run custom `async` commands, but for now, we've enabled a much simpler way to write our tests.
-
-Next, it asks `Where are your test specs located? (./test/specs/**/*.js)`. 
+The following question is: `Where are your test specs located? (./test/specs/**/*.js)`. 
 
 By default, they mark the location as the `test/specs` folder. However, you can change this, if you prefer. We haven't created the folders yet, but will in a second, so go with the default by pressing `enter`. Again, you can customize this if you prefer, but the examples in the book assume you used this default path. 
 
@@ -213,19 +177,17 @@ The `*` portion in `*.js` matches any file that ends with a `.js` extension. So 
 
 Okay, back to the questions. After that test file location, it asks `Do you want WebdriverIO to autogenerate some test files? (Y/n)`. We're going to say no here, as I'll be walking you through everything from scratch.
 
-After entering `n` for no and hitting enter, it asks "Are you using a compiler?". Compilers are useful utilities for improved code support, but are more complicated than I want to get into. We're going to stick with the default emphatic answer of `No!`.
-
-Next it asks "Which reporter do you want to use?". Here we can make multiple choices. 
+After entering `n` for no and hitting enter, it asks "Which reporter do you want to use?". Here we can make multiple selections. 
 
 Reporters are utilities that display the results of our tests in a more consumable format. Some print directly to the terminal and others display as websites you visit. Most of the reporters in this list are intended for advanced usage. The two you'd be interested in right now are `dot` and `spec`.
 
-`dot` is the simpler of the two, printing out either red or green dots depending on whether the test passed for failed (I'll let you guess which color means what).
+`dot` is the simpler of the two, printing out either red or green dots depending on whether the test passed or failed (I'll let you guess which color means what).
 
 `spec` will print out the name of the test in a hierarchical fashion, giving you a lot more information on how the test ran.
 
 Here are the two reporters showing the results of the same test run:
 
-![Terminal Output showing pass/failure reporting in 'dot' and 'spec' reporters](images/E956A797BD9DA8B8CDE6C713F82CF473.jpg)
+![Terminal Output showing pass/failure reporting in 'dot' and 'spec' reporters](images/E956A797BD9DA8B8CDE6C713F82CF473.jp)
 
 On top is `dot`, which is quite succinct. `spec` is much more verbose, giving us more detail into which specific test failed.
 
@@ -241,9 +203,9 @@ I'm going to choose ChromeDriver, since it's a little bit faster than using Sele
 
 An important note here. You shouldn't use both services at the same time. While you technically can, since they both provide the same functionality (running a WebDriver server), it doesn't make sense to have them both running. 
 
-Another important note: You can shut down a ChromeDriver or Selenium Standalone instance running in your terminal from the previous chapter. Now that we have our service set up, it will take care of starting/stopping that for us.
+Another important note: If you have a ChromeDriver and Selenium Standalone instance running in your terminal from the previous chapter, you should shut that down. Now that we have our service set up, it will take care of starting/stopping that for us.
 
-To finish off, the last question asks what `baseUrl` we want. By setting this value, we can shorten our `browser.url` calls. We'll talk about it soon, but for now just type `https://webdriver.io` and hit `enter`. 
+To finish off, the last question asks what `baseUrl` we want. By setting this value, we can shorten our `browser.url` calls. We'll dive into more details on this later, but for now, you can leave it as the default and hit `enter`.
 
 That completes the list of questions. Now WebdriverIO takes over and runs the NPM installs for the packages we requested, along with building out our configuration file.
 

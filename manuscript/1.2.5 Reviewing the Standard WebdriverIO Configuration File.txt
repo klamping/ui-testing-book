@@ -14,7 +14,9 @@ console.log('I am inside your configuration file, running your tests!')
 exports.config = { // rest of the file would be below
 ```
 
-There are some added benefits to being able to run Node.js code. One common usage is to customize your WebdriverIO configuration based on environmental variables. Alternatively, you can handle that through custom command line arguments. This is a pretty in-depth topic though, so we'll leave that alone for now. 
+We'll see this logged out when we run our tests in the next chapter.
+
+There are some added benefits to being able to run Node.js code. One common usage is to customize your WebdriverIO configuration based on environment variables. Alternatively, you can handle that through custom command line arguments. This is a pretty in-depth topic though, so we'll leave that alone for now. 
 
 Let's check out all the settings defined in our file. There are actually several more options here than just what we answered during our config step and it's good to know what those are.
 
@@ -22,12 +24,13 @@ Let's check out all the settings defined in our file. There are actually several
 #### Runner
 
 ```js
+//
 // ====================
 // Runner Configuration
 // ====================
 //
-// WebdriverIO allows it to run your tests in arbitrary locations (e.g., locally
-// or on a remote machine).
+// WebdriverIO allows it to run your tests in arbitrary locations (e.g. locally or
+// on a remote machine).
 runner: 'local',
 ```
 
@@ -84,7 +87,13 @@ If you set `maxInstances` to 3, WebdriverIO will start three separate sessions t
 
 If you set `maxInstances` to 5, all five files would run at the same time, taking a total of one minute for all your tests to run. 
 
-A word of warning: While running tests in parallel can certainly save time, it also requires you to have a powerful computer to process all the commands. If you find your CPU is maxing out when running all your tests, consider lowering this number to reduce the strain on your processor. Maxing out your CPU can definitely lead to failures in your test runner as the computer isn't able to keep up with all the requests.
+There are a few reasons why you wouldn't want to set this value too high. First, while running tests in parallel can certainly save time, it also requires you to have a powerful computer to process all the commands. If you find your CPU is maxing out when running all your tests, consider lowering this number to reduce the strain on your processor. Maxing out your CPU can definitely lead to failures in your test runner as the computer isn't able to keep up with all the requests.
+
+Secondly, if you're using a cloud Selenium service like Sauce Labs, many of their plans have a hard limit on the number of parallel sessions allowed at once. Ensure that your `maxInstances` value does not exceed this.
+
+Third, debugging is significantly more difficult when several processes spawn dozens of tests in multiple browsers. It's very helpful to limit parallelism by setting `maxInstances` to 1, and targeting only those specs and browsers that need to be debugged.
+
+Finally, sometimes your tests modify data that's used by other tests. For example, if you create, edit or delete a bit of information that's also used by another test, you could create an intermittent bug where your test doesn't have the correct data because it was being changed by another test at the same time. Overall, this is a 'test smell', and indicates a deeper issue with the way those tests are written. We'll talk about solutions to this problem later on.
 
 #### Capabilities
 
@@ -127,7 +136,9 @@ Note that within your capabilities you can overwrite the `spec`, `exclude`, and 
 logLevel: 'info',
 ```
 
-Next in our settings file is the test configurations section. These levels correspond to common log levels in code output, and the higher up the list you choose (trace being highest), the more log output you'll get. This can be helpful for debugging later on. `silent`, on the other hand, doesn't log anything when running tests, and can be useful for avoiding a lot of noise in your test run.
+Next in our settings file is the test configurations section. This section includes all WebdriverIO specific settings.
+
+The first such option is `logLevel`. This 'level' corresponds to common log levels in code output, and the higher up the list you choose (trace being highest), the more log output you'll get. This can be helpful for debugging later on. `silent`, on the other hand, doesn't log anything when running tests, and can be useful for avoiding a lot of noise in your test run.
 
 It defaults to `info`, which is a good mix between the two ends of the spectrum. Feel free to change this as you see fit.
 
@@ -139,7 +150,7 @@ It defaults to `info`, which is a good mix between the two ends of the spectrum.
 bail: 0,
 ```
 
-The `bail` setting can be useful if you only want to run your tests until a specific amount of tests have failed use. This can help save time when debugging tests.
+The `bail` setting can be useful if you want to stop your test run if a specific amount of tests have failed. This can help save time when debugging tests.
 
 #### Base URL
 
@@ -151,7 +162,7 @@ The `bail` setting can be useful if you only want to run your tests until a spec
 baseUrl: 'http://localhost',
 ```
 
-We've already talked about `baseUrl`, so we'll jump past that setting as well.
+We've already talked about `baseUrl`, so we'll jump past that setting.
 
 #### "waitFor" Timeout
 
@@ -190,7 +201,7 @@ Here's an array of services we have chosen to run when using the test runner. Th
 Do note that not all services work together. For example, you wouldn't want to have the following services array:
 
 ```js
-services: ['selenium-standalone', 'chromedriver', 'sauce'],
+services: ['chromedriver', 'selenium-standalone', 'sauce'],
 ```
 
 All three of those services do the same thing: host a WebDriver server for you to run your tests against. By having all three services set, they'd have conflicts when starting up. Instead, you'd just choose one and go with it. 

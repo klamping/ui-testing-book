@@ -181,7 +181,7 @@ LoginPage.login('testuser', 'hunter2');
 
 No reference to specific selectors. No knowledge of URLs. Just self-documenting steps that read out more like instructions than code.
 
-Now, Page Objects aren't a new idea that WebdriverIO introduced. But they way they've set it up to use plain JavaScript objects is brilliant. There is no external library or custom domain language to understand. It's just JavaScript and a little bit of prototypical inheritance. (We'll definitely cover Page Objects in more detail later in this book.) 
+Now, Page Objects aren't a new idea that WebdriverIO introduced. But the way they've set it up to use plain JavaScript objects is brilliant. There is no external library or custom domain language to understand. It's just JavaScript and a little bit of prototypical inheritance. (We'll definitely cover Page Objects in more detail later in this book.) 
 
 ### Summing It Up
 

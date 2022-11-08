@@ -31,7 +31,7 @@ const Auth = require('../pageObjects/Auth.page');
 const auth = new Auth();
 
 describe('Post Editor', function () {
-    it('should load page properly', function () {
+    it('should load page properly', async function () {
         // Load the login page
         // Login with a valid user
         // Load the Post Editor page
@@ -44,11 +44,11 @@ describe('Post Editor', function () {
 This structure is very similar to what we've seen with our Login page, which means that it's a good thing we've made our Auth page object available for reuse. Let's take advantage of it by adding the login code to our test:
 
 ```js
-it('should load page properly', function () {
+it('should load page properly', async function () {
     // Load the login page
-    browser.url('./login');
+    await browser.url('./login');
     // Login with a valid user
-    auth.login('demo@learnwebdriverio.com', 'wdiodemo');
+    await auth.login('demo@learnwebdriverio.com', 'wdiodemo');
     // Load the Post Editor page
     // Assert the URL is correct
     // Assert the page fields are correct
@@ -63,13 +63,13 @@ Using the same code as our login page, we can add in a `before` hook that will l
 
 ```js
 describe('Post Editor', function () {
-    before(function () {
+    before(async function () {
         // Load the login page
-        browser.url('./login');
+        await browser.url('./login');
         // Login with a valid user
-        auth.login('demo@learnwebdriverio.com', 'wdiodemo');
+        await auth.login('demo@learnwebdriverio.com', 'wdiodemo');
     });
-    it('should load page properly', function () {
+    it('should load page properly', async function () {
         // Load the Post Editor page
         // Assert the URL is correct
         // Assert the page fields are correct
@@ -83,15 +83,15 @@ Here's what the code looks like with both a `before` and a `beforeEach` hook:
 
 ```js
 describe('Post Editor', function () {
-    before(function () {
+    before(async function () {
         // Load the login page
-        browser.url('./login');
+        await browser.url('./login');
         // Login with a valid user
-        auth.login('demo@learnwebdriverio.com', 'wdiodemo');
+        await auth.login('demo@learnwebdriverio.com', 'wdiodemo');
     });
-    beforeEach(function () {
+    beforeEach(async function () {
         // Load the Post Editor page
-        browser.url('./editor');
+        await browser.url('./editor');
     });
     it('should load page properly', function () {
         // Assert the URL is correct
@@ -154,20 +154,23 @@ const auth = new Auth();
 const editor = new Editor();
 
 describe('Post Editor', function () {
-    before(function () {
-        browser.url('./login');
-        auth.login('demo@learnwebdriverio.com', 'wdiodemo');
+    before(async function () {
+        // Load the login page
+        await browser.url('./login');
+        // Login with a valid user
+        await auth.login('demo@learnwebdriverio.com', 'wdiodemo');
     });
-    beforeEach(function () {
-        browser.url('./editor');
+    beforeEach(async function () {
+        // Load the Post Editor page
+        await browser.url('./editor');
     });
-    it('should load page properly', function () {
-        expect(browser).toHaveUrl('editor', { containing: true });
-        expect(editor.$title).toBeExisting();
-        expect(editor.$description).toBeExisting();
-        expect(editor.$body).toBeExisting();
-        expect(editor.$tags).toBeExisting();
-        expect(editor.$publish).toBeExisting();
+    it('should load page properly', async function () {
+        await expect(browser).toHaveUrl('editor', { containing: true });
+        await expect(editor.$title).toBeExisting();
+        await expect(editor.$description).toBeExisting();
+        await expect(editor.$body).toBeExisting();
+        await expect(editor.$tags).toBeExisting();
+        await expect(editor.$publish).toBeExisting();
     });
 });
 ```
@@ -228,6 +231,7 @@ To use our `user1` constant, we update our `auth.login` code to pass in the prop
 
 Here's what the fully updated file looks like:
 
+{title="test/specs/editor.js"}
 ```js
 const Auth = require('../pageObjects/Auth.page');
 const Editor = require('../pageObjects/Editor.page');
@@ -237,20 +241,23 @@ const auth = new Auth();
 const editor = new Editor();
 
 describe('Post Editor', function () {
-    before(function () {
-        browser.url('./login');
-        auth.login(user1.email, user1.password);
+    before(async function () {
+        // Load the login page
+        await browser.url('./login');
+        // Login with a valid user
+        await auth.login(user1.email, user1.password);
     });
-    beforeEach(function () {
-        browser.url('./editor');
+    beforeEach(async function () {
+        // Load the Post Editor page
+        await browser.url('./editor');
     });
-    it('should load page properly', function () {
-        expect(browser).toHaveUrl('editor', { containing: true });
-        expect(editor.$title).toBeExisting();
-        expect(editor.$description).toBeExisting();
-        expect(editor.$body).toBeExisting();
-        expect(editor.$tags).toBeExisting();
-        expect(editor.$publish).toBeExisting();
+    it('should load page properly', async function () {
+        await expect(browser).toHaveUrl('editor', { containing: true });
+        await expect(editor.$title).toBeExisting();
+        await expect(editor.$description).toBeExisting();
+        await expect(editor.$body).toBeExisting();
+        await expect(editor.$tags).toBeExisting();
+        await expect(editor.$publish).toBeExisting();
     });
 });
 ```
@@ -274,7 +281,7 @@ It's all one big trade-off.
 For the sake of my argument though, let's switch to passing in an object, in an effort to save effort down the road. First, we need to update our function call to pass in the object, instead of the parts. That's a simple change, as we just delete half the function call:
 
 ```js
-auth.login(user1);
+await auth.login(user1);
 ```
 
 This is the big payoff of this approach. It's a much more concise login call.
@@ -282,7 +289,7 @@ This is the big payoff of this approach. It's a much more concise login call.
 Now for the slightly more complicated part. In our `Auth.page.js` file, we need to update our `login` function to accept an object with two properties. It used to be trickier, but with 'named parameters', we can do a little trick that looks like:
 
 ```js
-login ({ email, password} ) {
+async login ({ email, password} ) {
 ```
 
 All we did was add curly braces around what are now our property names. If you're looking for more information on how this works, [Wes Bos has a video on how these "Named Parameters" work](https://www.youtube.com/watch?v=c2PGgkCIjEA). This trick can be helpful in your day-to-day coding, so I think it's well worth knowing.
@@ -293,39 +300,43 @@ Since we need to pass in missing details, sending over the full object won't wor
 
 For the first test in the `login.js` file, we can switch over to using the `user1` like we've done in our `editor.js` file. For the other two, we need to define a new object to pass over, using the relevant `user1` property, plus a blank property:
 
+{title="test/specs/login.js"}
 ```js
 const Auth = require('../pageObjects/Auth.page');
 const { user1 } = require('../fixtures/users');
 
 const auth = new Auth();
 
-describe('Login Form', function () {
-    beforeEach(function () {
-        browser.url('./login');
+describe('Login Page', function () {
+    beforeEach(async function () {
+        // go to the login page
+        await browser.url('./login');
     });
 
-    it('should let you log in', function () {
-        auth.login(user1);
+    it('should let you log in', async function () {
+        await auth.login(user1);
 
-        expect(auth.$errorMessages).not.toBeExisting();
+        await expect(auth.$errorMessages).not.toBeExisting();
     });
 
-    it('should error with a missing username', function () {
-        auth.login({
+    it('should error with a missing username', async function () {
+        await auth.login({
             email: '',
             password: user1.password
         });
 
-        expect(auth.$errorMessages).toHaveText(`email can't be blank`);
+        // assert that error message is showing
+        await expect(auth.$errorMessages).toHaveText(`email can't be blank`);
     });
 
-    it('should error with a missing password', function () {
-        auth.login({
+    it('should error with a missing password', async function () {
+        await auth.login({
             email: user1.email,
             password: ''
         });
 
-        expect(auth.$errorMessages).toHaveText(`password can't be blank`);
+        // assert that error message is showing
+        await expect(auth.$errorMessages).toHaveText(`password can't be blank`);
     });
 });
 ```
@@ -340,18 +351,26 @@ For one, we're repeating the `browser.url('./login')` command in both our login 
 
 Just like we added element selector information to our page object, we can also add the page URL to it. But we won't do it through a 'getter'; instead we'll create a `load` function that we'll call to run our `browser.url` command:
 
+{title="test/pageObjects/Auth.js"}
 ```js
-class Login {
-    load() {
-        browser.url('./login');
+class Auth {
+    // ... other code here ...
+    
+    async load () {
+        await browser.url('./login');
     }
+    
+    // ... other code here ...
 }
+
+
 ```
 
+{title="test/specs/editor.js"}
 ```js
-before(function () {
-    auth.load();
-    auth.login(user1);
+before(async function () {
+    await auth.load();
+    await auth.login(user1);
 });
 ```
 
@@ -359,19 +378,25 @@ Now, we could call that `load` function from inside our login function, and I'm 
 
 We can do the same thing for our Editor page object:
 
+{title="test/pageObjects/Editor.page.js"}
 ```js
 class Editor {
-    load() {
-        browser.url('./editor');
+    // ... other code here ...
+    
+    async load () {
+        await browser.url('./editor');
     }
+    
+    // ... other code here ...
 }
 ```
 
 And in the `beforeEach` hook of our `editor.js` file:
 
+{title="test/specs/editor.js"}
 ```js
-beforeEach(function () {
-    editor.load();
+beforeEach(async function () {
+    await editor.load();
 });
 ```
 
@@ -389,10 +414,11 @@ As I mentioned, it would be nice to avoid redefining that `load` function across
 
 In our `Generic` class, we'll define a `load` function, similar to the one we defined in our `Login` and `Editor` objects:
 
+{title="test/pageObjects/Generic.js"}
 ```js
 class Generic {
-    load() {
-        browser.url(???);
+    async load() {
+        await browser.url(???);
     }
 }
 
@@ -433,18 +459,25 @@ const genericPage = new Generic('./login');
 
 This path value can be stored to the class's `this` value and then used in the `load` function (similar to how we access element references):
 
+{title="test/pageObjects/Generic.js"}
 ```js
 class Generic {
     constructor(path) {
         this.path = path;
     }
 
-    load() {
-        browser.url(this.path); // navigates to './login', which is passed in below
+    async load () {
+        await browser.url(this.path); // navigates to './login', which is passed in below
     }
 }
 
-const genericPage = new Generic('./login');
+module.exports = Generic;
+```
+
+Usage: 
+
+```
+const loginPage = new Generic('./login');
 ```
 
 ## 2.5.7 Time to 'extend' Our Generic Page
@@ -459,8 +492,8 @@ class Generic {
         this.path = path;
     }
 
-    load() {
-        browser.url(this.path); // navigates to './login', which is passed in below
+    async load () {
+        await browser.url(this.path); // navigates to './login', which is passed in below
     }
 }
 
@@ -474,8 +507,8 @@ const auth = new Auth('./login');
 Now our Auth class has that `load` function built in, so our `beforeEach` hook now looks like:
 
 ```js
-beforeEach(function () {
-    auth.load();
+beforeEach(async function () {
+    await auth.load();
 });
 ```
 
@@ -533,13 +566,14 @@ We've gone through a lot of theory and have reworked the code several times. Let
 
 The contents of that file will be:
 
+{title="test/pageObjects/Generic.page.js"}
 ```js
 class Generic {
-    constructor(path) {
+    constructor (path) {
         this.path = path;
     }
-    load() {
-        browser.url(this.path);
+    async load () {
+        await browser.url(this.path);
     }
 }
 
@@ -548,36 +582,35 @@ module.exports = Generic;
 
 Next up, we need to update our Auth and Editor files to import the Generic page object and extend it:
 
+{title="test/pageObjects/Auth.page.js"}
 ```js
 const Generic = require('./Generic.page');
 
 class Auth extends Generic {
     constructor() {
-        super('./login')
+        super('./login');
     }
-    
+
     get $email () { return $('input[type="email"]'); }
     get $password () { return $('input[type="password"]'); }
     get $signIn () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    login({ email, password }) {
-        this.$email.setValue(email);
-        this.$password.setValue(password);
+    async login ({ email, password }) {
+        await this.$email.setValue(email);
+        await this.$password.setValue(password);
 
-        this.$signIn.click();
+        await this.$signIn.click();
 
-        // wait until either the sign in button is gone or an error has appeared
-        browser.waitUntil(
-            () => {
-                const signInExists = this.$signIn.isExisting();
-                const errorExists = this.$errorMessages.isExisting();
+        await browser.waitUntil(
+            async () => {
+                const signInExists = await this.$signIn.isExisting();
+                const errorExists = await this.$errorMessages.isExisting();
 
                 return !signInExists || errorExists;
             },
             {
-                timoutMsg:
-                    'The "Sign in" button still exists and an error never appeared'
+                timoutMsg: 'The "Sign in" button still exists and an error never appeared'
             }
         );
     }
@@ -586,6 +619,7 @@ class Auth extends Generic {
 module.exports = Auth;
 ```
 
+{title="test/pageObjects/Editor.page.js"}
 ```js
 const Generic = require('./Generic.page');
 
@@ -606,12 +640,14 @@ module.exports = Editor;
 
 With those adjustments made, we can run our tests again, which now use `auth.load()` and `editor.load()`, and validate they all pass with flying colors. 
 
+Note that we removed the `load` function from both page objects, as that's now handled by the Generic class.
+
 ## 2.5.10 Using Our Page Object's Path in Tests
 
 If you had a close eye on the editor test, you may have noticed this line:
 
 ```js
-expect(browser).toHaveUrl('editor', { containing: true });
+await expect(browser).toHaveUrl('editor', { containing: true });
 ```
 
 If we've defined that path value in our `Editor` page object, why aren't we using it in our tests? Let's get to fixing that!
@@ -619,7 +655,7 @@ If we've defined that path value in our `Editor` page object, why aren't we usin
 Similar to how we can access element references in our tests (e.g., `editor.$title`), we can also access properties defined to the `this` value. That means we can access that `path` property via `editor.path`. So we could update our test to be:
 
 ```js
-expect(browser).toHaveUrl(editor.path, { containing: true });
+await expect(browser).toHaveUrl(editor.path, { containing: true });
 ```
 
 But there's a problem with that. If we were to run the test, it would fail with the error message: `expected 'http://localhost:8080/editor' to include './editor'`
@@ -681,6 +717,7 @@ To get the `baseUrl` from inside our page object, we can reference `browser.conf
 
 Pulling this all together, our Generic page object now looks like:
 
+{title="test/pageObjects/Generic.page.js"}
 ```js
 const { URL } = require('url');
 
@@ -692,8 +729,8 @@ class Generic {
         // using the NodeJS URL utility
         this.url = new URL(path, browser.config.baseUrl);
     }
-    load() {
-        browser.url(this.path);
+    async load () {
+        await browser.url(this.path);
     }
 }
 
@@ -720,27 +757,32 @@ const auth = new Auth();
 const editor = new Editor();
 
 describe('Post Editor', function () {
-    before(function () {
-        auth.load();
-        auth.login(user1);
+    before(async function () {
+        // Load the login page
+        await auth.load();
+        // Login with a valid user
+        await auth.login(user1);
     });
-    beforeEach(function () {
-        editor.load();
+    beforeEach(async function () {
+        // Load the Post Editor page
+        await editor.load();
     });
-    it('should load page properly', function () {
-        expect(browser).toHaveUrl(editor.url.href);
-        expect(editor.$title).toBeExisting();
-        expect(editor.$description).toBeExisting();
-        expect(editor.$body).toBeExisting();
-        expect(editor.$tags).toBeExisting();
-        expect(editor.$publish).toBeExisting();
+    it('should load page properly', async function () {
+        await expect(browser).toHaveUrl(editor.url.href);``
+        await expect(editor.$title).toBeExisting();
+        await expect(editor.$description).toBeExisting();
+        await expect(editor.$body).toBeExisting();
+        await expect(editor.$tags).toBeExisting();
+        await expect(editor.$publish).toBeExisting();
     });
 });
 ```
 
 Well, that sure was a lot to go through for a simple test. It's worth it though. By extending more generic classes, we can continue to grow our automation test suite without running into issues with code duplication, which can create maintenance nightmares in the long run.
 
-One final note: you can have JavaScript classes that extend classes that extend classes. Right now, we have a Generic class, but we could also have a SlightlyLessGeneric class that's extended by specific page types. We'll take a look at that in a few chapters. Next up: learning how to test complex inputs.
+One final note: you can have JavaScript classes that extend classes that extend classes. Right now, we have a Generic class, but we could also have a SlightlyLessGeneric class that's extended by specific page types. We'll take a look at that in a few chapters.
+
+Next up: learning how to test complex inputs.
 
 ## 2.5.13 Chapter Challenge
 

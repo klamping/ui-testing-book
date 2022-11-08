@@ -23,7 +23,7 @@ In this chapter, we're going to look at Option C, which has involves creating co
 
 When an article is created, a user can add 'tags' to that article to mark it as a specific type of post. Then, later on, a user can limit their feed results by a specific tag. That's the page we're going to be testing now. 
 
-![Example 'WebdriverIO' Tag page](images/22ACB8AF3534C2579BDFCF04FE17088A.jpg)
+![Example 'WebdriverIO' Tag page](images/22ACB8AF3534C2579BDFCF04FE17088A.jp)
 
 To represent this page in our code, let's create a new "tag" page. If you look at this page, you'll notice that it's almost exactly the same as the homepage, just with an extra tab for the specific tag. What we can do is, instead of duplicating the Home page object, just extend off of it. 
 

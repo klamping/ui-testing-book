@@ -50,7 +50,7 @@ MochaJS provides a feature called "hooks" that allow you to run custom test code
 
 As you can see, `beforeEach` and `afterEach` run multiple times based on the number of tests written. `before` and `after` only run at the start/end of the test suite.
 
-Okay, enough explanation, let's see this in action. In our first test, we load the login page by running `browser.url('./login');`. This is the code we're going to move to our hook.
+Okay, enough explanation, let's see this in action. In our first test, we load the login page by running `await browser.url('./login');`. This is the code we're going to move to our hook.
 
 Should we use a `before` or `beforeEach` hook though? That's a good question to ask, because there are benefits/drawbacks to each. The benefit to using a `beforeEach` hook is that we can be sure our page is "fresh" for our test. Changes made in a previous test won't impact this one (mostly... sometimes this isn't true). 
 
@@ -63,21 +63,33 @@ With that, let's move our step over. This is what the code looks like:
 {title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
-    beforeEach(function () {
-        browser.url('./login');
+    beforeEach(async function () {
+        // go to the login page
+        await browser.url('./login');
     });
 
-    it('should let you log in', function () {
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
-        $('input[type="password"]').setValue('wdiodemo');
+    it('should let you log in', async function () {
+        // enter a valid username in the "email" input
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
 
+        // enter a valid password in the "password" input
+        await $('input[type="password"]').setValue('wdiodemo');
+
+        // get the 'Sign in' button element reference
         const $signIn = $('button*=Sign in');
-        $signIn.click();
 
-        $signIn.waitForExist({ reverse: true });
+        // click the 'Sign in' button
+        await $signIn.click();
 
-        expect($('.error-messages li')).not.toBeExisting();
+        // wait for 'Your Feed' tab to appear, indicating we're logged in
+        await $('=Your Feed').waitForDisplayed();
+
+        // assert that we're logged in
+        await expect($('.error-messages li')).not.toBeExisting();
     });
+
+    // should error with a missing username
+    // should error with a missing password
 });
 ```
 
@@ -88,18 +100,18 @@ Not much has changed, but we've set ourselves up to do a little less work in the
 As mentioned, there isn't much different between these two new tests we're writing and our previous test. That means I won't be covering what we've already talked about. So, on that note, here's what our two new tests are almost going to look like:
 
 ```js
-it('should error with a missing username', function () {
-    $('input[type="password"]').setValue('wdiodemo');
+it('should error with a missing username', async function () {
+    await $('input[type="password"]').setValue('wdiodemo');
 
-    $('button*=Sign in').click();
+    await $('button*=Sign in').click();
 
     // assert that error message is showing
 });
 
-it('should error with a missing password', function () {
-    $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+it('should error with a missing password', async function () {
+    await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
 
-    $('button*=Sign in').click();
+    await $('button*=Sign in').click();
 
     // assert that error message is showing
 });
@@ -117,12 +129,13 @@ We have a couple of decent options:
 Using the second method, we'd combine our text-based selector with a `toBeExisting` assertion that runs after our test actions are executed. Here's what one test would look like:
 
 ```js
-it('should error with a missing username', function () {
-    $('input[type="password"]').setValue('wdiodemo');
+it('should error with a missing email', async function () {
+    await $('input[type="password"]').setValue('wdiodemo');
 
-    $('button*=Sign in').click();
+    await $('button*=Sign in').click();
 
-    expect($("li*=email can't be blank")).toBeExisting();
+    // assert that error message is showing
+    await expect($("li*=email can't be blank")).toBeExisting();
 });
 ```
 
@@ -137,16 +150,18 @@ We'll do this by using `toHaveText`, which uses the `getText` command behind the
 The next two snippets of code are essentially the same:
 
 ```js
-expect($('.error-messages li')).toHaveText(`email can't be blank`);
+await expect($('.error-messages li')).toHaveText(`email can't be blank`);
 // note the use of backticks due to the apostrophe in "can't"
 ```
 
 ```js
-const errorText = $('.error-messages li').getText();
+const errorText = await $('.error-messages li').getText();
 expect(errorText).toEqual(`email can't be blank`);
 ```
 
-As you can probably guess, `getText` gets the visible text of an element. Notice that I mentioned "visible." If the element is hidden, the `getText` command will return an empty string. A great example of this is an item in a dropdown menu. Since that item isn't visible until you open up the dropdown menu, `getText` will return an empty string. If you were to open up the dropdown menu, then run `getText`, it would successfully return the text value.
+As you can probably guess, `getText` gets the *visible* text of an element. Notice that I mentioned "visible." If the element is hidden, the `getText` command will return an empty string. 
+
+A great example of this is an item in a dropdown menu. Since that item isn't visible until you open up the dropdown menu, `getText` will return an empty string. If you were to open up the dropdown menu, then run `getText`, it would successfully return the text value.
 
 There is a workaround to this issue: The `getHTML` command. Just like `getText`, `getHTML` returns the HTML value of an element, including the text inside it. Do note that as of this writing, there is no `toHaveHTML` assertion to go alongside it.
 
@@ -161,16 +176,16 @@ Let's look again at the HTML for our error message:
 Assuming that all elements are visible, here's what our `getText` and `getHTML` commands would return:
 
 ```js
-$('.error-messages li').getText();
+await $('.error-messages li').getText();
 // returns "email can't be blank"
 
-$('.error-messages li').getHTML();
+await $('.error-messages li').getHTML();
 // returns "<li>email can't be blank</li>"
 
-$('.error-messages').getText();
+await $('.error-messages').getText();
 // returns "email can't be blank"
 
-$('.error-messages').getHTML();
+await $('.error-messages').getHTML();
 // returns "<ul class="error-messages"><li>email can't be blank</li></ul>"
 ```
 
@@ -181,10 +196,10 @@ Second, the `getHTML` included the `<li>` tags in the response. It would be a mo
 `getHTML` accepts a single parameter, which is a boolean flag to include the selector element tag or not. By default it's `true`, and therefore includes that tag. If we pass in `false`, we get different results:
 
 ```js
-$('.error-messages li').getHTML(false);
+await $('.error-messages li').getHTML(false);
 // returns "email can't be blank"
 
-$('.error-messages').getHTML(false);
+await $('.error-messages').getHTML(false);
 // returns "<li>email can't be blank</li>"
 ```
 
@@ -193,13 +208,13 @@ In the first command, now we get just the text without HTML. However, because th
 Since our error message shouldn't be hidden, let's stick with the `getText` route. As mentioned before, we'll use the `toHaveText` assertion to achieve this. As an added benefit, because `toHaveText` automatically retries if it fails, we don't need to add any `waitFor` commands since it's essentially built-in to it:
 
 ```js
-it('should error with a missing username', function () {
-    $('input[type="password"]').setValue('wdiodemo');
+it('should error with a missing email', async function () {
+    await $('input[type="password"]').setValue('wdiodemo');
 
-    $('button*=Sign in').click();
+    await $('button*=Sign in').click();
 
     // assert that error message is showing
-    expect($('.error-messages li')).toHaveText(`email can't be blank`);
+    await expect($('.error-messages li')).toHaveText(`email can't be blank`);
 });
 ```
 
@@ -213,13 +228,13 @@ Say we're working on a test, but it's failing and we don't really have time to f
 
 ```js
 describe('All tests', function () {
-    it('will run', function () {});
+    it('will run', async function () {});
 
-    it.skip('will be skipped', function () {});
+    it.skip('will be skipped', async function () {});
 
     describe.skip('Skipped Suite', function () {
-        it('will be skipped', function () {});
-        it('will also be skipped', function () {});
+        it('will be skipped', async function () {});
+        it('will also be skipped', async function () {});
     });
 });
 ```
@@ -228,13 +243,13 @@ Alternatively, say you only want to run a single test (or single set of tests). 
 
 ```js
 describe('All tests', function () {
-    it('will be skipped', function () {});
+    it('will be skipped', async function () {});
 
-    it.only('will run', function () {});
+    it.only('will run', async function () {});
 
-    describe.only('Only Suite', function () {
-        it('will run', function () {});
-        it('will also run', function () {});
+    describe.only('Only Suite', async function () {
+        it('will run', async function () {});
+        it('will also run', async function () {});
     });
 });
 ```
@@ -246,35 +261,44 @@ Okay, so we can use this new knowledge to run just the single new test that we'v
 {title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
-    beforeEach(function () {
-        browser.url('./login');
+    beforeEach(async function () {
+        // go to the login page
+        await browser.url('./login');
     });
 
-    it('should let you log in', function () {
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
-        $('input[type="password"]').setValue('wdiodemo');
+    it('should let you log in', async function () {
+        // enter a valid username in the "email" input
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
 
+        // enter a valid password in the "password" input
+        await $('input[type="password"]').setValue('wdiodemo');
+
+        // get the 'Sign in' button element reference
         const $signIn = $('button*=Sign in');
-        $signIn.click();
 
-        $signIn.waitForExist({ reverse: true });
+        // click the 'Sign in' button
+        await $signIn.click();
 
-        expect($('.error-messages li')).not.toBeExisting();
+        // wait for 'Your Feed' tab to appear, indicating we're logged in
+        await $('=Your Feed').waitForDisplayed();
+
+        // assert that we're logged in
+        await expect($('.error-messages li')).not.toBeExisting();
     });
 
-    it.only('should error with a missing username', function () {
-        $('input[type="password"]').setValue('wdiodemo');
+    it.only('should error with a missing email', async function () {
+        await $('input[type="password"]').setValue('wdiodemo');
 
-        $('button*=Sign in').click();
+        await $('button*=Sign in').click();
 
         // assert that error message is showing
-        expect($('.error-messages li')).toHaveText(`email can't be blank`);
+        await expect($('.error-messages li')).toHaveText(`email can't be blank`);
     });
 
-    it('should error with a missing password', function () {
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+    it('should error with a missing password', async function () {
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
 
-        $('button*=Sign in').click();
+        await $('button*=Sign in').click();
 
         // assert that error message is showing
     });
@@ -286,13 +310,13 @@ After running our `npx wdio --spec=login.js` command from the terminal again, yo
 Since the missing password test is so similar to the missing email test, I'm going to skip over explaining it and just post the test:
 
 ```js
-it('should error with a missing password', function () {
-    $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+it('should error with a missing password', async function () {
+    await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
 
-    $('button*=Sign in').click();
+    await $('button*=Sign in').click();
 
     // assert that error message is showing
-    expect($('.error-messages li')).toHaveText(`password can't be blank`);
+    await expect($('.error-messages li')).toHaveText(`password can't be blank`);
 });
 ```
 
@@ -310,23 +334,23 @@ Rather, we're going to create a custom function that will handle the unique part
 Here's what the function is going to look like:
 
 ```js
-function login(email, password) {
-    $('input[type="email"]').setValue(email);
-    $('input[type="password"]').setValue(password);
+async function login(email, password) {
+    await $('input[type="email"]').setValue(email);
+    await $('input[type="password"]').setValue(password);
 
-    $('button*=Sign in').click();
+    await $('button*=Sign in').click();
 }
 ```
 
 We're using the exact code in our first test, so let's look at how that will look replaced:
 
 ```js
-it('should let you log in', function () {
-    login('demo@learnwebdriverio.com', 'wdiodemo');
+it('should let you log in', async function () {
+    await login('demo@learnwebdriverio.com', 'wdiodemo');
 
-    $('button*=Sign in').waitForExist({ reverse: true });
+    await $('button*=Sign in').waitForExist({ reverse: true });
 
-    expect($('.error-messages li')).not.toBeExisting();
+    await expect($('.error-messages li')).not.toBeExisting();
 });
 ```
 
@@ -335,11 +359,11 @@ In place of those commands, we call the `login` function, passing in our usernam
 So what do we do for the other tests where we don't have a value for one of our fields? Well, we just pass in an empty string:
 
 ```js
-it('should error with a missing username', function () {
-    login('', 'wdiodemo');
+it('should error with a missing username', async function () {
+    await login('', 'wdiodemo');
     
     // assert that error message is showing
-    expect($('.error-messages li')).toHaveText(`email can't be blank`);
+    await expect($('.error-messages li')).toHaveText(`email can't be blank`);
 });
 ```
 
@@ -349,38 +373,39 @@ Altogether, here's what the updates look like:
 
 {title="test/specs/login.js"}
 ```js
-function login(email, password) {
-    $('input[type="email"]').setValue(email);
-    $('input[type="password"]').setValue(password);
+async function login(email, password) {
+    await $('input[type="email"]').setValue(email);
+    await $('input[type="password"]').setValue(password);
 
-    $('button*=Sign in').click();
+    await $('button*=Sign in').click();
 }
 
 describe('Login Page', function () {
-    beforeEach(function () {
-        browser.url('./login');
+    beforeEach(async function () {
+        // go to the login page
+        await browser.url('./login');
     });
 
-    it('should let you log in', function () {
-        login('demo@learnwebdriverio.com', 'wdiodemo');
+    it('should let you log in', async function () {
+        await login('demo@learnwebdriverio.com', 'wdiodemo');
 
-        $('button*=Sign in').waitForExist({ reverse: true });
+        await $('button*=Sign in').waitForExist({ reverse: true });
 
-        expect($('.error-messages li')).not.toBeExisting();
+        await expect($('.error-messages li')).not.toBeExisting();
     });
 
-    it('should error with a missing username', function () {
-        login('', 'wdiodemo');
+    it('should error with a missing username', async function () {
+        await login('', 'wdiodemo');
 
         // assert that error message is showing
-        expect($('.error-messages li')).toHaveText(`email can't be blank`);
+        await expect($('.error-messages li')).toHaveText(`email can't be blank`);
     });
 
-    it('should error with a missing password', function () {
-        login('demo@learnwebdriverio.com', '');
+    it('should error with a missing password', async function () {
+        await login('demo@learnwebdriverio.com', '');
 
         // assert that error message is showing
-        expect($('.error-messages li')).toHaveText(`password can't be blank`);
+        await expect($('.error-messages li')).toHaveText(`password can't be blank`);
     });
 });
 ```
@@ -404,11 +429,11 @@ const emailSelector = 'input[type="email"]';
 const passwordSelector = 'input[type="password"]';
 const signInSelector = 'button*=Sign in';
 
-function login(email, password) {
-    $(emailSelector).setValue(email);
-    $(passwordSelector).setValue(password);
+async function login(email, password) {
+    await $(emailSelector).setValue(email);
+    await $(passwordSelector).setValue(password);
 
-    $(signInSelector).click();
+    await $(signInSelector).click();
 }
 ```
 
@@ -420,16 +445,16 @@ const $password = $('input[type="password"]');
 const $signIn = $('button*=Sign in');
 
 function login(email, password) {
-    $email.setValue(email);
-    $password.setValue(password);
+    await $email.setValue(email);
+    await $password.setValue(password);
 
-    $signIn.click();
+    await $signIn.click();
 }
 ```
 
 Isn't that better? No! It's much worse! If you tried running that code, you'd get several failures.
 
-The reason is that we're trying to run the `$()` function outside its normal living space (this has to do with the `wdio-sync` library, but I won't go into those details). Because the constants are defined outside the WebdriverIO context (which only exists within the specific Mocha functions), it errors out with a message of `$email.setValue is not a function`.
+The reason is that we're trying to run the `$()` function outside its normal living space. Because the constants are defined outside the WebdriverIO context (which only exists within the specific Mocha functions), it errors out with a message of `Unable to load spec files quite likely because they rely on 'browser' object that is not fully initialised.`
 
 So what we really need is "just-in-time" references. We want to store the code needed to get the element reference, but only run that code when we're inside our tests. What if we write some cute little functions that do that?
 
@@ -444,11 +469,11 @@ const $signIn = function () {
     return $('button*=Sign in');
 };
 
-function login(email, password) {
-    $email().setValue(email);
-    $password().setValue(password);
+async function login(email, password) {
+    await $email().setValue(email);
+    await $password().setValue(password);
 
-    $signIn().click();
+    await $signIn().click();
 }
 ```
 
@@ -504,13 +529,15 @@ class Auth {
 
 const auth = new Auth();
 
-function login(email, password) {
-    auth.$email.setValue(email);
-    auth.$password.setValue(password);
+async function login(email, password) {
+    await auth.$email.setValue(email);
+    await auth.$password.setValue(password);
 
-    auth.$signIn.click();
+    await auth.$signIn.click();
 }
 ```
+
+*Note: We don't need to include `async`/`await` in our `get` functions, as the `await` in our login function handles all of that. It's admittedly a little confusing and I don't really have a good explanation aside from "that's just how it works".*
 
 We got rid of the function call for each of our element references, and prepended everything with our `auth` instantiated class. If you're counting text characters, we've actually gone up, but it's a lot cleaner and more self-documenting. All the elements related to authentication are stored inside the Auth instance. 
 
@@ -527,38 +554,39 @@ class Auth {
 
 const auth = new Auth();
 
-function login(email, password) {
-    auth.$email.setValue(email);
-    auth.$password.setValue(password);
+async function login(email, password) {
+    await auth.$email.setValue(email);
+    await auth.$password.setValue(password);
 
-    auth.$signIn.click();
+    await auth.$signIn.click();
 }
 
 describe('Login Page', function () {
-    beforeEach(function () {
-        browser.url('./login');
+    beforeEach(async function () {
+        // go to the login page
+        await browser.url('./login');
     });
 
-    it('should let you log in', function () {
-        login('demo@learnwebdriverio.com', 'wdiodemo');
+    it('should let you log in', async function () {
+        await login('demo@learnwebdriverio.com', 'wdiodemo');
 
-        auth.$signIn.waitForExist({ reverse: true });
+        await auth.$signIn.waitForExist({ reverse: true });
 
-        expect(auth.$errorMessages).not.toBeExisting();
+        await expect(auth.$errorMessages).not.toBeExisting();
     });
 
-    it('should error with a missing username', function () {
-        login('', 'wdiodemo');
+    it('should error with a missing username', async function () {
+        await login('', 'wdiodemo');
 
         // assert that error message is showing
-        expect(auth.$errorMessages).toHaveText(`email can't be blank`);
+        await expect(auth.$errorMessages).toHaveText(`email can't be blank`);
     });
 
-    it('should error with a missing password', function () {
-        login('demo@learnwebdriverio.com', '');
+    it('should error with a missing password', async function () {
+        await login('demo@learnwebdriverio.com', '');
 
         // assert that error message is showing
-        expect(auth.$errorMessages).toHaveText(`password can't be blank`);
+        await expect(auth.$errorMessages).toHaveText(`password can't be blank`);
     });
 });
 ```
@@ -622,7 +650,7 @@ class Auth {
     get $signIn () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
     
-    login (email, password) {
+    async login (email, password) {
         // login actions go here
     }
 }
@@ -649,11 +677,11 @@ class Auth {
     get $signIn () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    login (email, password) {
-        this.$email.setValue(email);
-        this.$password.setValue(password);
+    async login (email, password) {
+        await this.$email.setValue(email);
+        await this.$password.setValue(password);
 
-        this.$signIn.click();
+        await this.$signIn.click();
     }
 }
 ```
@@ -665,13 +693,13 @@ There's one last item to complete in our transition to page actions: we need to 
 So:
 
 ```js
-login('demowdio@example.com', 'wdiodemo');
+await login('demowdio@example.com', 'wdiodemo');
 ```
 
 becomes:
 
 ```js
-auth.login('demowdio@example.com', 'wdiodemo');
+await auth.login('demowdio@example.com', 'wdiodemo');
 ```
 
 Now when we run the code, it will look for the `login` function on the `auth` page object instance. Here's what the entire file now looks like:
@@ -684,41 +712,42 @@ class Auth {
     get $signIn () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    login (email, password) {
-        this.$email.setValue(email);
-        this.$password.setValue(password);
+    async login (email, password) {
+        await this.$email.setValue(email);
+        await this.$password.setValue(password);
 
-        this.$signIn.click();
+        await this.$signIn.click();
     }
 }
 
 const auth = new Auth();
 
 describe('Login Page', function () {
-    beforeEach(function () {
-        browser.url('./login');
+    beforeEach(async function () {
+        // go to the login page
+        await browser.url('./login');
     });
 
-    it('should let you log in', function () {
-        auth.login('demo@learnwebdriverio.com', 'wdiodemo');
+    it('should let you log in', async function () {
+        await auth.login('demo@learnwebdriverio.com', 'wdiodemo');
 
-        auth.$signIn.waitForExist({ reverse: true });
+        await auth.$signIn.waitForExist({ reverse: true });
 
-        expect(auth.$errorMessages).not.toBeExisting();
+        await expect(auth.$errorMessages).not.toBeExisting();
     });
 
-    it('should error with a missing username', function () {
-        auth.login('', 'wdiodemo');
+    it('should error with a missing username', async function () {
+        await auth.login('', 'wdiodemo');
 
         // assert that error message is showing
-        expect(auth.$errorMessages).toHaveText(`email can't be blank`);
+        await expect(auth.$errorMessages).toHaveText(`email can't be blank`);
     });
 
-    it('should error with a missing password', function () {
-        auth.login('demo@learnwebdriverio.com', '');
+    it('should error with a missing password', async function () {
+        await auth.login('demo@learnwebdriverio.com', '');
 
         // assert that error message is showing
-        expect(auth.$errorMessages).toHaveText(`password can't be blank`);
+        await expect(auth.$errorMessages).toHaveText(`password can't be blank`);
     });
 });
 ```
@@ -749,9 +778,9 @@ With it, we can say, "Wait for the login button to disappear or for an error mes
 For our login method, we can write our function as follows:
 
 ```js
-browser.waitUntil(function () {
-    const signInExists = auth.$signIn.isExisting();
-    const errorExists = auth.$errorMessages.isExisting();
+await browser.waitUntil(async function () {
+    const signInExists = await auth.$signIn.isExisting();
+    const errorExists = await auth.$errorMessages.isExisting();
 
     return !signInExists || errorExists;
 });
@@ -769,7 +798,7 @@ Well, that message isn't very helpful. We know that `waitUntil` failed, but unle
 We can help that by passing in a custom error message. The `waitUntil` function signature looks like: 
 
 ```js
-browser.waitUntil(condition, { timeout, timeoutMsg, interval });
+await browser.waitUntil(condition, { timeout, timeoutMsg, interval });
 ```
 
 The `condition` is our function, which is required. After that is an options object. This object is almost the same as what we have for `waitForExist` (`reverse` isn't included, as it's not needed).
@@ -779,10 +808,10 @@ The `timeoutMsg` option is the custom error message we want to show in case of f
 Here's what this looks like:
 
 ```js
-browser.waitUntil(
-    function () {
-        const signInExists = auth.$signIn.isExisting();
-        const errorExists = auth.$errorMessages.isExisting();
+await browser.waitUntil(
+    async function () {
+        const signInExists = await auth.$signIn.isExisting();
+        const errorExists = await auth.$errorMessages.isExisting();
 
         return !signInExists || errorExists;
     },
@@ -799,24 +828,20 @@ class Auth {
     get $signIn () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    login (email, password) {
-        this.$email.setValue(email);
-        this.$password.setValue(password);
+    async login (email, password) {
+        await this.$email.setValue(email);
+        await this.$password.setValue(password);
 
-        this.$signIn.click();
+        await this.$signIn.click();
 
-        // wait until either the sign in button is gone or an error appears
-        browser.waitUntil(
-            () => {
-                const signInExists = this.$signIn.isExisting();
-                const errorExists = this.$errorMessages.isExisting();
+        await browser.waitUntil(
+            async () => {
+                const signInExists = await this.$signIn.isExisting();
+                const errorExists = await this.$errorMessages.isExisting();
 
                 return !signInExists || errorExists;
             },
-            {
-                timoutMsg:
-                    'The "Sign in" button still exists and an error never appeared'
-            }
+            { timoutMsg: 'The "Sign in" button still exists and an error never appeared' }
         );
     }
 }
@@ -830,10 +855,10 @@ Two important things to point out that I changed here.
 Remember how I said `this` can be tricky? Well, here's your example. If we used the following code...
 
 ```js
-browser.waitUntil(
-    function () {
-        const signInExists = this.$signIn.isExisting();
-        const errorExists = this.$errorMessages.isExisting();
+await browser.waitUntil(
+    async function () {
+        const signInExists = await this.$signIn.isExisting();
+        const errorExists = await this.$errorMessages.isExisting();
 
         return !signInExists || errorExists;
     },
@@ -855,24 +880,20 @@ class Auth {
     get $signIn () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    login(email, password) {
-        this.$email.setValue(email);
-        this.$password.setValue(password);
+    async login (email, password) {
+        await this.$email.setValue(email);
+        await this.$password.setValue(password);
 
-        this.$signIn.click();
+        await this.$signIn.click();
 
-        // wait until either the sign in button is gone or an error appears
-        browser.waitUntil(
-            () => {
-                const signInExists = this.$signIn.isExisting();
-                const errorExists = this.$errorMessages.isExisting();
+        await browser.waitUntil(
+            async function () {
+                const signInExists = await this.$signIn.isExisting();
+                const errorExists = await this.$errorMessages.isExisting();
 
                 return !signInExists || errorExists;
             },
-            {
-                timoutMsg:
-                    'The "Sign in" button still exists and an error never appeared'
-            }
+            { timoutMsg: 'The "Sign in" button still exists and an error never appeared' }
         );
     }
 }
@@ -880,28 +901,29 @@ class Auth {
 const auth = new Auth();
 
 describe('Login Page', function () {
-    beforeEach(function () {
-        browser.url('./login');
+    beforeEach(async function () {
+        // go to the login page
+        await browser.url('./login');
     });
 
-    it('should let you log in', function () {
-        auth.login('demo@learnwebdriverio.com', 'wdiodemo');
+    it('should let you log in', async function () {
+        await auth.login('demo@learnwebdriverio.com', 'wdiodemo');
 
-        expect(auth.$errorMessages).not.toBeExisting();
+        await expect(auth.$errorMessages).not.toBeExisting();
     });
 
-    it('should error with a missing username', function () {
-        auth.login('', 'wdiodemo');
+    it('should error with a missing username', async function () {
+        await auth.login('', 'wdiodemo');
 
         // assert that error message is showing
-        expect(auth.$errorMessages).toHaveText(`email can't be blank`);
+        await expect(auth.$errorMessages).toHaveText(`email can't be blank`);
     });
 
-    it('should error with a missing password', function () {
-        auth.login('demo@learnwebdriverio.com', '');
+    it('should error with a missing password', async function () {
+        await auth.login('demo@learnwebdriverio.com', '');
 
         // assert that error message is showing
-        expect(auth.$errorMessages).toHaveText(`password can't be blank`);
+        await expect(auth.$errorMessages).toHaveText(`password can't be blank`);
     });
 });
 ```
@@ -920,23 +942,21 @@ class Auth {
     get $signIn () { return $('button*=Sign in'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    login(email, password) {
-        this.$email.setValue(email);
-        this.$password.setValue(password);
+    async login (email, password) {
+        await this.$email.setValue(email);
+        await this.$password.setValue(password);
 
-        this.$signIn.click();
+        await this.$signIn.click();
 
-        // wait until either the sign in button is gone or an error appears
-        browser.waitUntil(
-            () => {
-                const signInExists = this.$signIn.isExisting();
-                const errorExists = this.$errorMessages.isExisting();
+        await browser.waitUntil(
+            async () => {
+                const signInExists = await this.$signIn.isExisting();
+                const errorExists = await this.$errorMessages.isExisting();
 
                 return !signInExists || errorExists;
             },
-            {
-                timoutMsg:
-                    'The "Sign in" button still exists and an error never appeared'
+            { 
+                timoutMsg: 'The "Sign in" button still exists and an error never appeared'
             }
         );
     }

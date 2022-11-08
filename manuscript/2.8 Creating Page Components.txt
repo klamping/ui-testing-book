@@ -6,8 +6,9 @@ We've got our login and logout functionality worked out for our tests. Now it's 
 
 By default, both logged in and out views should show the 'global' tab by default. Let's write a test that checks which tab is "active" on page load:
 
+{title="test/specs/home.js"}
 ```js
-it('should default to showing the "global" feed', function () {
+it('should default to showing the "global" feed', async function () {
     // get all tabs with an 'active' class, check only one returns with correct text
 })
 ```
@@ -27,17 +28,23 @@ Now, using our previous knowledge, let's update the `Home` page object to includ
 const Generic = require('./Generic.page');
 
 class Home extends Generic {
-    constructor() {
+    constructor () {
         super('./');
     }
+
+    get $feedsContainer() {
+        return $('[data-qa-id="feed-tabs"]');
+    }
     get $$feedTabs() {
-        return $$('[data-qa-id="feed-tabs"] [data-qa-type="feed-tab"]');
+        return this.$feedsContainer.$$('[data-qa-type="feed-tab"]');
     }
     get feedTabsText() {
-        return this.$$feedTabs.map(($tab) => $tab.getText().trim());
+        return this.$$feedTabs.map(($tab) => $tab.getText());
     }
     get activeFeedTabText() {
-        return this.$$feedTabs.$$('.active').map(($tab) => $tab.getText().trim());
+        return this.$feedsContainer.
+	        .$$('[data-qa-type="feed-tab"] .active')
+	        .map(($tab) => $tab.getText());
     }
 }
 
@@ -46,12 +53,15 @@ module.exports = Home;
 
 It's similar to the existing `feedTabsText` property, except it only gets element text with an `active` class.
 
+Also notice that I moved the `[data-qa-id="feed-tabs"]` selector information into it's own element reference. This allows us to re-use that selector for both our `$$feedTabs` and `activeFeedTabText` references. 
+
 Now it's time to use it in our test. Usage is similar to the previous test we wrote checking that both tabs exist:
 
+{title="test/specs/home.js"}
 ```js
-it('should default to showing the global feed', function () {
+it('should default to showing the global feed', async function () {
     // get all tabs with an 'active' class, check only one returns with correct text
-    expect(home.activeFeedTabText).toEqual(['Global Feed']);
+    expect(await home.activeFeedTabText).toEqual(['Global Feed']);
 })
 ```
 
@@ -64,9 +74,15 @@ So, in a new file, we'll define an exported object with a single function proper
 {title="utils/functions.js"}
 ```js
 module.exports = {
-    getTrimmedText: $el => $el.getText().trim()
+    getTrimmedText: $el => $el.getText().then(text => text.trim())
 }
 ```
+
+I made one small tweak to this function. Sometimes `getText` includes whitespace around the text that's included by the HTML. We want to get just the text itself, and not these extra characters, so we call the JavaScript String `trim` function. 
+
+What's a little strange about this is that, because we don't await `$el.getText()`, if we tried `$el.getText().trim()`, we'll get an error `$el.getText(...).trim is not a function`. 
+
+We also can't use `async`/`await` here, because this function is used insider of JavaScript Class Getters, [which can't be `async`/`await`](https://github.com/tc39/proposal-async-await/issues/15). But, because WebdriverIO elements are Promises, we can use the `.then` function to handle the promise without the `async`/`await` keywords. 
 
 We'll save this in the `utils` folder we created for our API file, naming it `functions.js`. To use this in our page object, we need to require it, then pass it to our `map` function:
 
@@ -97,30 +113,35 @@ class Home extends Generic {
 module.exports = new Home();
 ```
 
-Again, this isn't entirely necessary, but it can reduce some of the duplication in your code.
+Again, moving `getTrimmedText` to an external file isn't entirely necessary, but it can reduce some of the duplication in your code.
 
 ## 2.8.2 Switching Tabs
 
 So we've validated that both tabs show, and that `Global` is the default tab being displayed. Now let's check that we can switch between the two tabs. We can do that with our existing page object, by finding the tab with the text we want and clicking on it:
 
 ```js
-it('should let you switch between global and personal feeds', function () {
+it('should let you switch between global and personal feeds', async function () {
     // get the tab that has `Your Feed` as text
-    const yourFeedTab = home.$$feedTabs.find(
-        ($tab) => $tab.getText() === 'Your Feed'
+    const yourFeedTab = await home.$$feedTabs.find(
+        async ($tab) => await $tab.getText() === 'Your Feed'
     );
+
     // Click on that tab
-    yourFeedTab.click();
+    await yourFeedTab.click();
+
     // Validate 'active' tab is now `Your Feed`
-    expect(home.activeFeedTabText).toEqual(['Your Feed']);
+    expect(await home.activeFeedTabText).toEqual(['Your Feed']);
+
     // get the tab that has `Global` as text
-    const globalFeedTab = home.$$feedTabs.find(
-        ($tab) => $tab.getText() === 'Global Feed'
+    const globalFeedTab = await home.$$feedTabs.find(
+        async ($tab) => await $tab.getText() === 'Global Feed'
     );
+
     // Click on that tab
-    globalFeedTab.click();
+    await globalFeedTab.click();
+
     // validate again
-    expect(home.activeFeedTabText).toEqual(['Global Feed']);
+    expect(await home.activeFeedTabText).toEqual(['Global Feed']);
 });
 ```
 
@@ -276,7 +297,7 @@ This won't be too difficult, and we'll use our old friend `waitForExist()` to ma
 
 When the page first loads, the following loading text is shown:
 
-!["Loading Articles..." text screenshot](images/42289218B9E0B5919D7B05A4A6F2967B.png)
+!["Loading Articles..." text screenshot](images/42289218B9E0B5919D7B05A4A6F2967B.pn)
 
 That text is removed from the page once the content is loaded, meaning we can use it's absence as an indicator that the content has completed loading.
 

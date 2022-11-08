@@ -4,7 +4,7 @@ Each chapter includes a challenge or two for you to tackle on your own. But it's
 
 ## Chapter 2.1: Assertions
 
-In your existing test, add a check that validates that when you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.
+In your existing test, add a check that validates that when on the login page, if you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.
 
 In the test we're adding to, we're on the login page. Now we need to click that logo, which can be done using the link text selector like we used for the 'Sign Up' button: `$('=conduit')`
 
@@ -17,22 +17,22 @@ Instead, we'll just validate that we're no longer on the login url, by using the
 {title="test/specs/navigation.js"}
 ```js
 describe('Homepage', function () {
-    it('should load properly', function () {
+    it('should load properly', async function () {
         // load the page
-        browser.url('./');
+        await browser.url('./');
 
         // Get the title of the homepage, should be 'Conduit'
-        expect(browser).toHaveTitle('Conduit');
+        await expect(browser).toHaveTitle('Conduit');
 
         // Click the 'Sign in' navigation link
-        $('=Sign in').click();
+        await $('=Sign in').click();
 
         // Get the URL of the sign in page. It should include 'login'
-        expect(browser).toHaveUrl('/login', { containing: true });
+        await expect(browser).toHaveUrl('/login', { containing: true });
 
-        $('=conduit').click();
+        await $('=conduit').click();
 
-        expect(browser).not.toHaveUrl('/login', { containing: true });
+        await expect(browser).not.toHaveUrl('/login', { containing: true });
     });
 });
 ```
@@ -79,17 +79,18 @@ The full file would look like:
 {title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
-    it('should let you log in', function () {
-        browser.url('./login');
+    it('should let you log in', async function () {
+        await browser.url('./login');
 
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
-        $('input[type="password"]').setValue('wdiodemo');
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+        await $('input[type="password"]').setValue('wdiodemo');
 
-        $('button*=Sign in').click();
+        const $signIn = $('button*=Sign in');
+        await $signIn.click();
 
-        $('=Your Feed').waitForDisplayed();
+        await $('=Your Feed').waitForDisplayed();
 
-        expect($('.error-messages li')).not.toBeExisting();
+        await expect($('.error-messages li')).not.toBeExisting();
     });
 });
 ```
@@ -102,31 +103,25 @@ This is a pretty lengthy exercise, so I'm not going to detail the steps involved
 
 {title="test/pageObjects/Register.page.js"}
 ```js
-const Generic = require('./Generic.page');
-
-class Register extends Generic {
-    constructor() {
-        super('./register');
-    }
-
-    get $username () { return $('input[name="email"]'); }
-    get $email () { return $('input[name="email"]'); }
-    get $password () { return $('input[type="password"]'); }
-    get $register () { return $('button*=Sign in'); }
+class Register {
+    get $username () { return $('input[placeholder="Username"]'); }
+    get $email () { return $('input[placeholder="Email"]'); }
+    get $password () { return $('input[placeholder="Password"]'); }
+    get $register () { return $('button*=Sign up'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    submit({ username, email, password }) {
-        this.$username.setValue(username);
-        this.$email.setValue(email);
-        this.$password.setValue(password);
+    async submit({ username, email, password }) {
+        await this.$username.setValue(username);
+        await this.$email.setValue(email);
+        await this.$password.setValue(password);
 
-        this.$register.click();
+        await this.$register.click();
 
         // wait until either the register button is gone or an error has appeared
-        browser.waitUntil(
-            () => {
-                const buttonExists = this.$signUpButton.isExisting();
-                const errorExists = this.$errorMessages.isExisting();
+        await browser.waitUntil(
+            async () => {
+                const buttonExists = await this.$register.isExisting();
+                const errorExists = await this.$errorMessages.isExisting();
 
                 return !buttonExists || errorExists;
             },
@@ -152,83 +147,83 @@ const email = 'newuser@learnwebdriverio.com';
 const password = 'hunter2';
 
 describe('Register Page', function () {
-    beforeEach(function () {
-        register.load();
+    beforeEach(async function () {
+        await browser.url('./register')
     });
 
-    it('should let you register', function () {
+    it('should let you register', async function () {
         // use a timestamp to generate "unique" username/email every test run
         const uniqueUsername = username + Date.now();
 
-        register.submitForm({
+        await register.submit({
             username: uniqueUsername,
             email: uniqueUsername + '@learnwebdriverio.com',
             password
         });
 
         // Get the URL of the page, which should no longer include 'register'
-        expect(browser).not.toHaveUrl(register.url.href);
+        await expect(browser).not.toHaveUrl('./register');
     });
 
-    it('should error with a missing username', function () {
-        register.submitForm({
+    it('should error with a missing username', async function () {
+        await register.submit({
             username: '',
             email,
             password
         });
 
-        expect(register.$errorMessages).toHaveText(`username can't be blank`);
+        await expect(register.$errorMessages).toHaveText(`username can't be blank`);
     });
 
-    it('should error with an already registered username', function () {
-        register.submitForm({
+    it('should error with an already registered username', async function () {
+        await register.submit({
             username: 'demouser',
             email,
             password
         });
 
-        expect(register.$errorMessages).toHaveText(`username is already taken.`);
+        await expect(register.$errorMessages).toHaveText(`username is already taken.`);
     });
 
-    it('should error with a missing email', function () {
-        register.submitForm({
+    it('should error with a missing email', async function () {
+        await register.submit({
             username,
             email: '',
             password
         });
 
-        expect(register.$errorMessages).toHaveText(`email can't be blank`);
+        await expect(register.$errorMessages).toHaveText(`email can't be blank`);
     });
 
-    it('should error with an already registered email', function () {
-        register.submitForm({
+    it('should error with an already registered email', async function () {
+        await register.submit({
             username,
             email: 'demo@learnwebdriverio.com',
             password
         });
 
-        expect(register.$errorMessages).toHaveText(`email is already taken.`);
+        await expect(register.$errorMessages).toHaveText(`email is already taken.`);
     });
 
-    it('should error with an invalid email', function () {
-        register.submitForm({
+    it('should error with an invalid email', async function () {
+        await register.submit({
             username,
             email: 'invalid',
             password
         });
 
-        expect(register.$errorMessages).toHaveText(`email is invalid`);
+        await expect(register.$errorMessages).toHaveText(`email is invalid`);
     });
 
     // uh-oh, this test fails because there's a bug on the register page!
-    it.skip('should error with a missing password', function () {
-        register.submitForm({
+    it.skip('should error with a missing password', async function () {
+        await register.submit({
             username,
             email,
             password: ''
         });
 
-        expect(register.$errorMessages).toHaveText(`password can't be blank`);
+        await expect(register.$errorMessages).toHaveText(`password can't be blank`);
     });
 });
 ```
@@ -245,25 +240,23 @@ Your updated function will look like:
 
 {title="test/pageObjects/Auth.page.js"}
 ```js
-login({ email, password }) {
-    this.load();
+async login ({ email, password }) {
+    await this.load();
+    
+    await this.$email.setValue(email);
+    await this.$password.setValue(password);
 
-    this.$email.setValue(email);
-    this.$password.setValue(password);
+    await this.$signIn.click();
 
-    this.$signIn.click();
-
-    // wait until either the sign in button is gone or an error has appeared
-    browser.waitUntil(
-        () => {
-            const signInExists = this.$signIn.isExisting();
-            const errorExists = this.$errorMessages.isExisting();
+    await browser.waitUntil(
+        async () => {
+            const signInExists = await this.$signIn.isExisting();
+            const errorExists = await this.$errorMessages.isExisting();
 
             return !signInExists || errorExists;
         },
         {
-            timoutMsg:
-                'The "Sign in" button still exists and an error never appeared'
+            timoutMsg: 'The "Sign in" button still exists and an error never appeared'
         }
     );
 }
@@ -283,14 +276,16 @@ class Generic {
 
         // store the url by combining specific page path with WDIO base url
         // using the NodeJS URL utility
-        this.url = new URL(path, browser.options.baseUrl);
+        this.url = new URL(path, browser.config.baseUrl);
     }
-    load() {
-        browser.url(this.path);
-    }
+
     get $siteHeader () { return $('[data-qa-id="site-header"]'); }
     get $siteNav () { return $('[data-qa-id="site-nav"]'); }
     get $siteFooter () { return $('[data-qa-id="site-footer"]'); }
+
+    async load () {
+        await browser.url(this.path);
+    }
 }
 
 module.exports = Generic;
@@ -309,7 +304,7 @@ Also, to keep things simpler, I skipped making an edits to the tags. While I cou
 We need to add two new references in our `Editor.page.js` file, for the "Tags List" items that are created when adding tags. That code is:
 
 {title="test/pageObjects/Editor.page.js"}
-```
+```js
 get $$tagsListItems () { return $$('.tag-list .tag-pill'); }
 get tagsListItems () { return this.$$tagsListItems.map($tag => $tag.getText()); }
 ```
@@ -330,11 +325,11 @@ const article = new Article();
 describe('Existing Article Editor', function () {
     let articleDetails;
 
-    before(function () {
-        auth.login(user1);
+    before(async function () {
+        await auth.login(user1);
 
         // create an article for editing
-        editor.load();
+        await editor.load();
 
         articleDetails = {
             title: global.chance.sentence({ words: 1 }),
@@ -343,22 +338,22 @@ describe('Existing Article Editor', function () {
             tags: [global.chance.word(), global.chance.word()]
         };
 
-        editor.submitArticle(articleDetails);
-        article.waitForLoad();
+        await editor.submitArticle(articleDetails);
+        // await article.waitForLoad();
 
-        article.$edit.click();
-        editor.$title.waitForDisplayed();
+        await article.$edit.click();
+        await editor.$title.waitForDisplayed();
     });
 
-    it('should populate fields with article details', function () {
-        expect(browser).toHaveUrl('editor', { containing: true });
-        expect(editor.$title).toHaveValue(articleDetails.title);
-        expect(editor.$description).toHaveValue(articleDetails.description);
-        expect(editor.$body).toHaveValue(articleDetails.body);
-        expect(editor.tagsListItems).toEqual(articleDetails.tags);
+    it('should populate fields with article details', async function () {
+        await expect(browser).toHaveUrl('editor', { containing: true });
+        await expect(editor.$title).toHaveValue(articleDetails.title);
+        await expect(editor.$description).toHaveValue(articleDetails.description);
+        await expect(editor.$body).toHaveValue(articleDetails.body);
+        await expect(await editor.tagsListItems).toEqual(articleDetails.tags);
     });
 
-    it('should update article after editing', function () {
+    it('should update article after editing', async function () {
         const updatedDetails = {
             title: global.chance.sentence({ words: 1 }),
             description: global.chance.sentence({ words: 2 }),
@@ -366,15 +361,15 @@ describe('Existing Article Editor', function () {
             tags: [] // don't add any new tags
         };
 
-        editor.submitArticle(updatedDetails);
+        await editor.submitArticle(updatedDetails);
 
-        article.waitForLoad();
+        // await article.waitForLoad();
 
-        expect(article.$title).toHaveText(updatedDetails.title);
-        expect(article.$body).toHaveText(updatedDetails.body);
+        await expect(article.$title).toHaveText(updatedDetails.title);
+        await expect(article.$body).toHaveText(updatedDetails.body);
 
         // tags should be same since we didn't change them
-        expect(article.tags).toEqual(articleDetails.tags);
+        await expect(await article.tags).toEqual(articleDetails.tags);
     });
 });
 ```
@@ -392,23 +387,21 @@ There are two steps to this change:
 class Auth extends Generic {
     // ... other Auth page object stuff goes here
 
-    loginViaApi(user) {
-        const token = browser.call(() => {
-            return global.api.getAuthToken(user);
-        });
+    async loginViaApi(user) {
+        const token = await global.api.getAuthToken(user);
 
         // load the base page so we can set the token
-        browser.url('./');
+        await browser.url('./');
 
         // inject the auth token
-        browser.execute((browserToken) => {
+        await browser.execute((browserToken) => {
             window.localStorage.setItem('id_token', browserToken);
         }, token);
     }
 }
 ```
 
-- Update references in the test to switch `browser.loginViaApi` to `Auth.loginViaApi`.
+- Update references in the test to switch `browser.loginViaApi` to `auth.loginViaApi`.
 
 Personally, I prefer the custom command style, but I did want to demonstrate another way you can make this happen. 
 

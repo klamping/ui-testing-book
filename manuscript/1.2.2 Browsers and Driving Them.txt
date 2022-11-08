@@ -31,9 +31,9 @@ The WebDriver protocol is the de-facto standard automation technique. It allows 
 
 On the other side of things, that are many native browser interfaces to run automation on. In the past, every browser had its own (often not documented) protocol. But these days a lot of browsers, including Chrome, Edge and soon Firefox, come with a somewhat unified interface revolving around the Chrome DevTools Protocol.
 
-While WebDriver provides true cross browser support and allows you to run tests on a large scale in the cloud using vendors like Sauce Labs, native browser interfaces often allow many more automation capabilities like listening and interacting with network or DOM events while often being limited to a single browser only. These native interfaces also run much faster than their WebDriver counterparts, as they're a bit "closer to the metal".
+What are some differences between WebDriver and these native browser interfaces? Well, WebDriver provides true cross browser support and allows you to run tests on a large scale in the cloud using vendors like Sauce Labs. But native browser interfaces often allow for many more automation capabilities, like listening and interacting with network or DOM events. That said, they are usually limited to a single browser engine only. These native interfaces also run much faster than their WebDriver counterparts, as they're a bit "closer to the metal".
 
-We're going to take a minute to look at how to get set up with a few of these solutions. Throughout the book though, our examples with use the WebDriver protocol, since it's the most popular standard in use as of this writing. Thankfully though, it's very easy to switch between protocols in WebdriverIO, so we're not boxing ourselves in by picking one or the other.
+We're going to take a minute to look at how to get set up with a few of these solutions. Throughout the book though, our examples will use the WebDriver protocol, since it's the most popular standard in use as of this writing. Thankfully though, it's very easy to switch between protocols in WebdriverIO, so we're not boxing ourselves in by picking one or the other.
 
 ### Using the Chrome DevTools Protocol
 
@@ -61,11 +61,11 @@ There are drivers available for mobile testing (e.g., Appium), but they won't be
 
 ### Installing and Running ChromeDriver
 
-Installation instructions for these clients can be found on their respective websites, but in many cases, you can search on npmjs.org for Node.js-based installation tools. 
+Installation instructions for browser drivers, like ChromeDriver, can be found on their respective websites. However, in most cases, you can use Node.js-based tools to make installation simpler. You can find these tools on the npmjs.org website.
 
-For example, you can download and install ChromeDriver using [the NPM ChromeDriver package](https://www.npmjs.com/package/chromedriver).
+For example, you can download and run ChromeDriver using [the NPM ChromeDriver package](https://www.npmjs.com/package/chromedriver).
 
-To install the NPM package, run 
+To install the tool, in a terminal, run:
 
 ```sh
 npm install -g chromedriver
@@ -73,7 +73,7 @@ npm install -g chromedriver
 
 ![Terminal Output from installing ChromeDriver Globally](images/E98612E83AA301ACA18B813373384941.jpg)
 
-You can then start a ChromeDriver instance by running:
+Once installed, you can then start a ChromeDriver instance by running:
 
 ```sh
 chromedriver
@@ -94,7 +94,7 @@ While it is possible to manually download and start [a selenium server](https://
 To install and use it, run the following command in your terminal:
 
 ```sh
-npm i -g selenium-standalone
+npm install -g selenium-standalone
 ```
 
 This will make a global command available called `selenium-standalone`. With this command, we can do the following:
