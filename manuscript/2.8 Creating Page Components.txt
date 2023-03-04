@@ -42,7 +42,7 @@ class Home extends Generic {
         return this.$$feedTabs.map(($tab) => $tab.getText());
     }
     get activeFeedTabText() {
-        return this.$feedsContainer.
+        return this.$feedsContainer
 	        .$$('[data-qa-type="feed-tab"] .active')
 	        .map(($tab) => $tab.getText());
     }
@@ -149,30 +149,9 @@ There are a couple problems with this code. First off, it's a bit verbose to hav
 
 And there's a bug in this code (it's a tricky one too). If you run these tests with limited bandwidth, it will click the tab and then check for the text, but because of network delays, the tab will not have actually switched yet. So you'll get a failure that the active tab text isn't correct. 
 
-We could add a custom wait statement after each click, but that would clog up an already busy test case. Instead, let's look at some alternative approaches.
+We could add a custom wait statement after each click, but that would clog up an already busy test case. Instead, let's look at an alternative approach.
 
-One option is to get all the tabs, map their text to an object, and reference it through that. For example:
-
-```js
-const tabs = home.$$feedTabs.reduce(function (accTabs, tab) {
-    accTabs[tab.getText()] = tab;
-
-    return accTabs;
-}, {});
-
-// click on 'Your feed' tab
-tabs['Your Feed'].click();
-// // validate 'active' tabs are correct
-expect(home.activeFeedTabText).toEqual(['Your Feed']);
-// // click 'Global' tab
-tabs['Global Feed'].click();
-// // validate again
-expect(home.activeFeedTabText).toEqual(['Global Feed']);
-```
-
-The above is definitely a more complex coding example (understanding the `reduce` function is worthy of a PhD in my opinion), so I won't dive into details here as it revolves more around JavaScript coding than testing. It also has its own drawback, especially if two tabs share the same name. I simply wanted to mention it as an alternative. 
-
-How about another option? We'll create a `clickTab` function on the Home page object, which looks like:
+We'll create a `clickTab` function on the Home page object, which looks like:
 
 {title="test/pageObjects/Home.page.js"}
 ```js
@@ -198,14 +177,14 @@ class Home extends Generic {
             .map(getTrimmedText);
     }
 
-    clickTab(tabText) {
-        const tabToClick = this.$$feedTabs.find(
-            ($tab) => $tab.getText() === tabText
+    async clickTab (tabText) {
+        const tabToClick = await this.$$feedTabs.find(
+            async ($tab) => await $tab.getText() === tabText
         );
-        tabToClick.click();
-        browser.waitUntil(
-            () => {
-                return this.activeFeedTabText[0] === tabText;
+        await tabToClick.click();
+        await browser.waitUntil(
+            async () => {
+                return (await this.activeFeedTabText[0]) === tabText;
             },
             { timeoutMsg: 'Active tab text never switched to desired text' }
         );
@@ -220,15 +199,15 @@ Notice the custom `waitUntil` function we added after the tab click. This tells 
 Now, to use it in our test:
 
 ```js
-it('should let you switch between global and personal feeds', function () {
+it('should let you switch between global and personal feeds', async function () {
     // click on 'Your feed' tab
-    home.clickTab('Your Feed');
+    await home.clickTab('Your Feed');
     // // validate 'active' tabs are correct
-    expect(home.activeFeedTabText).toEqual(['Your Feed']);
+    expect(await home.activeFeedTabText).toEqual(['Your Feed']);
     // click 'Global' tab
-    home.clickTab('Global Feed');
+    await home.clickTab('Global Feed');
     // validate again
-    expect(home.activeFeedTabText).toEqual(['Global Feed']);
+    expect(await home.activeFeedTabText).toEqual(['Global Feed']);
 });
 ```
 
@@ -297,7 +276,7 @@ This won't be too difficult, and we'll use our old friend `waitForExist()` to ma
 
 When the page first loads, the following loading text is shown:
 
-!["Loading Articles..." text screenshot](images/42289218B9E0B5919D7B05A4A6F2967B.pn)
+!["Loading Articles..." text screenshot](images/42289218B9E0B5919D7B05A4A6F2967B.png)
 
 That text is removed from the page once the content is loaded, meaning we can use it's absence as an indicator that the content has completed loading.
 
@@ -320,7 +299,7 @@ $(selector).waitForExist({ timeout, reverse, timeoutMsg, interval })
 Bringing that all together, we can wait for the "Loading Articles..." text to disappear with the following code:
 
 ```js
-$('div=Loading Articles...').waitForExist({ reverse: true });
+await $('div=Loading Articles...').waitForExist({ reverse: true });
 ```
 
 A quick note: It can be tricky to figure out the HTML of these loading indicators because they often disappear before you can inspect them. Thankfully, the built-in browser development tools often have a way to artificially throttle your connection speed (think back to how we did this in Chapter 2.3.3 with `browser.throttle`). [Here's how to do that in Chrome](https://developers.google.com/web/tools/chrome-devtools/network/reference#throttling).
@@ -333,23 +312,23 @@ While I used the actual text in the previous example, there's also a `data-qa-id
 ```js
 class Home extends Generic {
     // ... some contents omitted for brevity ...
-
+    
     get $articleLoadingIndicator() {
         return $('[data-qa-id="article-loading-indicator"]');
     }
 
-    clickTab(tabText) {
-        const tabToClick = this.$$feedTabs.find(
-            ($tab) => $tab.getText() === tabText
+    async clickTab (tabText) {
+        const tabToClick = await this.$$feedTabs.find(
+            async ($tab) => await $tab.getText() === tabText
         );
-        tabToClick.click();
-        browser.waitUntil(
-            () => {
-                return this.activeFeedTabText[0] === tabText;
+        await tabToClick.click();
+        await browser.waitUntil(
+            async () => {
+                return (await this.activeFeedTabText[0]) === tabText;
             },
             { timeoutMsg: 'Active tab text never switched to desired text' }
         );
-        this.$articleLoadingIndicator.waitForExist({ reverse: true });
+        await this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
 }
 ```
@@ -422,10 +401,12 @@ class Feed extends Component {
     get $articleLoadingIndicator() {
         return this.$origin.$('[data-qa-id="article-loading-indicator"]');
     }
-    waitForLoad() {
-        this.$articleLoadingIndicator.waitForExist({ reverse: true });
+    async waitForLoad() {
+        await this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
 }
+
+module.exports = Feed;
 ```
 
 A few things:
@@ -458,8 +439,8 @@ Say we were to define a new `load` function in the Home page object:
 
 ```js
 class Home extends Generic {
-    load () {
-        this.currentFeed.waitForLoad();
+    async load () {
+        await this.currentFeed.waitForLoad();
     }
 }
 ```
@@ -474,23 +455,23 @@ Going back to the Home page object, we'll add that `super.load()` call to our `l
 
 {title="test/pageObjects/Home.page.js"}
 ```js
-load () {
-    super.load();
-    this.currentFeed.waitForLoad();
+async load () {
+	await super.load();
+	await this.currentFeed.waitForLoad();
 }
 
-clickTab (tabText) {
-    const tabToClick = this.$$feedTabs.find(
-        ($tab) => $tab.getText() === tabText
+async clickTab (tabText) {
+    const tabToClick = await this.$$feedTabs.find(
+        async ($tab) => await $tab.getText() === tabText
     );
-    tabToClick.click();
-    browser.waitUntil(
-        () => {
-            return this.activeFeedTabText[0] === tabText;
+    await tabToClick.click();
+    await browser.waitUntil(
+        async () => {
+            return (await this.activeFeedTabText[0]) === tabText;
         },
         { timeoutMsg: 'Active tab text never switched to desired text' }
     );
-    this.currentFeed.waitForLoad();
+    await this.currentFeed.waitForLoad();
 }
 ```
 
@@ -509,19 +490,19 @@ describe('Personal Feed', function () {
 In the `before` hook, we'll make sure we're on the `Your Feed` tab. 
 
 ```js
-before(function () {
+before(async function () {
     // ensure we're on the personal feed tab
-    if (home.activeFeedTabText !== 'Your Feed') {
-        home.clickTab('Your Feed');
+    if (await home.activeFeedTabText[0] !== 'Your Feed') {
+        await home.clickTab('Your Feed');
     }
 });
 ```
 
-Then, we'll write our test that checks that the number of items in the feed is correct (which will be 1, from a special account we follow that only has a single article). We use [the 'toHaveChildren' check](https://webdriver.io/docs/api/expect.html#tohavechildren), which looks at the amount of fetched elements using `$$` command and compares them to the number passed in.
+Then, we'll write our test that checks that the number of items in the feed is correct (which will be 1, from a special account we follow that only has a single article). We use [the 'toBeElementsArrayOfSize' check](https://webdriver.io/docs/api/expect-webdriverio/#tobeelementsarrayofsize), which looks at the amount of fetched elements using `$$` command and compares them to the number passed in.
 
 ```js
-it('should show most recent articles from people you follow', function () {
-    expect(home.currentFeed.$$articles).toHaveChildren(1);
+it('should show most recent articles from people you follow', async function () {
+    expect(home.currentFeed.$$articles).toBeElementsArrayOfSize(1);
 });
 ```
 
@@ -530,29 +511,29 @@ Overall, it looks like:
 ```js
 describe('Homepage', function () {
     describe('Logged In', function () {
-        before(function () {
-            browser.loginViaApi(user1);
+        before(async function () {
+            await browser.loginViaApi(user1);
 
-            home.load();
+            await home.load();
         });
 
         // tests hidden here for brevity
 
         describe('Personal Feed', function () {
-            before(function () {
+            before(async function () {
                 // ensure we're on the personal feed tab
-                if (home.activeFeedTabText !== 'Your Feed') {
-                    home.clickTab('Your Feed');
+                if (await home.activeFeedTabText[0] !== 'Your Feed') {
+                    await home.clickTab('Your Feed');
                 }
             });
 
-            it('should show most recent articles from people you follow', function () {
-                expect(home.currentFeed.$$articles).toHaveChildren(1);
+            it('should show most recent articles from people you follow', async function () {
+                await expect(home.currentFeed.$$articles).toBeElementsArrayOfSize(1);
             });
         });
 
-        after(function () {
-            auth.clearSession();
+        after(async function () {
+            await auth.clearSession();
         });
     });
 
@@ -617,8 +598,8 @@ class Feed extends Component {
     get $articleLoadingIndicator() {
         return this.$origin.$('[data-qa-id="article-loading-indicator"]');
     }
-    waitForLoad () {
-        this.$articleLoadingIndicator.waitForExist({ reverse: true });
+    async waitForLoad () {
+        await this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
 }
 
@@ -628,8 +609,9 @@ module.exports = Feed;
 Finally, we'll add a new test that checks the title of the first article in the 'Personal' feed:
 
 ```js
-it('should show most recent article first', function () {
-    expect(home.currentFeed.articles[0].$title).toHaveText('An Article');
+it('should show most recent article first', async function () {
+    const article = await home.currentFeed.articles[0];
+	await expect(article.$title).toHaveText('An Article');
 });
 ```
 
@@ -647,31 +629,32 @@ While we could copy/paste the test code from before, it would be more helpful to
 In our `ArticlePreview` class, let's create a `getDetails` function that retrieves the text in a test-friendly format for asserting against:
 
 ```js
-getDetails() {
+async getDetails() {
     // this is important, because `getText` will return an empty string if the
     // article preview is outside the browser's viewport
-    this.$origin.scrollIntoView(true);
-    return {
-        author: this.$author.getText().trim(),
-        date: this.$date.getText().trim(),
-        title: this.$title.getText().trim(),
-        description: this.$description.getText().trim(),
-        tags: this.$$tags.map($tag => $tag.getText().trim())
+    await this.$origin.scrollIntoView(true);
+	return {
+		author: (await this.$author.getText()).trim(),
+		date: (await this.$date.getText()).trim(),
+		title: (await this.$title.getText()).trim(),
+		description: (await this.$description.getText()).trim()
     }
 }
 ```
 
-Then, we'll update our test to reference the new `getDetails` function, validating the details. The assertion we'll use is [`toMatchObject`](https://jestjs.io/docs/en/expect#tomatchobjectobject), which is part of ExpectJS and allows us to compare two objects with each other (here, it's the object returned from `getDetails`, with an object of expected data on the page). 
+Note how we surround our `getText` calls with parenthesis. These are needed to ensure the `trim` function runs against the returned string from `getText`, and not the `Promise`.
+
+Let's then update our test to reference the new `getDetails` function, validating the details. The assertion we'll use is [`toMatchObject`](https://jestjs.io/docs/en/expect#tomatchobjectobject), which is part of ExpectJS and allows us to compare two objects with each other (here, it's the object returned from `getDetails`, with an object of expected data on the page). 
 
 ```js
 it('should show most recent article first', function () {
-    const firstArticleDetails = home.currentFeed.articles[0].getDetails();
+	const article = await home.currentFeed.articles[0];
+	const firstArticleDetails = await article.getDetails();
     expect(firstArticleDetails).toMatchObject({
         author: 'singlearticleuser',
         date: 'May 1, 2020',
         title: 'An Article',
-        description: 'A Single Article',
-        tags: []
+        description: 'A Single Article'
     });
 });
 
@@ -679,7 +662,7 @@ it('should show most recent article first', function () {
 
 As you see, we can dynamically create multiple page components on the fly for our use. Now, this is a very powerful feature, but understand that it comes with a cost. Creating each dynamic component does take a half-second of time, so if you have hundreds of components to create, perhaps this isn't the best approach. 
 
-Also, it complicates the code a bit. Anyone new to the codebase would need to look into what the 'Feed' and 'ArticlePreview' components do in order to really understand the test. As will all things in code, by trying to reduce the complexity, you end up introducing new complexities. Sometimes you just can't win. :D
+Also, it complicates the code a bit. Anyone new to the codebase would need to look into what the 'Feed' and 'ArticlePreview' components do in order to really understand the test. As will all things in code, by trying to reduce the complexity, you end up introducing new complexities. Sometimes you just can't win.
 
 ## 2.8.10 Chapter Challenge
 

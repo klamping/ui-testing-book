@@ -4,8 +4,8 @@
 
 Because technology changes fast, it's good to cover what versions of software I used when creating these exercises.
 
-- Node.js: v14.17.1 (Important: Node v16 has a breaking change which causes 'sync' mode to malfunction. The examples in the book are therefore not compatible with Node v16)
-- WebdriverIO: 7.12.5
+- Node.js: v18.12.1
+- WebdriverIO: 7.25.4
 - Java 8 (optional)
 - MongoDB 4.2 (optional)
 
@@ -63,7 +63,7 @@ That said, you don't need to know how to create a Node.js server, build a websit
 
 #### Where can I freshen up?
 
-While I won't be covering it in this book, here's a few free images you might find helpful if you'd like to refresh your knowledge:
+While I won't be covering it in this book, here's a few free resources you might find helpful if you'd like to refresh your knowledge:
 
 - [HTML Crash Course For Absolute Beginners](https://www.youtube.com/watch?v=UB1O30fR-EE)
 - [CSS Crash Course For Absolute Beginners](https://www.youtube.com/watch?v=yfoY53QXEnI)

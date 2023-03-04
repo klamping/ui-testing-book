@@ -97,7 +97,7 @@ services:
       - mongo
   mongo:
     container_name: realworld-mongo
-    image: mongo
+    image: mongo:5.0.13
     ports:
       - "27017:27017"
 ```

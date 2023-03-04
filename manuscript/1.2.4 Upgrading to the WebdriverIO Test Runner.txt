@@ -138,7 +138,7 @@ Even though we're not passing in the `config` flag to that command (although you
 
 Enter `y` and press enter, and you should see a screen like this:
 
-![Terminal Output from running `npx wdio` command with no config file available](images/EC7A419A118391E3528E0065E194DE37.jp)
+![Terminal Output from running `npx wdio` command with no config file available](images/EC7A419A118391E3528E0065E194DE37.jpg)
 
 This configuration utility will ask you a series of questions in regards to how you want to run your tests. 
 
@@ -187,7 +187,7 @@ Reporters are utilities that display the results of our tests in a more consumab
 
 Here are the two reporters showing the results of the same test run:
 
-![Terminal Output showing pass/failure reporting in 'dot' and 'spec' reporters](images/E956A797BD9DA8B8CDE6C713F82CF473.jp)
+![Terminal Output showing pass/failure reporting in 'dot' and 'spec' reporters](images/E956A797BD9DA8B8CDE6C713F82CF473.jpg)
 
 On top is `dot`, which is quite succinct. `spec` is much more verbose, giving us more detail into which specific test failed.
 

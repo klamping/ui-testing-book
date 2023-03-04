@@ -60,7 +60,7 @@ npx wdio
 
 This will start a WebdriverIO session to run our test. You should see a browser pop-up, and successful test output that looks something like:
 
-![Terminal output running our test via Chrome DevTools protocol](images/AE340D40E83E7C1D84D07A0034DE5819.jp)
+![Terminal output running our test via Chrome DevTools protocol](images/AE340D40E83E7C1D84D07A0034DE5819.jpg)
 
 Notice the line `INFO devtools:puppeteer: Initiate new session using the DevTools protocol` several lines down in the log. That lets us know we really are using the DevTools protocol. This is just like the output we saw when running through `devtools` for our standalone tests.
 
@@ -98,7 +98,7 @@ Like before, after a few moments, test output will start appearing. You'll proba
 
 The test will take a few seconds to run, then shut everything down. Once finished, it'll print out the final results, something like:
 
-![Terminal output running our test via Selenium Standalone](images/39A9220512B697E18CB4AE724B3A8C08.jp)
+![Terminal output running our test via Selenium Standalone](images/39A9220512B697E18CB4AE724B3A8C08.jpg)
 
 And remember, our `selenium-standalone` service took care of shutting down the server it started, so we don't have to do anything extra. 
 
@@ -128,7 +128,7 @@ npx wdio
 
 The output should look almost identical to before:
 
-![Terminal output running our test via ChromeDriver](images/295EF6EFD41A012957D8763159977669.jp)
+![Terminal output running our test via ChromeDriver](images/295EF6EFD41A012957D8763159977669.jpg)
 
 Notice the line `INFO webdriver: [POST] http://localhost:9515/session`. See how the port is set to `9515`? That's the ChromeDriver service managing things for us!
 

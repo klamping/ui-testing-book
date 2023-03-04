@@ -414,9 +414,9 @@ In your `Api.js` file, add a new function to make the API call. You don't need t
 {title="utils/Api.js"}
 ```js
 async getTags() {
-    const tagsResponse = await this.client.get(`tags`);
+    const tagsResponse = await this.api.get('tags');
     // return just the array, not the full response
-    return tagsResponse.tags;
+    return tagsResponse.data.tags;
 }
 ```
 
@@ -436,13 +436,11 @@ With that, add a test that asserts those tags are properly shown. In your `home.
 
 {title="test/specs/home.js"}
 ```js
-it('should show "Popular Tags"', function () {
+it('should show "Popular Tags"', async function () {
     // get the tags that should exist from the API
-    const apiTags = browser.call(() => {
-        return global.api.getTags();
-    });
+    const apiTags = await global.api.getTags();
 
-    expect(home.popularTags).toEqual(apiTags);
+    expect(await home.popularTags).toEqual(apiTags);
 });
 ```
 
@@ -474,13 +472,13 @@ class Profile extends Generic {
         super('./@' + username);
     }
 
-    get feeds () { return new Feeds('[data-qa-id="feed-tabs"]'); }
-    get followToggle () { return $('[data-qa-id="follow-toggle"]'); }
+    get feeds () { return new Feeds('[data-qa-id="profile-tabs"]'); }
+    get $followToggle () { return $('[data-qa-id="follow-toggle"]'); }
     get $username () { return $('[data-qa-id="profile-username"]'); }
 
-    load () {
-        super.load();
-        this.feeds.currentFeed.waitForLoad();
+    async load () {
+        await super.load();
+        await this.feeds.currentFeed.waitForLoad();
     }
 }
 
@@ -489,7 +487,7 @@ module.exports = Profile;
 
 As you can see, the Profile page uses a new "Feeds" Component, which has shared 'feeds' functionality between it and the Home/Tags page:
 
-{title="test/pageObjects/Feeds.page.js"}
+{title="test/pageObjects/Feeds.js"}
 ```js
 const Component = require('./Component');
 const { getTrimmedText } = require('../../utils/functions')
@@ -508,18 +506,19 @@ class Feeds extends Component {
     }
     get currentFeed () { return new Feed('[data-qa-type="article-list"]'); }
 
-    clickTab(tabText) {
-        const tabToClick = this.$$feedTabs.find(
-            ($tab) => $tab.getText() === tabText
+    async clickTab(tabText) {
+        const tabToClick = await this.$$feedTabs.find(
+            async ($tab) => await $tab.getText() === tabText
         );
-        tabToClick.click();
-        browser.waitUntil(
-            () => {
-                return this.activeFeedTabText[0] === tabText;
+
+        await tabToClick.click();
+        await browser.waitUntil(
+            async () => {
+                return await this.activeFeedTabText[0] === tabText;
             },
             { timeoutMsg: 'Active tab text never switched to desired text' }
         );
-        this.currentFeed.waitForLoad();
+        await this.currentFeed.waitForLoad();
     }
 }
 
@@ -531,22 +530,25 @@ Since we're using a new shared component, let's replace that code from the Home 
 {title="test/pageObjects/Home.page.js"}
 ```js
 const Generic = require('./Generic.page');
-const { getTrimmedText } = require('../utils/functions')
 const Feeds = require('./components/Feeds');
 
+const { getTrimmedText } = require('../utils/functions');
+
 class Home extends Generic {
+    // set default URL to homepage, but allow for a custom URL to be passed in
     constructor (url = './') {
-        super(url)
+        super(url);
     }
+
     get feeds () { return new Feeds('[data-qa-id="feed-tabs"]'); }
     get $$popularTags() {
         return $$('//p[text()="Popular Tags"]/following-sibling::div/a');
     }
     get popularTags () { return this.$$popularTags.map(getTrimmedText) }
 
-    load () {
-        super.load();
-        this.feeds.currentFeed.waitForLoad();
+    async load () {
+        await super.load();
+        await this.feeds.currentFeed.waitForLoad();
     }
 }
 
@@ -566,92 +568,89 @@ const auth = new Auth();
 
 describe('Homepage', function () {
     describe('Logged In', function () {
-        before(function () {
-            browser.loginViaApi(user1);
+        before(async function () {
+            await browser.loginViaApi(user1);
 
-            home.load();
+            await home.load();
         });
 
-        it('should show both feed tabs', function () {
-            expect(home.feeds.feedTabsText).toEqual(['Your Feed', 'Global Feed']);
+        it('should show both feed tabs', async function () {
+            expect(await home.feeds.feedTabsText).toEqual(['Your Feed', 'Global Feed']);
         });
 
-        it('should default to showing the global feed', function () {
+        it('should default to showing the global feed', async function () {
             // get all tabs with an 'active' class,
             // check only one returns with correct text
-            expect(home.feeds.activeFeedTabText).toEqual(['Global Feed']);
+            expect(await home.feeds.activeFeedTabText).toEqual(['Global Feed']);
         });
 
-        it('should let you switch between global and personal feeds', function () {
+        it('should let you switch between global and personal feeds', async function () {
             // click on 'Your feed' tab
-            home.feeds.clickTab('Your Feed');
+            await home.feeds.clickTab('Your Feed');
             // validate 'active' tabs are correct
-            expect(home.feeds.activeFeedTabText).toEqual(['Your Feed']);
+            expect(await home.feeds.activeFeedTabText).toEqual(['Your Feed']);
             // click 'Global' tab
-            home.feeds.clickTab('Global Feed');
+            await home.feeds.clickTab('Global Feed');
             // validate again
-            expect(home.feeds.activeFeedTabText).toEqual(['Global Feed']);
+            expect(await home.feeds.activeFeedTabText).toEqual(['Global Feed']);
             // click on 'Your feed' tab
-            home.feeds.clickTab('Your Feed');
+            await home.feeds.clickTab('Your Feed');
             // validate 'active' tabs are correct
-            expect(home.feeds.activeFeedTabText).toEqual(['Your Feed']);
+            expect(await home.feeds.activeFeedTabText).toEqual(['Your Feed']);
         });
 
         describe('Personal Feed', function () {
-            before(function () {
+            before(async function () {
                 // ensure we're on the personal feed tab
-                if (home.feeds.activeFeedTabText !== 'Your Feed') {
-                    home.feeds.clickTab('Your Feed');
+                if (await home.feeds.activeFeedTabText !== 'Your Feed') {
+                    await home.feeds.clickTab('Your Feed');
                 }
             });
 
             it('should show most recent articles from people you follow',
-                function () {
-                    expect(home.feeds.currentFeed.$$articles).toHaveChildren(1);
+                async function () {
+                    await expect(home.feeds.currentFeed.$$articles).toBeElementsArrayOfSize(1);
                 }
             );
 
-            it('should show most recent article first', function () {
-                const firstArticleDetails = home.feeds.currentFeed.articles[0]
+            it('should show most recent article first', async function () {
+                const firstArticleDetails = await home.feeds.currentFeed.articles[0]
                     .getDetails();
                 expect(firstArticleDetails).toMatchObject({
                     author: 'singlearticleuser',
                     date: 'May 1, 2020',
                     title: 'An Article',
-                    description: 'A Single Article',
-                    tags: []
+                    description: 'A Single Article'
                 });
             });
         });
 
-        after(function () {
-            auth.clearSession();
+        after(async function () {
+            await auth.clearSession();
         });
     });
     describe('Anonymous', function () {
-        before(function () {
+        before(async function () {
             // load the page
-            home.load();
+            await home.load();
         });
 
-        it('should load properly', function () {
+        it('should load properly', async function () {
             // check that top nav/footer exist
-            expect(home.$siteHeader).toBeExisting();
-            expect(home.$siteFooter).toBeExisting();
-            expect(home.$siteNav).toBeExisting();
+            await expect(home.$siteHeader).toBeExisting();
+            await expect(home.$siteFooter).toBeExisting();
+            await expect(home.$siteNav).toBeExisting();
         });
 
-        it('should only show the global feed tab', function () {
-            expect(home.feeds.feedTabsText).toEqual(['Global Feed']);
+        it('should only show the global feed tab', async function () {
+            expect(await home.feeds.feedTabsText).toEqual(['Global Feed']);
         });
 
-        it('should show "Popular Tags"', function () {
+        it('should show "Popular Tags"', async function () {
             // get the tags that should exist from the API
-            const apiTags = browser.call(() => {
-                return global.api.getTags();
-            });
+            const apiTags = await global.api.getTags();
 
-            expect(home.popularTags).toEqual(apiTags);
+            expect(await home.popularTags).toEqual(apiTags);
         });
     });
 });
@@ -665,7 +664,7 @@ const Tag = require('../pageObjects/Tag.page');
 describe('Tag Feed', function () {
     let articleDetails, tagName, tagPage, articleResponse;
 
-    before(function () {
+    before(async function () {
         articleDetails = {
             title: chance.sentence({ words: 3 }),
             description: chance.sentence({ words: 7 }),
@@ -676,34 +675,31 @@ describe('Tag Feed', function () {
         tagName = articleDetails.tagList[0];
 
         // create the article we need to get the specific tag
-        articleResponse = browser.call(() => {
-            return global.api.createArticle(user1, articleDetails);
-        });
+        articleResponse = await global.api.createArticle(user1, articleDetails);
 
         tagPage = new Tag(tagName);
 
         // load the page
-        tagPage.load();
+        await tagPage.load();
     });
 
-    after(function () {
-        browser.call(() => {
-            return global.api.deleteArticle(user1, articleResponse.slug);
-        });
+    after(async function () {
+        await global.api.deleteArticle(user1, articleResponse.slug);
     });
 
-    it('should have tag tab', function () {
+    it('should have tag tab', async function () {
         // check that we're on the tag tab
-        expect(tagPage.feeds.$$activeFeedTabs[0]).toHaveText(tagName, {
+        expect(await tagPage.feeds.activeFeedTabText[0]).toEqual(tagName, {
             trim: true
         });
     });
-    it('should load only articles for that tag', function () {
-        expect(tagPage.feeds.currentFeed.$$articles).toHaveChildren(1);
+
+    it('should load only articles for that tag', async function () {
+        await expect(tagPage.feeds.currentFeed.$$articles).toBeElementsArrayOfSize(1);
     });
-    it('should load correct article preview details', function () {
-        const firstArticleDetails = tagPage.feeds.currentFeed.articles[0]
-            .getDetails();
+
+    it('should load correct article preview details', async function () {
+        const firstArticleDetails = await tagPage.feeds.currentFeed.articles[0].getDetails();
 
         expect(firstArticleDetails).toMatchObject({
             title: articleDetails.title,
@@ -711,7 +707,6 @@ describe('Tag Feed', function () {
         });
     });
 });
-
 ```
 
 Okay, with all that written, let's focus back on writing the actual tests. 
@@ -727,11 +722,9 @@ Add the following function to the API util, allowing us to create a new user/pro
 ```js
 async createProfile(profile) {
     const response = await this.client.post('users', {
-        json: {
-            user: profile
-        }
+		user: profile
     });
-    return response.body.user;
+    return response.data.user;
 }
 ```
 
@@ -745,7 +738,9 @@ const Component = require('./Component');
 const ArticlePreview = require('./ArticlePreview');
 
 class Feed extends Component {
-    get $$articles () { return this.$origin.$$('[data-qa-type="article-preview"]') }
+    get $$articles() {
+        return this.$origin.$$('[data-qa-type="article-preview"]');
+    }
     get articles() {
         return this.$$articles.map(($article) => new ArticlePreview($article));
     }
@@ -755,8 +750,8 @@ class Feed extends Component {
     get $noArticlesText() {
         return this.$origin.$('div=No articles are here... yet.');
     }
-    waitForLoad () {
-        this.$articleLoadingIndicator.waitForExist({ reverse: true });
+    async waitForLoad() {
+        await this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
 }
 
@@ -767,12 +762,16 @@ Now, we'll create a new `profile.js` test file, and call the needed API utils to
 
 {title="test/specs/profile.js"}
 ```js
+const Auth = require('../pageObjects/Auth.page');
 const Profile = require('../pageObjects/Profile.page');
+const { user1 } = require('../fixtures/users');
+
+const auth = new Auth();
 
 describe('User Profile Page', function () {
-    let profile, profileResponse, articleDetails;
+    let profile, profileResponse, articleResponse, articleDetails;
 
-    before(function () {
+    before(async function () {
         profile = {
             email: `test+${Date.now()}@learnwebdriverio.com`,
             password: 'testwdio',
@@ -780,9 +779,7 @@ describe('User Profile Page', function () {
         };
 
         // create the user/profile we need to for our test
-        profileResponse = browser.call(() => {
-            return global.api.createProfile(profile);
-        });
+        profileResponse = await global.api.createProfile(profile);
 
         // create a new article for the new user
         articleDetails = {
@@ -791,95 +788,99 @@ describe('User Profile Page', function () {
             body: chance.paragraph({ sentences: 2 })
         };
         // create the article we need to get the specific tag
-        articleResponse = browser.call(() => {
-            return global.api.createArticle(profile, articleDetails);
-        });
+        articleResponse = await global.api.createArticle(profile, articleDetails);
 
         profilePage = new Profile(profile.username);
 
         // load the page
-        profilePage.load();
+        await profilePage.load();
     });
 
-    after(function () {
-        browser.call(() => {
-            return global.api.deleteArticle(profile, articleResponse.slug);
+    after(async function () {
+        await global.api.deleteArticle(profile, articleResponse.slug);
+    });
+
+    it('should show username at top of the page', async function () {
+        await expect(profilePage.$username).toHaveText(profile.username);
+    });
+
+    it('should show username at top of the page', async function () {
+        await expect(profilePage.$username).toHaveText(profile.username);
+    });
+
+    describe('Logged in', function () {
+        before(async function () {
+            await auth.load();
+            await auth.login(user1);
+    
+            await profilePage.load();
+        })
+
+        it('should allow you to follow and unfollow the user if you are logged in', 
+        async function () {
+            await expect(profilePage.$followToggle).toHaveText(`Follow ${profile.username}`, {
+                trim: true
+            });
+    
+            await profilePage.$followToggle.click();
+    
+            await expect(profilePage.$followToggle).toHaveText(
+                `Unfollow ${profile.username}`,
+                { trim: true }
+            );
+    
+            await profilePage.$followToggle.click();
+    
+            await expect(profilePage.$followToggle).toHaveText(`Follow ${profile.username}`, {
+                trim: true
+            });
         });
-    });
-
-    it('should show username at top of the page', function () {
-        expect(profilePage.$username).toHaveText(profile.username);
-    });
-
-    it('should show username at top of the page', function () {
-        expect(profilePage.$username).toHaveText(profile.username);
-    });
-
-    it('should allow you to follow and unfollow the user if you are logged in', 
-    function () {
-        expect(profilePage.$followToggle).toHaveText(`Follow ${profile.username}`, {
-            trim: true
+    
+        it('should show "My Articles" and "Favorited Articles" tabs with correct content',
+        async function () {
+            // check that the tabs are correct
+            expect(await profilePage.feeds.feedTabsText).toEqual([
+                'My Articles',
+                'Favorited Articles'
+            ]);
+            expect(await profilePage.feeds.activeFeedTabText).toEqual(['My Articles']);
+    
+            // // check that the content for the 'My Articles' tab is correct
+            await expect(profilePage.feeds.currentFeed.$$articles).toBeElementsArrayOfSize(1);
+    
+            const articleDetails = await profilePage.feeds.currentFeed.articles[0]
+                .getDetails();
+    
+            // format created date to format of "August 1, 2020"
+            const months = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ];
+            const createdDate = new Date(articleResponse.createdAt);
+            const formattedDate = `${
+                months[createdDate.getMonth()]
+            } ${createdDate.getDate()}, ${createdDate.getFullYear()}`;
+    
+            expect(await articleDetails.author).toEqual(profile.username);
+            expect(await articleDetails.date).toEqual(formattedDate);
+            expect(await articleDetails.title).toEqual(articleResponse.title);
+    
+            // switch tabs and run again
+            await profilePage.feeds.clickTab('Favorited Articles');
+    
+            await expect(profilePage.feeds.currentFeed.$$articles).toBeElementsArrayOfSize(0);
+            await expect(profilePage.feeds.currentFeed.$noArticlesText).toBeExisting();
         });
-
-        profilePage.$followToggle.click();
-
-        expect(profilePage.$followToggle).toHaveText(
-            `Unfollow ${profile.username}`,
-            { trim: true }
-        );
-
-        profilePage.$followToggle.click();
-
-        expect(profilePage.$followToggle).toHaveText(`Follow ${profile.username}`, {
-            trim: true
-        });
-    });
-
-    it('should show "My Articles" and "Favorited Articles" tabs with correct content',
-    function () {
-        // check that the tabs are correct
-        expect(profilePage.feeds.feedTabsText).toEqual([
-            'My Articles',
-            'Favorited Articles'
-        ]);
-        expect(profilePage.feeds.activeFeedTabText).toEqual(['My Articles']);
-
-        // // check that the content for the 'My Articles' tab is correct
-        expect(profilePage.feeds.currentFeed.$$articles).toHaveChildren(1);
-
-        const articleDetails = profilePage.feeds.currentFeed.articles[0]
-            .getDetails();
-
-        // format created date to format of "August 1, 2020"
-        const months = [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December'
-        ];
-        const createdDate = new Date(articleResponse.createdAt);
-        const formattedDate = `${
-            months[createdDate.getMonth()]
-        } ${createdDate.getDate()}, ${createdDate.getFullYear()}`;
-
-        expect(articleDetails.author).toEqual(profile.username);
-        expect(articleDetails.date).toEqual(formattedDate);
-        expect(articleDetails.title).toEqual(articleResponse.title);
-        expect(articleDetails.tags).toEqual(articleResponse.tagList);
-
-        // switch tabs and run again
-        profilePage.feeds.clickTab('Favorited Articles');
-
-        expect(profilePage.feeds.currentFeed.$$articles).toHaveLength(0);
-        expect(profilePage.feeds.currentFeed.$noArticlesText).toBeExisting();
     });
 });
 ```

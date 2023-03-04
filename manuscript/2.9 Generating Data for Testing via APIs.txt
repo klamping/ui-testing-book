@@ -23,7 +23,7 @@ In this chapter, we're going to look at Option C, which has involves creating co
 
 When an article is created, a user can add 'tags' to that article to mark it as a specific type of post. Then, later on, a user can limit their feed results by a specific tag. That's the page we're going to be testing now. 
 
-![Example 'WebdriverIO' Tag page](images/22ACB8AF3534C2579BDFCF04FE17088A.jp)
+![Example 'WebdriverIO' Tag page](images/22ACB8AF3534C2579BDFCF04FE17088A.jpg)
 
 To represent this page in our code, let's create a new "tag" page. If you look at this page, you'll notice that it's almost exactly the same as the homepage, just with an extra tab for the specific tag. What we can do is, instead of duplicating the Home page object, just extend off of it. 
 
@@ -96,15 +96,17 @@ class Api {
 
     async createArticle(user, details) {
         const token = await this.getAuthToken(user);
-        const response = await this.client.post('articles', {
-            json: {
+        const response = await this.api.post('articles', 
+            {
                 article: details
             },
-            headers: {
-                Authorization: `Token ${token}`
+            {
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
             }
-        });
-        return response.body.article;
+        );
+        return response.data.article;
     }
 }
 
@@ -119,7 +121,7 @@ Moving forward, the first step in our function is to get the proper Authorizatio
 
 Once that returns, we make a new request, this time POSTing to the `articles` API endpoint. We pass along a JSON body following the format of the API (a single `article` property with a JSON representation – `details` – of the desired article). We also pass along authorization headers using the token we received. This will let the API know which user to associate this article with.
 
-Finally, we'll return just the `body.article` from the response. This isn't necessary, but will make our test code a little bit cleaner. 
+Finally, we'll return just the `data.article` from the response. This isn't necessary, but will make our test code a little bit cleaner. 
 
 ## 2.9.3 Writing Our Tag Page Test
 
@@ -148,7 +150,7 @@ const Tag = require('../pageObjects/Tag.page');
 describe('Tag Feed', function () {
     let articleDetails, tagName, tagPage, articleResponse;
 
-    before(function () {
+    before(async function () {
         articleDetails = {
             title: chance.sentence({ words: 3 }),
             description: chance.sentence({ words: 7 }),
@@ -159,29 +161,27 @@ describe('Tag Feed', function () {
         tagName = articleDetails.tagList[0];
 
         // create the article we need to get the specific tag
-        articleResponse = browser.call(() => {
-            return global.api.createArticle(user1, articleDetails);
-        });
+        articleResponse = await global.api.createArticle(user1, articleDetails);
 
         tagPage = new Tag(tagName);
 
         // load the page
-        tagPage.load();
+        await tagPage.load();
     });
 
-    it('should have tag tab', function () {
+    it('should have tag tab', async function () {
         // check that we're on the tag tab
-        expect(tagPage.feeds.$$activeFeedTabs[0]).toHaveText(tagName, {
+        expect(await tagPage.activeFeedTabText[0]).toEqual(tagName, {
             trim: true
         });
     });
 
-    it('should load only articles for that tag', function () {
-        expect(tagPage.currentFeed.$$articles).toHaveChildren(1);
+    it('should load only articles for that tag', async function () {
+        await expect(tagPage.currentFeed.$$articles).toBeElementsArrayOfSize(1);
     });
 
-    it('should load correct article preview details', function () {
-        const firstArticleDetails = tagPage.currentFeed.articles[0].getDetails();
+    it('should load correct article preview details', async function () {
+        const firstArticleDetails = await tagPage.currentFeed.articles[0].getDetails();
 
         expect(firstArticleDetails).toMatchObject({
             title: articleDetails.title,
@@ -203,7 +203,7 @@ With that said, let's look at how we can "clean up" after our test, by making an
 ```js
 async deleteArticle(user, slug) {
     const token = await this.getAuthToken(user);
-    return this.client.delete(`articles/${slug}`, {
+    return this.api.delete(`articles/${slug}`, {
         headers: { Authorization: `Token ${token}` }
     });
 }
@@ -214,10 +214,8 @@ Again, I won't get into the details on the Conduit API much, because it's specif
 Now to call this `deleteArticle` function. We only want to delete the article after all our tests are completed, so we'll make that call in the `after` Mocha hook:
 
 ```js
-after(function () {
-    browser.call(() => {
-        return global.api.deleteArticle(user1, articleResponse.slug);
-    });
+after(async function () {
+	await global.api.deleteArticle(user1, articleResponse.slug);
 });
 ```
 
