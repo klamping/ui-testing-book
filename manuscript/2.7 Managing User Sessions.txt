@@ -28,7 +28,7 @@ So, let's just delete that entire `navigation.js` file and get ready to set up a
 const Generic = require('./Generic.page');
 
 class Home extends Generic {
-    constructor() {
+    constructor () {
         super('./');
     }
 }
@@ -37,6 +37,7 @@ module.exports = Home;
 ```
 
 This matches the other page objects we've created in that we extend the Generic page object and define our page URL, using `./` to represent a URL without any suffix (so just the `baseUrl` alone). 
+
 Now let's get our test going. The first test we'll write will validate the page has loaded correctly. How do we want to do this?
 
 In our `editor` test, we checked that certain form fields existed. What's on our homepage that we can validate?
@@ -103,19 +104,21 @@ We can do this in a manner similar to how we've added a generic 'load' method on
 const { URL } = require('url');
 
 class Generic {
-    constructor(url) {
-        this.url = url;
+    constructor (path) {
+        this.path = path;
 
-        // store the fullUrl by combining specific page url with WDIO base url
-        // using NodeJS URL utility
-        this.fullUrl = new URL(url, browser.options.baseUrl);
+        // store the url by combining specific page path with WDIO base url
+        // using the NodeJS URL utility
+        this.url = new URL(path, browser.config.baseUrl);
     }
-    load() {
-        browser.url(this.url);
-    }
+
     get $siteHeader () { return $('[data-qa-id="site-header"]'); }
     get $siteNav () { return $('[data-qa-id="site-nav"]'); }
     get $siteFooter () { return $('[data-qa-id="site-footer"]'); }
+
+    async load () {
+        await browser.url(this.path);
+    }
 }
 
 module.exports = Generic;
@@ -129,9 +132,10 @@ In my list of "components on the homepage," I mentioned that there are two 'feed
 
 Right now, we're only going to validate that the tab appears (and not the content inside the tab, we'll talk about that soon though). So our test will be a single line of code that validates against the 'feed' tabs:
 
+{title="test/specs/home.js"}
 ```js
-it('should only show the global feed tab', function () {
-    expect(home.feedTabsText).toEqual(['Global Feed']);
+it('should only show the global feed tab', async function () {
+    expect(await home.feedTabsText).toEqual(['Global Feed']);
 })
 ```
 
@@ -142,9 +146,10 @@ What's `feedTabsText`? Well, it will be an array containing the text content of 
 
 To get the text of the tabs in an array format, we need to get the tab elements themselves. Since we've already taken a similar approach before with the 'tags' on the article page, let's skip right to what the code will look like:
 
+{title="test/pageObjects/Home.page.js"}
 ```js
 get $$feedTabs () { return $$('[data-qa-id="feed-tabs"] [data-qa-type="feed-tab"]') }
-get feedTabsText () { return this.$$feedTabs.map($tab => $tab.getText().trim()); }
+get feedTabsText () { return this.$$feedTabs.map($tab => $tab.getText()); }
 ```
 
 Add those two lines to your `Home.page.js` file, along with the updates to the homepage test file. And while you're in that test file, update it to include the fact that these tests are written for the "anonymous" view. Let's do that by updating our test file to have two nested `describe` blocks, one for the Anonymous view, and the other for when you're logged in:
@@ -157,20 +162,20 @@ const home = new Home();
 
 describe('Homepage', function () {
     describe('Anonymous', function () {
-        before(function () {
+        before(async function () {
             // load the page
-            home.load();
+            await home.load();
         });
 
-        it('should load properly', function () {
+        it('should load properly', async function () {
             // check that top nav/footer exist
-            expect(home.$siteHeader).toBeExisting();
-            expect(home.$siteFooter).toBeExisting();
-            expect(home.$siteNav).toBeExisting();
+            await expect(home.$siteHeader).toBeExisting();
+            await expect(home.$siteFooter).toBeExisting();
+            await expect(home.$siteNav).toBeExisting();
         });
 
-        it('should only show the global feed tab', function () {
-            expect(home.feedTabsText).toEqual(['Global Feed']);
+        it('should only show the global feed tab', async function () {
+            expect(await home.feedTabsText).toEqual(['Global Feed']);
         });
     });
 
@@ -199,11 +204,11 @@ describe('Homepage', function () {
     // ... anonymous tests hidden for brevity
 
     describe('Logged In', function () {
-        before(function () {
-            auth.load();
-            auth.login(user1);
+        before(async function () {
+            await auth.load();
+            await auth.login(user1);
 
-            home.load();
+            await home.load();
         });
     });
 });
@@ -212,8 +217,8 @@ describe('Homepage', function () {
 And then add our test that checks the tabs are correct:
 
 ```js
-it('should show both feed tabs', function () {
-    expect(home.feedTabsText).toEqual(['Your Feed', 'Global Feed']);
+it('should show both feed tabs', async function () {
+    expect(await home.feedTabsText).toEqual(['Your Feed', 'Global Feed']);
 });
 ```
 
@@ -236,13 +241,13 @@ It'd be smart to avoid this, so we should clean up after ourselves (as anyone wi
 
 ```js
 describe('Logged In', function () {
-    before(function () {
-        auth.load();
-        auth.login(user1);
+    before(async function () {
+        await auth.load();
+        await auth.login(user1);
 
-        home.load();
+        await home.load();
     });
-    after(function () {
+    after(async function () {
         // run steps to log out
     });
 });
@@ -270,7 +275,7 @@ This is extremely useful for those cases where Selenium doesn't have a built in 
 Or in our case, to use the browser's Local Storage API to clear our session information. Here's a basic example of execute in action:
 
 ```js
-browser.execute(function () {
+await browser.execute(function () {
     window.alert('This call is coming from inside the browser!');
 });
 ```
@@ -279,11 +284,13 @@ Wait, where did the `window` object come from? Is that part of WebdriverIO? Nope
 
 If you're unfamiliar with JavaScript in the browser, `window` is a global object that the browser maintains. It's similar to how WebdriverIO gives you a `browser` object to use. We're able to access it, because the function we defined in our `execute` call is run inside the browser. 
 
+This is also why we don't need an `await` for the `window.alert` command. It's a plain JavaScript command, and therefore is not asynchronous and does not need to be waited for.
+
 It can be confusing to understand where our scripts are being run, so I’m going to add two ‘log’ statements; one will run inside our node.js instance, and the other will run inside the browser:
 
 ```js
 console.log('outside the browser.'); // this is run by Node.js
-browser.execute(function () {
+await browser.execute(function () {
     console.log('Inside the browser.'); // this is run by the browser
     window.alert('This call is coming from inside the browser!');
 });
@@ -302,18 +309,18 @@ describe('Homepage', function () {
     // ... anonymous tests hidden for brevity
 
     describe('Logged In', function () {
-        before(function () {
-            auth.load();
-            auth.login(user1);
+        before(async function () {
+            await auth.load();
+            await auth.login(user1);
 
-            home.load();
+            await home.load();
         });
-        // ... some tests here ...
-        after(function () {
-            browser.execute(function () {
+        // ... our tests here ...
+        after(async function () {
+            await browser.execute(function () {
                 window.localStorage.clear();
             });
-        });
+        })
     });
 });
 ```
@@ -323,8 +330,8 @@ That's some pretty useful functionality that we'll likely use again in other tes
 ```js
 class Auth extends Generic {
     // ... other code removed for brevity ...
-    clearSession() {
-        browser.execute(function () {
+    async clearSession () {
+        await browser.execute(function () {
             window.localStorage.clear();
         });
     }
@@ -334,8 +341,8 @@ class Auth extends Generic {
 And updating our `after` test hook:
 
 ```js
-after(function () {
-    auth.clearSession();
+after(async function () {
+    await auth.clearSession();
 });
 ```
 
@@ -390,7 +397,7 @@ WebdriverIO does not have a built-in way to make POST API requests, but that's o
 
 Whichever one you use is fine. Figure out what fits best for your needs (or just try one and see how it goes). We're going to use 'Got', which is what WebdriverIO uses behind the scenes for its own needs.
 
-First thing, install Got as a dependency in your local project folder by running `npm i got`.
+First thing, install Got as a dependency in your local project folder by running `npm i got@11`.
 
 With that, let's keep things organized by creating a new file called `Api.js`, and storing it in a new folder called `utils` in our project root.
 
@@ -408,12 +415,16 @@ class Api {
         });
     }
 
-    getAuthToken({ email, password }) {
-        return this.client
-            .post('/users/login', {
+    async getAuthToken({ email, password }) {
+        try {
+            const { body } = await this.client.post('users/login', {
                 json: { user: { email, password } }
-            })
-            .then((response) => response.body.user.token);
+            });
+
+            return body.user?.token;
+        } catch (err) {
+            console.log(err);
+        }
     }
 }
 
@@ -422,8 +433,9 @@ module.exports = Api;
 
 A brief overview of the file is this:
 
-- It exports an "Api" class, which can be constructed with a `prefixUrl` which should match our root API endpoint ('http://localhost:3000')
+- It exports an "Api" class, which can be constructed with[[~ Daily Notes - Aug 2022]] a `prefixUrl` which should match our root API endpoint ('http://localhost:3000')
 - The class has a `getAuthToken`, which will accept user credentials and return a promise which will resolve with the token data
+- We don't use any `await`/`async` as 
 
 Here's an example of a basic Node.js script using this new file:
 
@@ -434,7 +446,7 @@ const Api = require('./utils/Api');
 (async () => {
     const api = new Api('http://localhost:3000/api/');
     const token = await api.getAuthToken({
-        email: 'demowdio@learnwebdriverio.com',
+        email: 'demo@learnwebdriverio.com',
         password: 'wdiodemo'
     });
     console.log(token);
@@ -444,11 +456,11 @@ const Api = require('./utils/Api');
 Now we need to convert this script to something WebdriverIO can use. Back in our `home.js` test file, we're going to update the 'Logged In' `before` function. For reference, this is what the function currently runs:
 
 ```js
-before(function () {
-    auth.load();
-    auth.login(user1);
+before(async function () {
+    await auth.load();
+    await auth.login(user1);
 
-    home.load();
+    await home.load();
 });
 ```
 
@@ -456,7 +468,7 @@ Instead, we need to:
 
 1. Require our Api file
 2. Instantiate a new Api with the correct url: `const api = new Api('http://localhost:3000/api/');`
-3. Call the `getAuthToken` function via `browser.call` (since that function is promise-based and we need to wait for it to complete)
+3. Call the `getAuthToken` function
 4. Load the page in an unauthorized state (we can't set `localStorage` until after we have the page loaded)
 5. Set the token via `browser.execute` and [the `window.localStorage.setItem` function](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem)
 6. Reload the homepage, now that we have our token set
@@ -464,28 +476,25 @@ Instead, we need to:
 Here's what all of that looks like:
 
 ```js
-before(function () {
+before(async function () {
     // 1. Require our Api file
-    const Api = require('../../utils/Api');
+    const Api = require('../utils/Api');
 
     // 2. Instantiate a new Api instance with the url of our Api
-    const api = new Api('http://localhost:3000/api/');
+    const api = new Api('http://localhost:5000/api/');
 
     // 3. Call the `getAuthToken` function
-    const token = browser.call(() => {
-        return api.getAuthToken(user1);
-    });
+    const token = await api.getAuthToken(user1);
 
     // 4. Load the page in an unauthorized state
-    home.load();
+    await home.load();
 
     // 5. Set the token
-    browser.execute((browserToken) => {
+    await browser.execute((browserToken) => {
         window.localStorage.setItem('id_token', browserToken);
     }, token);
 
-    // 6. Reload the homepage
-    home.load();
+    await home.load();
 });
 ```
 
@@ -495,7 +504,7 @@ The next step is to move all of that API/token business to a common area, so tha
 
 ## 2.7.6 Global Custom Commands
 
-Start things off in the configuration file by adding the  `const Api = require('./utils/Api');` require statement to the top of the file. This can go before or after the `Chance` code. 
+Start things off in the configuration file by adding the  `const Api = require('./test/utils/Api');` require statement to the top of the file. This can go before or after the `Chance` code. 
 
 Then, scoot on down to our `before` hook, which if you recall from earlier, we used to store a global reference to our Chance instance. 
 
@@ -514,16 +523,14 @@ To use it, pass in the name of the command you want to define, and then a functi
 We're going to define a new `loginViaApi` command with the following code:
 
 ```js
-browser.addCommand('loginViaApi', function (user) {
-    const token = browser.call(() => {
-        return global.api.getAuthToken(user);
-    });
+browser.addCommand('loginViaApi', async function (user) {
+    const token = await global.api.getAuthToken(user);
 
     // load the base page so we can set the token
-    browser.url('./');
+    await browser.url('./');
 
     // inject the auth token
-    browser.execute((browserToken) => {
+    await browser.execute((browserToken) => {
         window.localStorage.setItem('id_token', browserToken);
     }, token);
 });
@@ -532,11 +539,11 @@ browser.addCommand('loginViaApi', function (user) {
 Add that right after your `global.api` line and save the configuration file. Then jump back over to `home.js` and update the `before` hook we were previously editing to use this new command:
 
 ```js
-before(function () {
-    browser.loginViaApi(user1);
+before(async function () {
+    await browser.loginViaApi(user1);
 
-    home.load();
-})
+    await home.load();
+});
 ```
 
 That sure is a lot less code in our hook than before! And we can use this command anywhere in our tests, without having to specifically load it, making our tests a bit cleaner than before.

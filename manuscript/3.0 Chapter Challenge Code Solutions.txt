@@ -4,7 +4,7 @@ Each chapter includes a challenge or two for you to tackle on your own. But it's
 
 ## Chapter 2.1: Assertions
 
-In your existing test, add a check that validates that when you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.
+In your existing test, add a check that validates that when on the login page, if you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.
 
 In the test we're adding to, we're on the login page. Now we need to click that logo, which can be done using the link text selector like we used for the 'Sign Up' button: `$('=conduit')`
 
@@ -17,22 +17,22 @@ Instead, we'll just validate that we're no longer on the login url, by using the
 {title="test/specs/navigation.js"}
 ```js
 describe('Homepage', function () {
-    it('should load properly', function () {
+    it('should load properly', async function () {
         // load the page
-        browser.url('./');
+        await browser.url('./');
 
         // Get the title of the homepage, should be 'Conduit'
-        expect(browser).toHaveTitle('Conduit');
+        await expect(browser).toHaveTitle('Conduit');
 
         // Click the 'Sign in' navigation link
-        $('=Sign in').click();
+        await $('=Sign in').click();
 
         // Get the URL of the sign in page. It should include 'login'
-        expect(browser).toHaveUrl('/login', { containing: true });
+        await expect(browser).toHaveUrl('/login', { containing: true });
 
-        $('=conduit').click();
+        await $('=conduit').click();
 
-        expect(browser).not.toHaveUrl('/login', { containing: true });
+        await expect(browser).not.toHaveUrl('/login', { containing: true });
     });
 });
 ```
@@ -79,17 +79,18 @@ The full file would look like:
 {title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
-    it('should let you log in', function () {
-        browser.url('./login');
+    it('should let you log in', async function () {
+        await browser.url('./login');
 
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
-        $('input[type="password"]').setValue('wdiodemo');
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+        await $('input[type="password"]').setValue('wdiodemo');
 
-        $('button*=Sign in').click();
+        const $signIn = $('button*=Sign in');
+        await $signIn.click();
 
-        $('=Your Feed').waitForDisplayed();
+        await $('=Your Feed').waitForDisplayed();
 
-        expect($('.error-messages li')).not.toBeExisting();
+        await expect($('.error-messages li')).not.toBeExisting();
     });
 });
 ```
@@ -102,31 +103,25 @@ This is a pretty lengthy exercise, so I'm not going to detail the steps involved
 
 {title="test/pageObjects/Register.page.js"}
 ```js
-const Generic = require('./Generic.page');
-
-class Register extends Generic {
-    constructor() {
-        super('./register');
-    }
-
-    get $username () { return $('input[name="email"]'); }
-    get $email () { return $('input[name="email"]'); }
-    get $password () { return $('input[type="password"]'); }
-    get $register () { return $('button*=Sign in'); }
+class Register {
+    get $username () { return $('input[placeholder="Username"]'); }
+    get $email () { return $('input[placeholder="Email"]'); }
+    get $password () { return $('input[placeholder="Password"]'); }
+    get $register () { return $('button*=Sign up'); }
     get $errorMessages () { return $('.error-messages li'); }
 
-    submit({ username, email, password }) {
-        this.$username.setValue(username);
-        this.$email.setValue(email);
-        this.$password.setValue(password);
+    async submit({ username, email, password }) {
+        await this.$username.setValue(username);
+        await this.$email.setValue(email);
+        await this.$password.setValue(password);
 
-        this.$register.click();
+        await this.$register.click();
 
         // wait until either the register button is gone or an error has appeared
-        browser.waitUntil(
-            () => {
-                const buttonExists = this.$signUpButton.isExisting();
-                const errorExists = this.$errorMessages.isExisting();
+        await browser.waitUntil(
+            async () => {
+                const buttonExists = await this.$register.isExisting();
+                const errorExists = await this.$errorMessages.isExisting();
 
                 return !buttonExists || errorExists;
             },
@@ -152,83 +147,83 @@ const email = 'newuser@learnwebdriverio.com';
 const password = 'hunter2';
 
 describe('Register Page', function () {
-    beforeEach(function () {
-        register.load();
+    beforeEach(async function () {
+        await browser.url('./register')
     });
 
-    it('should let you register', function () {
+    it('should let you register', async function () {
         // use a timestamp to generate "unique" username/email every test run
         const uniqueUsername = username + Date.now();
 
-        register.submitForm({
+        await register.submit({
             username: uniqueUsername,
             email: uniqueUsername + '@learnwebdriverio.com',
             password
         });
 
         // Get the URL of the page, which should no longer include 'register'
-        expect(browser).not.toHaveUrl(register.url.href);
+        await expect(browser).not.toHaveUrl('./register');
     });
 
-    it('should error with a missing username', function () {
-        register.submitForm({
+    it('should error with a missing username', async function () {
+        await register.submit({
             username: '',
             email,
             password
         });
 
-        expect(register.$errorMessages).toHaveText(`username can't be blank`);
+        await expect(register.$errorMessages).toHaveText(`username can't be blank`);
     });
 
-    it('should error with an already registered username', function () {
-        register.submitForm({
+    it('should error with an already registered username', async function () {
+        await register.submit({
             username: 'demouser',
             email,
             password
         });
 
-        expect(register.$errorMessages).toHaveText(`username is already taken.`);
+        await expect(register.$errorMessages).toHaveText(`username is already taken.`);
     });
 
-    it('should error with a missing email', function () {
-        register.submitForm({
+    it('should error with a missing email', async function () {
+        await register.submit({
             username,
             email: '',
             password
         });
 
-        expect(register.$errorMessages).toHaveText(`email can't be blank`);
+        await expect(register.$errorMessages).toHaveText(`email can't be blank`);
     });
 
-    it('should error with an already registered email', function () {
-        register.submitForm({
+    it('should error with an already registered email', async function () {
+        await register.submit({
             username,
             email: 'demo@learnwebdriverio.com',
             password
         });
 
-        expect(register.$errorMessages).toHaveText(`email is already taken.`);
+        await expect(register.$errorMessages).toHaveText(`email is already taken.`);
     });
 
-    it('should error with an invalid email', function () {
-        register.submitForm({
+    it('should error with an invalid email', async function () {
+        await register.submit({
             username,
             email: 'invalid',
             password
         });
 
-        expect(register.$errorMessages).toHaveText(`email is invalid`);
+        await expect(register.$errorMessages).toHaveText(`email is invalid`);
     });
 
     // uh-oh, this test fails because there's a bug on the register page!
-    it.skip('should error with a missing password', function () {
-        register.submitForm({
+    it.skip('should error with a missing password', async function () {
+        await register.submit({
             username,
             email,
             password: ''
         });
 
-        expect(register.$errorMessages).toHaveText(`password can't be blank`);
+        await expect(register.$errorMessages).toHaveText(`password can't be blank`);
     });
 });
 ```
@@ -245,25 +240,23 @@ Your updated function will look like:
 
 {title="test/pageObjects/Auth.page.js"}
 ```js
-login({ email, password }) {
-    this.load();
+async login ({ email, password }) {
+    await this.load();
+    
+    await this.$email.setValue(email);
+    await this.$password.setValue(password);
 
-    this.$email.setValue(email);
-    this.$password.setValue(password);
+    await this.$signIn.click();
 
-    this.$signIn.click();
-
-    // wait until either the sign in button is gone or an error has appeared
-    browser.waitUntil(
-        () => {
-            const signInExists = this.$signIn.isExisting();
-            const errorExists = this.$errorMessages.isExisting();
+    await browser.waitUntil(
+        async () => {
+            const signInExists = await this.$signIn.isExisting();
+            const errorExists = await this.$errorMessages.isExisting();
 
             return !signInExists || errorExists;
         },
         {
-            timoutMsg:
-                'The "Sign in" button still exists and an error never appeared'
+            timoutMsg: 'The "Sign in" button still exists and an error never appeared'
         }
     );
 }
@@ -283,14 +276,16 @@ class Generic {
 
         // store the url by combining specific page path with WDIO base url
         // using the NodeJS URL utility
-        this.url = new URL(path, browser.options.baseUrl);
+        this.url = new URL(path, browser.config.baseUrl);
     }
-    load() {
-        browser.url(this.path);
-    }
+
     get $siteHeader () { return $('[data-qa-id="site-header"]'); }
     get $siteNav () { return $('[data-qa-id="site-nav"]'); }
     get $siteFooter () { return $('[data-qa-id="site-footer"]'); }
+
+    async load () {
+        await browser.url(this.path);
+    }
 }
 
 module.exports = Generic;
@@ -309,7 +304,7 @@ Also, to keep things simpler, I skipped making an edits to the tags. While I cou
 We need to add two new references in our `Editor.page.js` file, for the "Tags List" items that are created when adding tags. That code is:
 
 {title="test/pageObjects/Editor.page.js"}
-```
+```js
 get $$tagsListItems () { return $$('.tag-list .tag-pill'); }
 get tagsListItems () { return this.$$tagsListItems.map($tag => $tag.getText()); }
 ```
@@ -330,11 +325,11 @@ const article = new Article();
 describe('Existing Article Editor', function () {
     let articleDetails;
 
-    before(function () {
-        auth.login(user1);
+    before(async function () {
+        await auth.login(user1);
 
         // create an article for editing
-        editor.load();
+        await editor.load();
 
         articleDetails = {
             title: global.chance.sentence({ words: 1 }),
@@ -343,22 +338,22 @@ describe('Existing Article Editor', function () {
             tags: [global.chance.word(), global.chance.word()]
         };
 
-        editor.submitArticle(articleDetails);
-        article.waitForLoad();
+        await editor.submitArticle(articleDetails);
+        // await article.waitForLoad();
 
-        article.$edit.click();
-        editor.$title.waitForDisplayed();
+        await article.$edit.click();
+        await editor.$title.waitForDisplayed();
     });
 
-    it('should populate fields with article details', function () {
-        expect(browser).toHaveUrl('editor', { containing: true });
-        expect(editor.$title).toHaveValue(articleDetails.title);
-        expect(editor.$description).toHaveValue(articleDetails.description);
-        expect(editor.$body).toHaveValue(articleDetails.body);
-        expect(editor.tagsListItems).toEqual(articleDetails.tags);
+    it('should populate fields with article details', async function () {
+        await expect(browser).toHaveUrl('editor', { containing: true });
+        await expect(editor.$title).toHaveValue(articleDetails.title);
+        await expect(editor.$description).toHaveValue(articleDetails.description);
+        await expect(editor.$body).toHaveValue(articleDetails.body);
+        await expect(await editor.tagsListItems).toEqual(articleDetails.tags);
     });
 
-    it('should update article after editing', function () {
+    it('should update article after editing', async function () {
         const updatedDetails = {
             title: global.chance.sentence({ words: 1 }),
             description: global.chance.sentence({ words: 2 }),
@@ -366,15 +361,15 @@ describe('Existing Article Editor', function () {
             tags: [] // don't add any new tags
         };
 
-        editor.submitArticle(updatedDetails);
+        await editor.submitArticle(updatedDetails);
 
-        article.waitForLoad();
+        // await article.waitForLoad();
 
-        expect(article.$title).toHaveText(updatedDetails.title);
-        expect(article.$body).toHaveText(updatedDetails.body);
+        await expect(article.$title).toHaveText(updatedDetails.title);
+        await expect(article.$body).toHaveText(updatedDetails.body);
 
         // tags should be same since we didn't change them
-        expect(article.tags).toEqual(articleDetails.tags);
+        await expect(await article.tags).toEqual(articleDetails.tags);
     });
 });
 ```
@@ -392,23 +387,21 @@ There are two steps to this change:
 class Auth extends Generic {
     // ... other Auth page object stuff goes here
 
-    loginViaApi(user) {
-        const token = browser.call(() => {
-            return global.api.getAuthToken(user);
-        });
+    async loginViaApi(user) {
+        const token = await global.api.getAuthToken(user);
 
         // load the base page so we can set the token
-        browser.url('./');
+        await browser.url('./');
 
         // inject the auth token
-        browser.execute((browserToken) => {
+        await browser.execute((browserToken) => {
             window.localStorage.setItem('id_token', browserToken);
         }, token);
     }
 }
 ```
 
-- Update references in the test to switch `browser.loginViaApi` to `Auth.loginViaApi`.
+- Update references in the test to switch `browser.loginViaApi` to `auth.loginViaApi`.
 
 Personally, I prefer the custom command style, but I did want to demonstrate another way you can make this happen. 
 
@@ -421,9 +414,9 @@ In your `Api.js` file, add a new function to make the API call. You don't need t
 {title="utils/Api.js"}
 ```js
 async getTags() {
-    const tagsResponse = await this.client.get(`tags`);
+    const tagsResponse = await this.api.get('tags');
     // return just the array, not the full response
-    return tagsResponse.tags;
+    return tagsResponse.data.tags;
 }
 ```
 
@@ -443,13 +436,11 @@ With that, add a test that asserts those tags are properly shown. In your `home.
 
 {title="test/specs/home.js"}
 ```js
-it('should show "Popular Tags"', function () {
+it('should show "Popular Tags"', async function () {
     // get the tags that should exist from the API
-    const apiTags = browser.call(() => {
-        return global.api.getTags();
-    });
+    const apiTags = await global.api.getTags();
 
-    expect(home.popularTags).toEqual(apiTags);
+    expect(await home.popularTags).toEqual(apiTags);
 });
 ```
 
@@ -481,13 +472,13 @@ class Profile extends Generic {
         super('./@' + username);
     }
 
-    get feeds () { return new Feeds('[data-qa-id="feed-tabs"]'); }
-    get followToggle () { return $('[data-qa-id="follow-toggle"]'); }
+    get feeds () { return new Feeds('[data-qa-id="profile-tabs"]'); }
+    get $followToggle () { return $('[data-qa-id="follow-toggle"]'); }
     get $username () { return $('[data-qa-id="profile-username"]'); }
 
-    load () {
-        super.load();
-        this.feeds.currentFeed.waitForLoad();
+    async load () {
+        await super.load();
+        await this.feeds.currentFeed.waitForLoad();
     }
 }
 
@@ -496,7 +487,7 @@ module.exports = Profile;
 
 As you can see, the Profile page uses a new "Feeds" Component, which has shared 'feeds' functionality between it and the Home/Tags page:
 
-{title="test/pageObjects/Feeds.page.js"}
+{title="test/pageObjects/Feeds.js"}
 ```js
 const Component = require('./Component');
 const { getTrimmedText } = require('../../utils/functions')
@@ -515,18 +506,19 @@ class Feeds extends Component {
     }
     get currentFeed () { return new Feed('[data-qa-type="article-list"]'); }
 
-    clickTab(tabText) {
-        const tabToClick = this.$$feedTabs.find(
-            ($tab) => $tab.getText() === tabText
+    async clickTab(tabText) {
+        const tabToClick = await this.$$feedTabs.find(
+            async ($tab) => await $tab.getText() === tabText
         );
-        tabToClick.click();
-        browser.waitUntil(
-            () => {
-                return this.activeFeedTabText[0] === tabText;
+
+        await tabToClick.click();
+        await browser.waitUntil(
+            async () => {
+                return await this.activeFeedTabText[0] === tabText;
             },
             { timeoutMsg: 'Active tab text never switched to desired text' }
         );
-        this.currentFeed.waitForLoad();
+        await this.currentFeed.waitForLoad();
     }
 }
 
@@ -538,22 +530,25 @@ Since we're using a new shared component, let's replace that code from the Home 
 {title="test/pageObjects/Home.page.js"}
 ```js
 const Generic = require('./Generic.page');
-const { getTrimmedText } = require('../utils/functions')
 const Feeds = require('./components/Feeds');
 
+const { getTrimmedText } = require('../utils/functions');
+
 class Home extends Generic {
+    // set default URL to homepage, but allow for a custom URL to be passed in
     constructor (url = './') {
-        super(url)
+        super(url);
     }
+
     get feeds () { return new Feeds('[data-qa-id="feed-tabs"]'); }
     get $$popularTags() {
         return $$('//p[text()="Popular Tags"]/following-sibling::div/a');
     }
     get popularTags () { return this.$$popularTags.map(getTrimmedText) }
 
-    load () {
-        super.load();
-        this.feeds.currentFeed.waitForLoad();
+    async load () {
+        await super.load();
+        await this.feeds.currentFeed.waitForLoad();
     }
 }
 
@@ -573,92 +568,89 @@ const auth = new Auth();
 
 describe('Homepage', function () {
     describe('Logged In', function () {
-        before(function () {
-            browser.loginViaApi(user1);
+        before(async function () {
+            await browser.loginViaApi(user1);
 
-            home.load();
+            await home.load();
         });
 
-        it('should show both feed tabs', function () {
-            expect(home.feeds.feedTabsText).toEqual(['Your Feed', 'Global Feed']);
+        it('should show both feed tabs', async function () {
+            expect(await home.feeds.feedTabsText).toEqual(['Your Feed', 'Global Feed']);
         });
 
-        it('should default to showing the global feed', function () {
+        it('should default to showing the global feed', async function () {
             // get all tabs with an 'active' class,
             // check only one returns with correct text
-            expect(home.feeds.activeFeedTabText).toEqual(['Global Feed']);
+            expect(await home.feeds.activeFeedTabText).toEqual(['Global Feed']);
         });
 
-        it('should let you switch between global and personal feeds', function () {
+        it('should let you switch between global and personal feeds', async function () {
             // click on 'Your feed' tab
-            home.feeds.clickTab('Your Feed');
+            await home.feeds.clickTab('Your Feed');
             // validate 'active' tabs are correct
-            expect(home.feeds.activeFeedTabText).toEqual(['Your Feed']);
+            expect(await home.feeds.activeFeedTabText).toEqual(['Your Feed']);
             // click 'Global' tab
-            home.feeds.clickTab('Global Feed');
+            await home.feeds.clickTab('Global Feed');
             // validate again
-            expect(home.feeds.activeFeedTabText).toEqual(['Global Feed']);
+            expect(await home.feeds.activeFeedTabText).toEqual(['Global Feed']);
             // click on 'Your feed' tab
-            home.feeds.clickTab('Your Feed');
+            await home.feeds.clickTab('Your Feed');
             // validate 'active' tabs are correct
-            expect(home.feeds.activeFeedTabText).toEqual(['Your Feed']);
+            expect(await home.feeds.activeFeedTabText).toEqual(['Your Feed']);
         });
 
         describe('Personal Feed', function () {
-            before(function () {
+            before(async function () {
                 // ensure we're on the personal feed tab
-                if (home.feeds.activeFeedTabText !== 'Your Feed') {
-                    home.feeds.clickTab('Your Feed');
+                if (await home.feeds.activeFeedTabText !== 'Your Feed') {
+                    await home.feeds.clickTab('Your Feed');
                 }
             });
 
             it('should show most recent articles from people you follow',
-                function () {
-                    expect(home.feeds.currentFeed.$$articles).toHaveChildren(1);
+                async function () {
+                    await expect(home.feeds.currentFeed.$$articles).toBeElementsArrayOfSize(1);
                 }
             );
 
-            it('should show most recent article first', function () {
-                const firstArticleDetails = home.feeds.currentFeed.articles[0]
+            it('should show most recent article first', async function () {
+                const firstArticleDetails = await home.feeds.currentFeed.articles[0]
                     .getDetails();
                 expect(firstArticleDetails).toMatchObject({
                     author: 'singlearticleuser',
                     date: 'May 1, 2020',
                     title: 'An Article',
-                    description: 'A Single Article',
-                    tags: []
+                    description: 'A Single Article'
                 });
             });
         });
 
-        after(function () {
-            auth.clearSession();
+        after(async function () {
+            await auth.clearSession();
         });
     });
     describe('Anonymous', function () {
-        before(function () {
+        before(async function () {
             // load the page
-            home.load();
+            await home.load();
         });
 
-        it('should load properly', function () {
+        it('should load properly', async function () {
             // check that top nav/footer exist
-            expect(home.$siteHeader).toBeExisting();
-            expect(home.$siteFooter).toBeExisting();
-            expect(home.$siteNav).toBeExisting();
+            await expect(home.$siteHeader).toBeExisting();
+            await expect(home.$siteFooter).toBeExisting();
+            await expect(home.$siteNav).toBeExisting();
         });
 
-        it('should only show the global feed tab', function () {
-            expect(home.feeds.feedTabsText).toEqual(['Global Feed']);
+        it('should only show the global feed tab', async function () {
+            expect(await home.feeds.feedTabsText).toEqual(['Global Feed']);
         });
 
-        it('should show "Popular Tags"', function () {
+        it('should show "Popular Tags"', async function () {
             // get the tags that should exist from the API
-            const apiTags = browser.call(() => {
-                return global.api.getTags();
-            });
+            const apiTags = await global.api.getTags();
 
-            expect(home.popularTags).toEqual(apiTags);
+            expect(await home.popularTags).toEqual(apiTags);
         });
     });
 });
@@ -672,7 +664,7 @@ const Tag = require('../pageObjects/Tag.page');
 describe('Tag Feed', function () {
     let articleDetails, tagName, tagPage, articleResponse;
 
-    before(function () {
+    before(async function () {
         articleDetails = {
             title: chance.sentence({ words: 3 }),
             description: chance.sentence({ words: 7 }),
@@ -683,34 +675,31 @@ describe('Tag Feed', function () {
         tagName = articleDetails.tagList[0];
 
         // create the article we need to get the specific tag
-        articleResponse = browser.call(() => {
-            return global.api.createArticle(user1, articleDetails);
-        });
+        articleResponse = await global.api.createArticle(user1, articleDetails);
 
         tagPage = new Tag(tagName);
 
         // load the page
-        tagPage.load();
+        await tagPage.load();
     });
 
-    after(function () {
-        browser.call(() => {
-            return global.api.deleteArticle(user1, articleResponse.slug);
-        });
+    after(async function () {
+        await global.api.deleteArticle(user1, articleResponse.slug);
     });
 
-    it('should have tag tab', function () {
+    it('should have tag tab', async function () {
         // check that we're on the tag tab
-        expect(tagPage.feeds.$$activeFeedTabs[0]).toHaveText(tagName, {
+        expect(await tagPage.feeds.activeFeedTabText[0]).toEqual(tagName, {
             trim: true
         });
     });
-    it('should load only articles for that tag', function () {
-        expect(tagPage.feeds.currentFeed.$$articles).toHaveChildren(1);
+
+    it('should load only articles for that tag', async function () {
+        await expect(tagPage.feeds.currentFeed.$$articles).toBeElementsArrayOfSize(1);
     });
-    it('should load correct article preview details', function () {
-        const firstArticleDetails = tagPage.feeds.currentFeed.articles[0]
-            .getDetails();
+
+    it('should load correct article preview details', async function () {
+        const firstArticleDetails = await tagPage.feeds.currentFeed.articles[0].getDetails();
 
         expect(firstArticleDetails).toMatchObject({
             title: articleDetails.title,
@@ -718,7 +707,6 @@ describe('Tag Feed', function () {
         });
     });
 });
-
 ```
 
 Okay, with all that written, let's focus back on writing the actual tests. 
@@ -734,11 +722,9 @@ Add the following function to the API util, allowing us to create a new user/pro
 ```js
 async createProfile(profile) {
     const response = await this.client.post('users', {
-        json: {
-            user: profile
-        }
+		user: profile
     });
-    return response.body.user;
+    return response.data.user;
 }
 ```
 
@@ -752,7 +738,9 @@ const Component = require('./Component');
 const ArticlePreview = require('./ArticlePreview');
 
 class Feed extends Component {
-    get $$articles () { return this.$origin.$$('[data-qa-type="article-preview"]') }
+    get $$articles() {
+        return this.$origin.$$('[data-qa-type="article-preview"]');
+    }
     get articles() {
         return this.$$articles.map(($article) => new ArticlePreview($article));
     }
@@ -762,8 +750,8 @@ class Feed extends Component {
     get $noArticlesText() {
         return this.$origin.$('div=No articles are here... yet.');
     }
-    waitForLoad () {
-        this.$articleLoadingIndicator.waitForExist({ reverse: true });
+    async waitForLoad() {
+        await this.$articleLoadingIndicator.waitForExist({ reverse: true });
     }
 }
 
@@ -774,12 +762,16 @@ Now, we'll create a new `profile.js` test file, and call the needed API utils to
 
 {title="test/specs/profile.js"}
 ```js
+const Auth = require('../pageObjects/Auth.page');
 const Profile = require('../pageObjects/Profile.page');
+const { user1 } = require('../fixtures/users');
+
+const auth = new Auth();
 
 describe('User Profile Page', function () {
-    let profile, profileResponse, articleDetails;
+    let profile, profileResponse, articleResponse, articleDetails;
 
-    before(function () {
+    before(async function () {
         profile = {
             email: `test+${Date.now()}@learnwebdriverio.com`,
             password: 'testwdio',
@@ -787,9 +779,7 @@ describe('User Profile Page', function () {
         };
 
         // create the user/profile we need to for our test
-        profileResponse = browser.call(() => {
-            return global.api.createProfile(profile);
-        });
+        profileResponse = await global.api.createProfile(profile);
 
         // create a new article for the new user
         articleDetails = {
@@ -798,95 +788,99 @@ describe('User Profile Page', function () {
             body: chance.paragraph({ sentences: 2 })
         };
         // create the article we need to get the specific tag
-        articleResponse = browser.call(() => {
-            return global.api.createArticle(profile, articleDetails);
-        });
+        articleResponse = await global.api.createArticle(profile, articleDetails);
 
         profilePage = new Profile(profile.username);
 
         // load the page
-        profilePage.load();
+        await profilePage.load();
     });
 
-    after(function () {
-        browser.call(() => {
-            return global.api.deleteArticle(profile, articleResponse.slug);
+    after(async function () {
+        await global.api.deleteArticle(profile, articleResponse.slug);
+    });
+
+    it('should show username at top of the page', async function () {
+        await expect(profilePage.$username).toHaveText(profile.username);
+    });
+
+    it('should show username at top of the page', async function () {
+        await expect(profilePage.$username).toHaveText(profile.username);
+    });
+
+    describe('Logged in', function () {
+        before(async function () {
+            await auth.load();
+            await auth.login(user1);
+    
+            await profilePage.load();
+        })
+
+        it('should allow you to follow and unfollow the user if you are logged in', 
+        async function () {
+            await expect(profilePage.$followToggle).toHaveText(`Follow ${profile.username}`, {
+                trim: true
+            });
+    
+            await profilePage.$followToggle.click();
+    
+            await expect(profilePage.$followToggle).toHaveText(
+                `Unfollow ${profile.username}`,
+                { trim: true }
+            );
+    
+            await profilePage.$followToggle.click();
+    
+            await expect(profilePage.$followToggle).toHaveText(`Follow ${profile.username}`, {
+                trim: true
+            });
         });
-    });
-
-    it('should show username at top of the page', function () {
-        expect(profilePage.$username).toHaveText(profile.username);
-    });
-
-    it('should show username at top of the page', function () {
-        expect(profilePage.$username).toHaveText(profile.username);
-    });
-
-    it('should allow you to follow and unfollow the user if you are logged in', 
-    function () {
-        expect(profilePage.$followToggle).toHaveText(`Follow ${profile.username}`, {
-            trim: true
+    
+        it('should show "My Articles" and "Favorited Articles" tabs with correct content',
+        async function () {
+            // check that the tabs are correct
+            expect(await profilePage.feeds.feedTabsText).toEqual([
+                'My Articles',
+                'Favorited Articles'
+            ]);
+            expect(await profilePage.feeds.activeFeedTabText).toEqual(['My Articles']);
+    
+            // // check that the content for the 'My Articles' tab is correct
+            await expect(profilePage.feeds.currentFeed.$$articles).toBeElementsArrayOfSize(1);
+    
+            const articleDetails = await profilePage.feeds.currentFeed.articles[0]
+                .getDetails();
+    
+            // format created date to format of "August 1, 2020"
+            const months = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ];
+            const createdDate = new Date(articleResponse.createdAt);
+            const formattedDate = `${
+                months[createdDate.getMonth()]
+            } ${createdDate.getDate()}, ${createdDate.getFullYear()}`;
+    
+            expect(await articleDetails.author).toEqual(profile.username);
+            expect(await articleDetails.date).toEqual(formattedDate);
+            expect(await articleDetails.title).toEqual(articleResponse.title);
+    
+            // switch tabs and run again
+            await profilePage.feeds.clickTab('Favorited Articles');
+    
+            await expect(profilePage.feeds.currentFeed.$$articles).toBeElementsArrayOfSize(0);
+            await expect(profilePage.feeds.currentFeed.$noArticlesText).toBeExisting();
         });
-
-        profilePage.$followToggle.click();
-
-        expect(profilePage.$followToggle).toHaveText(
-            `Unfollow ${profile.username}`,
-            { trim: true }
-        );
-
-        profilePage.$followToggle.click();
-
-        expect(profilePage.$followToggle).toHaveText(`Follow ${profile.username}`, {
-            trim: true
-        });
-    });
-
-    it('should show "My Articles" and "Favorited Articles" tabs with correct content',
-    function () {
-        // check that the tabs are correct
-        expect(profilePage.feeds.feedTabsText).toEqual([
-            'My Articles',
-            'Favorited Articles'
-        ]);
-        expect(profilePage.feeds.activeFeedTabText).toEqual(['My Articles']);
-
-        // // check that the content for the 'My Articles' tab is correct
-        expect(profilePage.feeds.currentFeed.$$articles).toHaveChildren(1);
-
-        const articleDetails = profilePage.feeds.currentFeed.articles[0]
-            .getDetails();
-
-        // format created date to format of "August 1, 2020"
-        const months = [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December'
-        ];
-        const createdDate = new Date(articleResponse.createdAt);
-        const formattedDate = `${
-            months[createdDate.getMonth()]
-        } ${createdDate.getDate()}, ${createdDate.getFullYear()}`;
-
-        expect(articleDetails.author).toEqual(profile.username);
-        expect(articleDetails.date).toEqual(formattedDate);
-        expect(articleDetails.title).toEqual(articleResponse.title);
-        expect(articleDetails.tags).toEqual(articleResponse.tagList);
-
-        // switch tabs and run again
-        profilePage.feeds.clickTab('Favorited Articles');
-
-        expect(profilePage.feeds.currentFeed.$$articles).toHaveLength(0);
-        expect(profilePage.feeds.currentFeed.$noArticlesText).toBeExisting();
     });
 });
 ```

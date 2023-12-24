@@ -4,13 +4,14 @@
 
 Because technology changes fast, it's good to cover what versions of software I used when creating these exercises.
 
-%% [TODO update with latest versions upon book completion]
-
-- Node.js: v12.16.1
-- WebdriverIO: 7.7.3
+- Node.js: v18.12.1
+- WebdriverIO: 7.25.4
 - Java 8 (optional)
+- MongoDB 4.2 (optional)
 
-**Important: Node v16 includes a breaking change which causes 'sync' mode to malfunction. The examples in the book are therefore not compatible with Node v16. (An update to the book is currently in progress to address this)**
+### Node.js Requirements
+
+[Check the Webdriver.io website for minimum Node.js version requirements](https://webdriver.io/docs/gettingstarted#system-requirements). Normally, WebdriverIO works with the latest few LTS versions of Node.js. 
 
 ### Git Repository
 
@@ -70,7 +71,7 @@ While I won't be covering it in this book, here's a few free resources you might
 - [JavaScript for Testers (YouTube Playlist)](https://www.youtube.com/playlist?list=PLzDWIPKHyNmLxpL8iQWZXwl_ln0BgckLt)
 - [JavaScript Course (Codecademy)](https://www.codecademy.com/learn/learn-javascript)
 - [Must-know JavaScript Features (YouTube Playlist)](https://www.youtube.com/playlist?list=PL0zVEGEvSaeHJppaRLrqjeTPnCH6vw-sm)
-- [Start Using ES6 Today (Presenation)](https://www.youtube.com/watch?v=493p5FSFHz8)
+- [Start Using ES6 Today (Presentation)](https://www.youtube.com/watch?v=493p5FSFHz8)
 - [Linux Terminal (YouTube)](https://www.youtube.com/watch?v=oxuRxtrO2Ag)
 - [Windows Terminal (YouTube Playlist)](https://www.youtube.com/watch?v=MBBWVgE0ewk&list=PL6gx4Cwl9DGDV6SnbINlVUd0o2xT4JbMu)
 - [NPM Crash Course](https://www.youtube.com/watch?v=jHDhaSSKmB0)

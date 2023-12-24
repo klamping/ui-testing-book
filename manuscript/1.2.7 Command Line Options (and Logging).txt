@@ -30,9 +30,9 @@ Then, a path to a configuration file (i.e., `wdio.conf.js`, we'll talk about thi
 
 Finally, an option to set the `suite` to `foobar`. We can provide many options here, and we'll get to that soon.
 
-Back to the configuration file. By default, WebdriverIO will use the `wdio.conf.js` file (assuming you have one). If you want to have a different configuration file with different settings, this is how you can get WebdriverIO to use it.
+Back to the configuration file path. By default, WebdriverIO will use the `wdio.conf.js` file (assuming you have one). If you want to have a different configuration file with different settings, this is how you can tell WebdriverIO to use it instead.
 
-Say I create a second configuration file called `wdio.alternative.conf.js`. I can use that file by running:
+Say I've created a second configuration file called `wdio.alternative.conf.js`. I can use that file by running:
 
 ```sh
 npx wdio wdio.alternative.conf.js
@@ -40,7 +40,7 @@ npx wdio wdio.alternative.conf.js
 
 Now WebdriverIO will use that instead of `wdio.conf.js`.
 
-As you get into more advanced usage of the framework, you'll probably want to have custom configuration files. We won't be covering that in this book though, as it's a bit too advanced for our needs. So, let's move on and explore those options.
+As you get into more advanced usage of the framework, you'll probably want to have custom configuration files. We won't be covering that in this book though, as it's a bit more advanced than our needs. So, let's move on and explore some other options.
 
 ### `Run` Options
 
@@ -48,33 +48,34 @@ In the usage examples, you see two main options being passed: `suite` and `spec`
 
 ```sh
 Options:
-  --version             Show version number                            [boolean]
-  --watch               Run WebdriverIO in watch mode                  [boolean]
-  --hostname, -h        automation driver host address                  [string]
-  --port, -p            automation driver port                          [number]
-  --path                path to WebDriver endpoints (default "/")       [string]
-  --user, -u            username if using a cloud service as automation backend
+      --version          Show version number                           [boolean]
+      --watch            Run WebdriverIO in watch mode                 [boolean]
+  -h, --hostname         automation driver host address                 [string]
+  -p, --port             automation driver port                         [number]
+      --path             path to WebDriver endpoints (default "/")      [string]
+  -u, --user             username if using a cloud service as automation backend
                                                                         [string]
-  --key, -k             corresponding access key to the user            [string]
-  --logLevel, -l        level of logging verbosity
+  -k, --key              corresponding access key to the user           [string]
+  -l, --logLevel         level of logging verbosity
                   [choices: "trace", "debug", "info", "warn", "error", "silent"]
-  --bail                stop test runner after specific amount of tests have
-                        failed                                          [number]
-  --baseUrl             shorten url command calls by setting a base url [string]
-  --waitforTimeout, -w  timeout for all waitForXXX commands             [number]
-  --framework, -f       defines the framework (Mocha, Jasmine or Cucumber) to
-                        run the specs                                   [string]
-  --reporters, -r       reporters to print out the results on stdout     [array]
-  --suite               overwrites the specs attribute and runs the defined
-                        suite                                            [array]
-  --spec                run only a certain spec file - overrides specs piped
-                        from stdin                                       [array]
-  --exclude             exclude certain spec file from the test run - overrides
-                        exclude piped from stdin                         [array]
-  --mochaOpts           Mocha options
-  --jasmineNodeOpts     Jasmine options
-  --cucumberOpts        Cucumber options
-  --help                Show help                                      [boolean]
+      --bail             stop test runner after specific amount of tests have
+                         failed                                         [number]
+      --baseUrl          shorten url command calls by setting a base url[string]
+  -w, --waitforTimeout   timeout for all waitForXXX commands            [number]
+  -f, --framework        defines the framework (Mocha, Jasmine or Cucumber) to
+                         run the specs                                  [string]
+  -r, --reporters        reporters to print out the results on stdout    [array]
+      --suite            overwrites the specs attribute and runs the defined
+                         suite                                           [array]
+      --spec             run only a certain spec file - overrides specs piped
+                         from stdin                                      [array]
+      --exclude          exclude certain spec file from the test run - overrides
+                         exclude piped from stdin                        [array]
+      --mochaOpts        Mocha options
+      --jasmineOpts      Jasmine options
+      --cucumberOpts     Cucumber options
+      --autoCompileOpts  Auto compilation options
+      --help             Show help                                     [boolean]
 ```
  
 That's a lot of choices! Let's look at the most useful ones...
@@ -95,7 +96,7 @@ How about a couple of examples? Say you have the following test files:
 /test/auth/register.js
 ```
 
-Five files total, with three of them being inside the `test/auth` folder.
+There are five files total, with three of them being inside the `test/auth` folder.
 
 Assuming the `specs` setting in your configuration file is set to `./test/**/*.js`, normally you'd run all five tests on each run.
 
@@ -107,7 +108,7 @@ npx wdio --spec=homepage.js
 npx wdio --spec=home
 ```
 
-The `spec` option takes either the exact path to the file you want to test, or a filter by filename. So all three variations above work because `./test/homepage.js` matches against all three.
+The `spec` option takes either the exact path to the file you want to test, or a filter by filename. So all three variations above work because the `./test/homepage.js` filepath matches against all three.
 
 Here's a different example: I want to run just the login/logout tests. I could do any of the following:
 
@@ -120,7 +121,7 @@ npx wdio --spec=log
 
 Notice in the first two options, we define the `spec` option twice, allowing us to choose two different files specifically.
 
-As mentioned before, the `spec` option is very helpful when debugging individual tests. We'll be using it a lot going forward.
+The `spec` option is very dynamic and very helpful when debugging individual tests. We'll be using it a lot going forward.
 
 ### Bail
 
@@ -142,23 +143,29 @@ Of course, we could set this to any number, but 1 is what will be used most, as 
 
 Overriding the `baseUrl` can be helpful for times when you need to test the same site on a different server. Most often this occurs when you're testing a server on your local computer versus the test server. It can also be useful for one-time tests of special servers spun up to run specific code.
 
-In our settings, we defined our `baseUrl` as `https://webdriver.io`. And in our test, we used that URL by changing our `browser.url` call.
+In our settings, our `baseUrl` is defined as `http://localhost`. However, in our test we're not using that value, as we're overriding it by passing in the full DuckDuckGo URL:
 
-Let's say we want to test the old version of the WebdriverIO website. That URL is `http://v4.webdriver.io`. So to pass it in via the command line, we'd run:
-
-```sh
-npx wdio --baseUrl=http://v4.webdriver.io
+```js
+await browser.url('https://duckduckgo.com/')
 ```
 
-When we run that, we're going to get an assertion error. That's because it went to the old site, which had a different page title from the new one. At least we know our test correctly catches errors!
+What if we instead want to use the URL defined in our config file? If we change `browser.url('https://duckduckgo.com/')` to be just `browser.url('./')`, WebdriverIO will see that it isn’t a full website URL, and prepend our baseUrl from the config file.
 
-![Terminal output showing error message if `baseUrl` is incorrect](images/C32C072B870E5E8B9C33B717190F990F.jpg)
+But now if we run our test, it will go to the `localhost` site we accepted in our config wizard. This would be great if we were testing a local version of the DuckDuckGo site, but we don't have that set up. 
+
+So we can do one of two things: update our `baseUrl` in the config, or pass a custom URL via the command line. Let's try that second option:
+
+```sh
+npx wdio --baseUrl=https://duckduckgo.com/
+```
+
+When we run that, it loads the public DuckDuckGo site just like we asked and our tests pass again.
 
 I use the `baseUrl` override only every so often, but it's certainly handy to have around.
 
 ### Log Level
 
-Let's take a look at another option. We've run across the `logLevel` a couple times, which defines how much console output to show when running our tests.
+Let's take a look at another option. We've run across the `logLevel` a couple times, which defines how much console output to shown when running our tests.
 
 When you're debugging your tests, it can be helpful to see all the logs that WebdriverIO outputs. Other times you may not want any output at all. You can tweak this on a run-by-run basis by setting the `logLevel` option. 
 
@@ -174,21 +181,19 @@ If I didn't want any logs, I'd do:
 npx wdio --logLevel=silent
 ```
 
-Let's try out that first option. As the tests run, you should see logs appearing, which are describing what's currently happening. For example, the start of our logs would show:
+Let's try out that first option. As the tests run, you'll see logs appearing, which describe what's happening under the hood. For instance, the start of our logs are:
 
 ```sh
-2020-07-24T22:50:20.066Z INFO @wdio/cli:launcher: Run onWorkerStart hook
-2020-07-24T22:50:20.067Z INFO @wdio/local-runner: Start worker 0-0 with arg:
---logLevel=trace
-[0-0] 2020-07-24T22:50:20.425Z INFO @wdio/local-runner: Run
-worker command: run
-[0-0] 2020-07-24T22:50:20.431Z DEBUG
-@wdio/local-runner:utils: init remote session
+2021-07-01T20:25:12.263Z DEBUG @wdio/utils:initialiseServices: initialise
+service "chromedriver" as NPM package
+2021-07-01T20:25:12.293Z INFO @wdio/cli:launcher: Run onPrepare hook
+2021-07-01T20:25:12.294Z INFO chromedriver: Start Chromedriver
+(/Users/klamping/wdio-testrunner/node_modules/chromedriver/lib/chromedriver/chro
+medriver)
+with args --port=9515 --url-base=/
 ```
 
-As the test continues, old messages will "scroll" off the top of the log, while new messages appear at the bottom.
-
-Notice that each log message has a 'type.. The first message in the example output above is INFO and the last is DEBUG. These types are defined inside the core WebdriverIO code, and generally denote different types of messages. 
+Notice that each log message has a 'type'. The first message in the example output above is DEBUG and the rest are INFO. These types are defined inside the core WebdriverIO code, and generally denote different types of messages. 
 
 The log level is a hierarchical setup, having five levels:
 
@@ -202,131 +207,324 @@ When setting the log level to `trace`, you'll get all the `trace` messages, plus
 
 If you were to choose `warn`, you'd only get those messages, plus any `error` messages.
 
-After our tests have completed, WebdriverIO prints out the entirety of messages in a single section. Here's what that looks like:
+Let's go back to our `trace` log output. Here are the full logs from before:
 
 ```sh
-2020-07-24T22:50:19.909Z DEBUG @wdio/utils:initialiseServices: initialise
+2021-07-01T20:25:12.263Z DEBUG @wdio/utils:initialiseServices: initialise
 service "chromedriver" as NPM package
-2020-07-24T22:50:19.933Z INFO @wdio/cli:launcher: Run onPrepare hook
-Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-ref
-s/branch-heads/4147@{#310}) on port 9515
-Only local connections are allowed.
-Please see https://chromedriver.chromium.org/security-considerations for suggest
-ions on keeping ChromeDriver safe.
-ChromeDriver was started successfully.
-2020-07-24T22:50:20.066Z INFO @wdio/cli:launcher: Run onWorkerStart hook
-2020-07-24T22:50:20.067Z INFO @wdio/local-runner: Start worker 0-0 with arg: --l
-ogLevel=trace
-[0-0] 2020-07-24T22:50:20.425Z INFO @wdio/local-runner: Run worker command: run
-[0-0] 2020-07-24T22:50:20.431Z DEBUG @wdio/local-runner:utils: init remote sessi
-on
-2020-07-24T22:50:20.433Z INFO webdriverio: Initiate new session using the ./prot
-ocol-stub protocol
+2021-07-01T20:25:12.293Z INFO @wdio/cli:launcher: Run onPrepare hook
+2021-07-01T20:25:12.294Z INFO chromedriver: Start Chromedriver
+(/Users/klamping/wdio-testrunner/node_modules/chromedriver/lib/chromedriver/chro
+medriver)
+with args --port=9515 --url-base=/
+2021-07-01T20:25:12.326Z INFO chromedriver: Starting ChromeDriver 91.0.4472.101
+(af52a90bf87030dd1523486a1cd3ae25c5d76c9b-refs/branch-heads/4472@{#1462}) on
+port 9515
+2021-07-01T20:25:12.326Z INFO chromedriver: Only local connections are allowed.
+2021-07-01T20:25:12.326Z INFO chromedriver: Please see
+https://chromedriver.chromium.org/security-considerations for suggestions on
+keeping ChromeDriver safe.
+2021-07-01T20:25:12.328Z INFO chromedriver: ChromeDriver was started
+successfully.
+2021-07-01T20:25:12.414Z DEBUG @wdio/cli:utils: Finished to run "onPrepare"
+hook in 120ms
+2021-07-01T20:25:12.416Z INFO @wdio/cli:launcher: Run onWorkerStart hook
+2021-07-01T20:25:12.417Z DEBUG @wdio/cli:utils: Finished to run "onWorkerStart"
+hook in 1ms
+2021-07-01T20:25:12.417Z INFO @wdio/local-runner: Start worker 0-0 with arg:
+--logLevel=trace
+[0-0] 2021-07-01T20:25:13.012Z INFO @wdio/local-runner: Run worker command: run
+[0-0] 2021-07-01T20:25:13.020Z DEBUG @wdio/config:ConfigParser: No compiler
+found, continue without compiling files
+[0-0] I am inside your configuration file, running your tests!
+[0-0] 2021-07-01T20:25:13.023Z DEBUG @wdio/local-runner:utils: init remote
+session
+[0-0] 2021-07-01T20:25:13.027Z DEBUG @wdio/utils:initialiseServices: initialise
+service "chromedriver" as NPM package
 [0-0] RUNNING in chrome - /test/specs/example.js
-[0-0] 2020-07-24T22:50:20.576Z DEBUG @wdio/utils:initialiseServices: initialise 
-service "chromedriver" as NPM package
-[0-0] 2020-07-24T22:50:20.592Z DEBUG @wdio/local-runner:utils: init remote sessi
-on
-[0-0] 2020-07-24T22:50:20.592Z INFO webdriverio: Initiate new session using the 
-webdriver protocol
-[0-0] 2020-07-24T22:50:20.599Z INFO webdriver: [POST] http://localhost:9515/sess
-ion
-[0-0] 2020-07-24T22:50:20.599Z INFO webdriver: DATA {
-  capabilities: {
-    alwaysMatch: { browserName: 'chrome', acceptInsecureCerts: true },
-    firstMatch: [ {} ]
-  },
-  desiredCapabilities: { browserName: 'chrome', acceptInsecureCerts: true }
+[0-0] 2021-07-01T20:25:13.217Z DEBUG @wdio/local-runner:utils: init remote
+session
+[0-0] 2021-07-01T20:25:13.218Z INFO webdriver: Initiate new session using the
+WebDriver protocol
+[0-0] 2021-07-01T20:25:13.219Z INFO webdriver: [POST]
+http://localhost:9515/session
+[0-0] 2021-07-01T20:25:13.220Z INFO webdriver: DATA {
+[0-0]   capabilities: {
+[0-0]     alwaysMatch: { browserName: 'chrome', acceptInsecureCerts: true },
+[0-0]     firstMatch: [ {} ]
+[0-0]   },
+[0-0]   desiredCapabilities: { browserName: 'chrome', acceptInsecureCerts: true
 }
-[0-0] 2020-07-24T22:50:22.453Z INFO webdriver: COMMAND navigateTo("https://webdr
-iver.io/")
-[0-0] 2020-07-24T22:50:22.454Z INFO webdriver: [POST] http://localhost:9515/sess
-ion/32eec5f507ed6f86473e3c4b685fd96b/url
-[0-0] 2020-07-24T22:50:22.454Z INFO webdriver: DATA { url: 'https://webdriver.io
-/' }
-[0-0] 2020-07-24T22:50:23.711Z INFO webdriver: COMMAND getTitle()
-[0-0] 2020-07-24T22:50:23.711Z INFO webdriver: [GET] http://localhost:9515/sessi
-on/32eec5f507ed6f86473e3c4b685fd96b/title
-[0-0] 2020-07-24T22:50:24.119Z INFO webdriver: RESULT WebdriverIO · Next-gen bro
-wser and mobile automation test framework for Node.js
-[0-0] 2020-07-24T22:50:24.124Z INFO webdriver: COMMAND deleteSession()
-2020-07-24T22:50:24.124Z INFO webdriver: [DELETE] http://localhost:9515/session/
-32eec5f507ed6f86473e3c4b685fd96b
-2020-07-24T22:50:24.292Z DEBUG @wdio/local-runner: Runner 0-0 finished with exit
- code 0
+[0-0] }
+[0-0] 2021-07-01T20:25:14.953Z INFO webdriver: COMMAND
+navigateTo("https://duckduckgo.com/")
+[0-0] 2021-07-01T20:25:14.954Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/url
+[0-0] 2021-07-01T20:25:14.954Z INFO webdriver: DATA { url:
+'https://duckduckgo.com/' }
+[0-0] 2021-07-01T20:25:16.409Z INFO webdriver: COMMAND findElement("css
+selector", "#search_form_input_homepage")
+[0-0] 2021-07-01T20:25:16.409Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/element
+[0-0] 2021-07-01T20:25:16.409Z INFO webdriver: DATA { using: 'css selector',
+value: '#search_form_input_homepage' }
+[0-0] 2021-07-01T20:25:16.436Z INFO webdriver: RESULT {
+[0-0]   'element-6066-11e4-a52e-4f735466cecf':
+'8748ce31-3835-4506-8303-54b4975b4bc1'
+[0-0] }
+[0-0] 2021-07-01T20:25:16.442Z INFO webdriver: COMMAND
+elementClear("8748ce31-3835-4506-8303-54b4975b4bc1")
+[0-0] 2021-07-01T20:25:16.443Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/element/8748ce31-
+3835-4506-8303-54b4975b4bc1/clear
+[0-0] 2021-07-01T20:25:16.599Z INFO webdriver: COMMAND
+elementSendKeys("8748ce31-3835-4506-8303-54b4975b4bc1", "WebdriverIO")
+[0-0] 2021-07-01T20:25:16.599Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/element/8748ce31-
+3835-4506-8303-54b4975b4bc1/value
+[0-0] 2021-07-01T20:25:16.599Z INFO webdriver: DATA { text: 'WebdriverIO' }
+[0-0] 2021-07-01T20:25:16.841Z INFO webdriver: COMMAND findElement("css
+selector", "#search_button_homepage")
+[0-0] 2021-07-01T20:25:16.841Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/element
+[0-0] 2021-07-01T20:25:16.841Z INFO webdriver: DATA { using: 'css selector',
+value: '#search_button_homepage' }
+[0-0] 2021-07-01T20:25:16.855Z INFO webdriver: RESULT {
+[0-0]   'element-6066-11e4-a52e-4f735466cecf':
+'8919dfb0-2448-4225-9280-3564ecc24c6c'
+[0-0] }
+[0-0] 2021-07-01T20:25:16.859Z INFO webdriver: COMMAND
+elementClick("8919dfb0-2448-4225-9280-3564ecc24c6c")
+[0-0] 2021-07-01T20:25:16.859Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/element/8919dfb0-
+2448-4225-9280-3564ecc24c6c/click
+[0-0] 2021-07-01T20:25:19.164Z INFO webdriver: COMMAND getTitle()
+[0-0] 2021-07-01T20:25:19.164Z INFO webdriver: [GET]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/title
+[0-0] 2021-07-01T20:25:19.173Z INFO webdriver: RESULT WebdriverIO at DuckDuckGo
+[0-0] Title is: WebdriverIO at DuckDuckGo
+[0-0] 2021-07-01T20:25:19.176Z INFO webdriver: COMMAND deleteSession()
+[0-0] 2021-07-01T20:25:19.176Z INFO webdriver: [DELETE]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a
+2021-07-01T20:25:19.401Z DEBUG @wdio/local-runner: Runner 0-0 finished with
+exit code 0
 [0-0] PASSED in chrome - /test/specs/example.js
-2020-07-24T22:50:24.297Z INFO @wdio/cli:launcher: Run onComplete hook
+2021-07-01T20:25:19.402Z INFO @wdio/cli:launcher: Run onComplete hook
+2021-07-01T20:25:19.402Z DEBUG @wdio/cli:utils: Finished to run "onComplete"
+hook in 0ms
 ```
 
-Let's take a brief detour to walk through this activity. The first thing WebdriverIO does is initialize any services we requested. In this instance, we're using the `chromedriver` service, so we see log output for that. 
+Let's walk through this activity. The first thing WebdriverIO does is initialize any services we requested. In this instance, we're using the `chromedriver` service, so we see log output for that:
+
+```sh
+2021-07-01T20:25:12.263Z DEBUG @wdio/utils:initialiseServices: initialise
+service "chromedriver" as NPM package
+```
 
 Next, it runs any `onPrepare` hooks we have defined. We don't have any defined, but the ChromeDriver service does. That's why you see output stating that ChromeDriver is starting up. This is how services "hook" into the WebdriverIO flow to add functionality.
 
-Following that, WebdriverIO starts "workers" for our tests. These are sub-processes spun up that our test will run in. The point of doing this is to allow for multiple tests to run at the same time (they'd all be different "workers"). 
-
-It then sends the `run` command to the worker (i.e., `INFO @wdio/local-runner: Run worker command: run`), letting it know it should get to work. The worker itself then initializes the `chromedriver` service, in case it needed to run anything inside of a specific worker (which it doesn't).
-
-The next step is to get a browser running for use. These are called "sessions". To get one, WebdriverIO sends a POST request  (`INFO webdriver: [POST] http://localhost:9515/session`) with the capability data. This data is sent to chromedriver, which receives this request and initializes the session with the provided data. Combined, the two logs are:
-
 ```sh
-[0-0] 2020-07-24T22:50:20.599Z INFO webdriver: [POST] http://localhost:9515/session
-[0-0] 2020-07-24T22:50:20.599Z INFO webdriver: DATA {
-  capabilities: {
-    alwaysMatch: { browserName: 'chrome', acceptInsecureCerts: true },
-    firstMatch: [ {} ]
-  },
-  desiredCapabilities: { browserName: 'chrome', acceptInsecureCerts: true }
-}
+2021-07-01T20:25:12.293Z INFO @wdio/cli:launcher: Run onPrepare hook
+2021-07-01T20:25:12.294Z INFO chromedriver: Start Chromedriver
+(/Users/klamping/wdio-testrunner/node_modules/chromedriver/lib/chromedriver/chro
+medriver)
+with args --port=9515 --url-base=/
+2021-07-01T20:25:12.326Z INFO chromedriver: Starting ChromeDriver 91.0.4472.101
+(af52a90bf87030dd1523486a1cd3ae25c5d76c9b-refs/branch-heads/4472@{#1462}) on
+port 9515
+2021-07-01T20:25:12.326Z INFO chromedriver: Only local connections are allowed.
+2021-07-01T20:25:12.326Z INFO chromedriver: Please see
+https://chromedriver.chromium.org/security-considerations for suggestions on
+keeping ChromeDriver safe.
+2021-07-01T20:25:12.328Z INFO chromedriver: ChromeDriver was started
+successfully.
+2021-07-01T20:25:12.414Z DEBUG @wdio/cli:utils: Finished to run "onPrepare"
+hook in 120ms
 ```
 
-You'll notice this matches the capabilities settings in our config file for the most part, but has a couple of different options specified. These are WebdriverIO defaults used to start a normal browser session. We could override them via the capabilities object in our config file if we so desired, but we don't right now, so we'll omit them.
+Next we see another hook, this time `onWorkerStart`. There are many hooks that are triggered for individual steps in the test process. We'll dive into those later.
+
+```sh
+2021-07-01T20:25:12.416Z INFO @wdio/cli:launcher: Run onWorkerStart hook
+2021-07-01T20:25:12.417Z DEBUG @wdio/cli:utils: Finished to run "onWorkerStart"
+hook in 1ms
+```
+
+Following that, WebdriverIO starts "workers" for our tests. These are sub-processes spun up that our test will run in. The point of doing this is to allow for multiple tests to run at the same time (they're all different "workers"). WebdriverIO signals a new worker is started, then sends the `run` command to that worker, letting it know it should get to work:
+
+```sh
+2021-07-01T20:25:12.417Z INFO @wdio/local-runner: Start worker 0-0 with arg:
+--logLevel=trace
+[0-0] 2021-07-01T20:25:13.012Z INFO @wdio/local-runner: Run worker command: run
+```
+
+One thing you may see differently at this point is that all logs now start with `[0-0]`. These numbers are in reference to the "capability id", which is another term for the "worker session". Remember how we talked about the `maxInstances` setting, and the how WebdriverIO allows you to run multiple tests at once? Well, if the tests are running at the same time, that means they're logging out data at the same time. To help keep track of which logs are from which test instance, WebdriverIO will log out a "capability id" related to that session. 
+
+For our logs here, we see that ID as `[0-0]`. For each individual test file, the ID will be incremented, so you'd see `[0-1]`, then `[0-2]`, so on and so on. We don't see these numbers at the beginning of the log output, because those logs are coming from the main test runner and not related to a specific test session. This is why, at the end of our logs, the ID is gone again, as the individual test session is completed and it's only the main testrunner logging output.
+
+Keeping going with the log output, the next bit is WebdriverIO checking if we need to do any compilation. We aren't using a compiler, so this step is skipped:
+
+```sh
+[0-0] 2021-07-01T20:25:13.020Z DEBUG @wdio/config:ConfigParser: No compiler
+found, continue without compiling files
+```
+
+We also see our message of 'I am inside your configuration file, running your tests!', which we logged out from our `wdio.conf.js` file. You can remove that if you'd like, as it's not used for anything else.
+
+```sh
+[0-0] I am inside your configuration file, running your tests!
+```
+
+WebdriverIO then does a few initialization steps, then lets us know what file is being run:
+
+```sh
+[0-0] 2021-07-01T20:25:13.023Z DEBUG @wdio/local-runner:utils: init remote
+session
+[0-0] 2021-07-01T20:25:13.027Z DEBUG @wdio/utils:initialiseServices: initialise
+service "chromedriver" as NPM package
+[0-0] RUNNING in chrome - /test/specs/example.js
+```
+
+From there, we need to get a browser running for our test to use. These are called "sessions". To get one, WebdriverIO sends a POST request  (`INFO webdriver: [POST] http://localhost:9515/session`) with the capability data. This data is sent to ChromeDriver, which receives this request and initializes the session with the provided data.
+
+Combined, the two logs are:
+
+```sh
+[0-0] 2021-07-01T20:25:13.219Z INFO webdriver: [POST]
+http://localhost:9515/session
+[0-0] 2021-07-01T20:25:13.220Z INFO webdriver: DATA {
+[0-0]   capabilities: {
+[0-0]     alwaysMatch: { browserName: 'chrome', acceptInsecureCerts: true },
+[0-0]     firstMatch: [ {} ]
+[0-0]   },
+[0-0]   desiredCapabilities: { browserName: 'chrome', acceptInsecureCerts: true
+}
+[0-0] }
+```
+
+You'll notice this mostly matches the capabilities settings in our config file, but has a couple of different options specified. These are WebdriverIO defaults used to start a normal browser session. We could override them via the capabilities object in our config file if we so desired, but we don't right now, so we'll leave it be.
 
 Understanding the relationship between WebdriverIO and WebDriver/Selenium is helpful, so I want to take a little bit of extra time to review it. WebdriverIO doesn't actually run the browser automation, WebDriver (or whatever WebDriver endpoint we're using) takes care of all of that. 
 
 What WebdriverIO does provide is a JavaScript interface for sending commands to run. It does this through REST API calls, which means that it sends an HTTP request to specific endpoints on the WebDriver server (e.g., ChromeDriver). Basically, WebdriverIO and WebDriver have a common language they share (defined in [the official WebDriver spec](https://w3c.github.io/webdriver/)) to send data back and forth. WebdriverIO sends commands to the WebDriver server for it to run, then the server sends the results of those commands back.
 
-Take the `getUrl` command in the next few lines. WebdriverIO sends a request to the Chromdriver instance. In the request, it passes along information about the URL for the browser to go to. After ChromeDriver receives and processes this request, it returns the results of the command execution (which is empty). WebdriverIO doesn't output this information, as there isn't anything to show.
+Take the `navigateTo` command in the next few lines. WebdriverIO sends a request to the ChromeDriver `url` endpoint (`http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/url`). In the request, it passes along information about the URL for the browser to go to (`DATA { url:
+'https://duckduckgo.com/' }`). After ChromeDriver receives and processes this request, it returns the results of the command execution (which is empty). WebdriverIO doesn't output this information though, as there isn't anything to show.
 
 Overall, the logs for this look like:
 
 ```sh
-[0-0] 2020-07-24T22:50:20.599Z INFO webdriver: [POST] http://localhost:9515/session
-[0-0] 2020-07-24T22:50:20.599Z INFO webdriver: DATA {
-  capabilities: {
-    alwaysMatch: { browserName: 'chrome', acceptInsecureCerts: true },
-    firstMatch: [ {} ]
-  },
-  desiredCapabilities: { browserName: 'chrome', acceptInsecureCerts: true }
-}
+[0-0] 2021-07-01T20:25:14.953Z INFO webdriver: COMMAND
+navigateTo("https://duckduckgo.com/")
+[0-0] 2021-07-01T20:25:14.954Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/url
+[0-0] 2021-07-01T20:25:14.954Z INFO webdriver: DATA { url:
+'https://duckduckgo.com/' }
 ```
 
-In the next set of logs, WebdriverIO requests the page title from the browser. No data is sent to ChromeDriver, as there isn't any information to send. Instead, ChromeDriver returns data back to us, namely, the title of the page. You see this in the "result" log output and sequentially, the console output we sent in our test:
+Similarly, the `findElement` command passes data on the element selector to use to find the ID of the element. Data is returned by the browser this time, so it's logged out with the `RESULT` information. 
 
 ```sh
-[0-0] 2020-07-24T22:50:23.711Z INFO webdriver: COMMAND getTitle()
-[0-0] 2020-07-24T22:50:23.711Z INFO webdriver: [GET] http://localhost:9515/session/3
-2eec5f507ed6f86473e3c4b685fd96b/title
-[0-0] 2020-07-24T22:50:24.119Z INFO webdriver: RESULT WebdriverIO · Next-gen browser
- and mobile automation test framework for Node.js
+[0-0] 2021-07-01T20:25:16.409Z INFO webdriver: COMMAND findElement("css
+selector", "#search_form_input_homepage")
+[0-0] 2021-07-01T20:25:16.409Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/element
+[0-0] 2021-07-01T20:25:16.409Z INFO webdriver: DATA { using: 'css selector',
+value: '#search_form_input_homepage' }
+[0-0] 2021-07-01T20:25:16.436Z INFO webdriver: RESULT {
+[0-0]   'element-6066-11e4-a52e-4f735466cecf':
+'8748ce31-3835-4506-8303-54b4975b4bc1'
+[0-0] }
 ```
 
-Finally, WebdriverIO closes our browser by sending a `DELETE` request for our session endpoint. Once it gets the successful close message, it closes down the worker and runs the `onComplete` hook. With that the test is complete.
+This element ID is used in the next command to tell the browser which element to perform an `elementClear` command on:
+
+```sh
+[0-0] 2021-07-01T20:25:16.442Z INFO webdriver: COMMAND
+elementClear("8748ce31-3835-4506-8303-54b4975b4bc1")
+[0-0] 2021-07-01T20:25:16.443Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/element/8748ce31-
+3835-4506-8303-54b4975b4bc1/clear
+```
+
+It's used again to run the `elementSendKeys` command, which enters keystrokes into the desired element:
+
+```sh
+[0-0] 2021-07-01T20:25:16.599Z INFO webdriver: COMMAND
+elementSendKeys("8748ce31-3835-4506-8303-54b4975b4bc1", "WebdriverIO")
+[0-0] 2021-07-01T20:25:16.599Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/element/8748ce31-
+3835-4506-8303-54b4975b4bc1/value
+[0-0] 2021-07-01T20:25:16.599Z INFO webdriver: DATA { text: 'WebdriverIO' }
+```
+
+You'll see these element IDs all over the place in our logs. Each HTML element on a page has an associated element ID that uniquely identifies it for that page. WebdriverIO gets the element ID using a 'locator strategy', which we'll talk about in a later chapter, then stores that ID for later commands. To recap our last few logs, WebdriverIO:
+
+- Gets the element ID
+- Uses that ID to:
+    - Clear any value inside that element's input field
+    - Send the keystrokes `WebdriverIO` to that element's input field
+
+Let's look at another example, this time with clicking a button. In the next set of logs, WebdriverIO:
+
+- Gets the Element ID
+- Sends a 'click' command for that element
+
+```sh
+[0-0] 2021-07-01T20:25:16.841Z INFO webdriver: COMMAND findElement("css
+selector", "#search_button_homepage")
+[0-0] 2021-07-01T20:25:16.841Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/element
+[0-0] 2021-07-01T20:25:16.841Z INFO webdriver: DATA { using: 'css selector',
+value: '#search_button_homepage' }
+[0-0] 2021-07-01T20:25:16.855Z INFO webdriver: RESULT {
+[0-0]   'element-6066-11e4-a52e-4f735466cecf':
+'8919dfb0-2448-4225-9280-3564ecc24c6c'
+[0-0] }
+[0-0] 2021-07-01T20:25:16.859Z INFO webdriver: COMMAND
+elementClick("8919dfb0-2448-4225-9280-3564ecc24c6c")
+[0-0] 2021-07-01T20:25:16.859Z INFO webdriver: [POST]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/element/8919dfb0-
+2448-4225-9280-3564ecc24c6c/click
+```
+
+This tells the browser to click the element that matches the CSS selector `#search_button_homepage`. In our code, that looks like `await $('#search_button_homepage').click()`. This comes back to one of the features I really enjoy about WebdriverIO, in that it simplifies the syntax used for commands. 
+
+In the next set of logs, WebdriverIO requests the page title from the browser. Here, no data is sent to ChromeDriver, as there isn't any information to send. Therefore it's a `[GET]` request, and no `DATA` information is logged. 
+
+```sh
+[0-0] 2021-07-01T20:25:19.164Z INFO webdriver: COMMAND getTitle()
+[0-0] 2021-07-01T20:25:19.164Z INFO webdriver: [GET]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a/title
+[0-0] 2021-07-01T20:25:19.173Z INFO webdriver: RESULT WebdriverIO at DuckDuckGo
+[0-0] Title is: WebdriverIO at DuckDuckGo
+```
+
+Finally, WebdriverIO closes our browser by sending a `DELETE` request for our session endpoint. Once it gets the successful close message, it closes down the worker, prints the 'pass/fail' message, and runs the `onComplete` hook. With that the test is complete.
+
+```sh
+[0-0] 2021-07-01T20:25:19.176Z INFO webdriver: COMMAND deleteSession()
+[0-0] 2021-07-01T20:25:19.176Z INFO webdriver: [DELETE]
+http://localhost:9515/session/f33d1589af9e783f835d04c1662f227a
+2021-07-01T20:25:19.401Z DEBUG @wdio/local-runner: Runner 0-0 finished with
+exit code 0
+[0-0] PASSED in chrome - /test/specs/example.js
+2021-07-01T20:25:19.402Z INFO @wdio/cli:launcher: Run onComplete hook
+2021-07-01T20:25:19.402Z DEBUG @wdio/cli:utils: Finished to run "onComplete"
+hook in 0ms
+```
 
 That was a lot of logs. What if we want to ignore all this output and only show the basics (plus any `console.log` messages we may have added). Let's see what the log output looks like when running it with `logLevel` set to `silent`:
 
 ```sh
-Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/br
-anch-heads/4147@{#310}) on port 9515
-Only local connections are allowed.
-Please see https://chromedriver.chromium.org/security-considerations for suggestions
- on keeping ChromeDriver safe.
-ChromeDriver was started successfully.
+[0-0] I am inside your configuration file, running your tests!
 [0-0] RUNNING in chrome - /test/specs/example.js
+[0-0] Title is: WebdriverIO at DuckDuckGo
 [0-0] PASSED in chrome - /test/specs/example.js
 ```
 
-There's still some output, but not much. This is helpful if you have console.log messages that you want to be able to see without extra noise.
+There's still some output, but not much. This is helpful if you have `console.log` messages that you want to be able to see without extra noise.
 
 ### Other Options
 
-That sums it up for the most important options. There are other settings you can configure, but that would be too in-depth and personalized for the good of this book. Feel free to experiment, and remember, you can get all the options by running `npx wdio run --help`.
+That sums it up for the most important options. There are other settings you can configure, but that would be too verbose for the good of this book. Feel free to experiment, and remember, you can get all the options by running `npx wdio run --help`.

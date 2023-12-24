@@ -56,7 +56,7 @@ There are many well-written guides to Docker already available, so I won't cover
 
 I've done some work "containerizing" the two apps we need to run in order to have a local server available for our testing. I've also created a `docker-compose.yml` file that you can use to run your own server setup with only a few commands.
 
-First, download [the `docker-compose.yml` file](https://gist.githubusercontent.com/klamping/669d63c7f7f712b27bcfc611b22ec41c/raw/936e2b9cb3d7b668d66e6531e1674736c805da46/docker-compose.yml) (or copy it from below) to somewhere safe for it to live. It can be in its own folder, or a shared folder. Just don't forget where you put it as you'll want to access it later.
+First, download [the `docker-compose.yml` file](https://gist.githubusercontent.com/klamping/669d63c7f7f712b27bcfc611b22ec41c/raw/a72c590536c8a18850e8899db5b322f846e4f1f2/docker-compose.yml) (or copy it from below) to somewhere safe for it to live. It can be in its own folder, or a shared folder. Just don't forget where you put it as you'll want to access it later.
 
 Next, open a terminal, then go to the location where you stored your `docker-compose.yml` file. Finally, run `docker-compose up` (alternatively use `docker-compose up -d` to have it run in the background).
 
@@ -97,7 +97,7 @@ services:
       - mongo
   mongo:
     container_name: realworld-mongo
-    image: mongo
+    image: mongo:5.0.13
     ports:
       - "27017:27017"
 ```

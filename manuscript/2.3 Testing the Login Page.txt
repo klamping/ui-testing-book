@@ -29,14 +29,14 @@ Let's go back to our test. With our comments laid out, let's start translating t
 
 ```js
 describe('Login Page', function () {
-    it('should let you log in', function () {
+    it('should let you log in', async function () {
     });
     // should error with a missing username
     // should error with a missing password
 });
 ```
 
-I took the text straight from the comments and turned them into the structure for my first test. Don't think we're done with comments! In fact, that's our next step.
+I took the text straight from the comments and turned them into the structure for my first test. Don't think we're done with writing comments! In fact, that's our next step.
 
 Similar to how we wrote the comments for the overall test scenarios, we want to do the same thing with our individual test steps. Let's think through what this "should log in" test will do:
 
@@ -53,7 +53,7 @@ Let's throw those comments into the file:
 {title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
-    it('should let you log in', function () {
+    it('should let you log in', async function () {
       // go to the login page
       // enter a valid username in the "email" input
       // enter a valid password in the "password" input
@@ -76,14 +76,14 @@ First, it's going to take extra time to load the homepage, then find the 'Sign I
 
 Second, if the "Sign In" link changes or altered, it could easily break this entire set of tests. Even if the "Sign In" page was working entirely fine, your whole file would be failing due to outside circumstances.
 
-Finally, if you do want to validate that your links work as expected, have that be it's own separate tests. Don't mix responsibilities here. This step is better saved for an individual "links" test, maybe even one that doesn't rely on WebdriverIO to run (and therefore may execute faster). 
+Finally, if you do want to validate that your links work as expected, have that be its own separate tests. Don't mix responsibilities here. This step is better saved for an individual "links" test, maybe even one that doesn't rely on WebdriverIO to run (and therefore may execute faster). 
 
 With those reasons in mind, the best approach is to use a simple `browser.url` call to load the `login` url we referenced in our previous assertion. Adding that to the code, it looks like:
 
 ```js
-it('should let you log in', function () {
+it('should let you log in', async function () {
     // go to the login page
-    browser.url('./login');
+    await browser.url('./login');
     
     // enter a valid username into the "email" input
     // enter a valid password into the "password" input
@@ -113,26 +113,26 @@ Typically, I use the `setValue` command, as it's less likely to cause test issue
 Those are the commands, now let's learn how to use them. `clearValue` and `getValue` are called as such:
 
 ```js
-$('#inputId').clearValue();
-const theValue = $('#inputId').getValue();
+await $('#inputId').clearValue();
+const theValue = await $('#inputId').getValue();
 ```
 
 For `addValue` and `setValue` though, you need to pass in the text that you want to use:
 
 ```js
-$('#inputId').addValue('do');
-$('#inputId').setValue('donut');
+await $('#inputId').addValue('do');
+await $('#inputId').setValue('donut');
 ```
 
 Altogether, we can modify the form input value again and again:
 
 ```js
-$('#inputId').addValue('do'); // value is 'do'
-$('#inputId').addValue('nut'); // value is 'donut'
-const theValue = $('#inputId').getValue(); // 'theValue' is 'donut'
-$('#inputId').clearValue(); // value is empty
-$('#inputId').addValue('do'); // value is 'do'
-$('#inputId').setValue('nut'); // value is 'nut'
+await $('#inputId').addValue('do'); // value is 'do'
+await $('#inputId').addValue('nut'); // value is 'donut'
+const theValue = await $('#inputId').getValue(); // 'theValue' is 'donut'
+await $('#inputId').clearValue(); // value is empty
+await $('#inputId').addValue('do'); // value is 'do'
+await $('#inputId').setValue('nut'); // value is 'nut'
 ```
 
 Now that we've covered these actions, let's put them to use. We're only going to be using `setValue` for our needs. 
@@ -140,16 +140,23 @@ Now that we've covered these actions, let's put them to use. We're only going to
 {title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
-    it('should let you log in', function () {
-        browser.url('./login');
-
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
-        $('input[type="password"]').setValue('wdiodemo');
+    it('should let you log in', async function () {
+        // go to the login page
+        await browser.url('./login');
+        
+        // enter a valid username into the "email" input
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+        
+        // enter a valid password into the "password" input
+        await $('input[type="password"]').setValue('wdiodemo');
+        
+        // click the 'Sign In' button
+        // assert that we're logged in
     });
 });
 ```
 
-For our element selectors, we're using a combination of element type (`input`) with a CSS attribute selector (`name`).  For reference, here's what the HTML on the page looks like:
+For our element selectors, we're using a combination of element type (`input`) with a CSS attribute selector (`[type="email"]`).  For reference, here's what the HTML on the page looks like:
 
 ```html
 <form>
@@ -188,13 +195,20 @@ Here's what the full file looks like:
 {title=test/specs/login.js}
 ```js
 describe('Login Page', function () {
-    it('should let you log in', function () {
-        browser.url('./login');
-
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
-        $('input[type="password"]').setValue('wdiodemo');
-
-        $('button=Sign in').click();
+    it('should let you log in', async function () {
+        // go to the login page
+        await browser.url('./login');
+        
+        // enter a valid username into the "email" input
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+        
+        // enter a valid password into the "password" input
+        await $('input[type="password"]').setValue('wdiodemo');
+        
+        // click the 'Sign In' button
+        await $('button=Sign in').click();
+        
+        // assert that we're logged in
     });
 });
 ```
@@ -230,7 +244,7 @@ As always with testing, we can assert any number of details:
 
 All of these conditions potentially demonstrate that we're successfully logged in. Which one should we choose, or should we choose all of them? Honestly, it's up to you and your team to decide. While additional assertions ensure you're in the valid state, they also add complexity and dependencies to the test.
 
-What happens if the redirect after login changes to go to a different URL than the homepage? Or what if the 'settings' link is purposefully removed from the navigation? These are both alterations that will break our test, requiring upkeep to maintain that green checkmark status. A little bit of upkeep should be expected with automation, but it's smart not to tie yourself down to too many requirements that don't really add value.
+What happens if the redirect after login changes to go to a different URL than the homepage? Or what if the 'settings' link is purposefully removed from the navigation? These are both alterations that will break our test, requiring upkeep to maintain that green checkmark status. A little bit of upkeep should be expected with automation, but it's smart not to tie yourself down with too many requirements that don't really add value.
 
 For this example, we're going to check the first item in that list, that no error messages should show. If you were to inspect the HTML of the login page after trying to login with invalid credentials, you might see this:
 
@@ -240,10 +254,10 @@ For this example, we're going to check the first item in that list, that no erro
 </ul>
 ```
 
-What we want to do is validate that an `<li>` inside the `error-messages` class doesn't exist (hopefully meaning no errors occurred). We can check for that with this assertion:
+What we want to do is validate that an `<li>` inside the `error-messages` class does not exist (hopefully meaning no errors occurred). We can check for that with this assertion:
 
 ```js
-expect($('.error-messages li')).not.toBeExisting();
+await expect($('.error-messages li')).not.toBeExisting();
 ```
 
 Notice the `not` in there. I mentioned it before, but to reiterate, that flips the assertion to do the opposite. In this case, it checks that the element matching the selector `.error-messages li` does not exist. If an error was existing on the page for some reason, it would fail. It's not perfect, but it's good enough for now. 
@@ -255,15 +269,21 @@ Here's the full test:
 {title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
-    it('should let you log in', function () {
-        browser.url('./login');
-
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
-        $('input[type="password"]').setValue('wdiodemo');
-
-        $('button=Sign in').click();
-
-        expect($('.error-messages li')).not.toBeExisting();
+    it('should let you log in', async function () {
+        // go to the login page
+        await browser.url('./login');
+        
+        // enter a valid username into the "email" input
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+        
+        // enter a valid password into the "password" input
+        await $('input[type="password"]').setValue('wdiodemo');
+        
+        // click the 'Sign In' button
+        await $('button=Sign in').click();
+        
+        // assert that we're logged in
+        await expect($('.error-messages li')).not.toBeExisting();
     });
 });
 ```
@@ -293,17 +313,24 @@ Let's try it out:
 {title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
-    it('should let you log in', function () {
-        browser.url('./login');
+    it('should let you log in', async function () {
+        // go to the login page
+        await browser.url('./login');
+        
+        // enter a valid username into the "email" input
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+        
+        // enter a valid password into the "password" input
+        //await $('input[type="password"]').setValue('wdiodemo');
+        
+        // click the 'Sign In' button
+        await $('button=Sign in').click();
 
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
-        // $('input[type="password"]').setValue('wdiodemo');
-
-        $('button=Sign in').click();
-
-        browser.pause(1000);
-
-        expect($('.error-messages li')).not.toBeExisting();
+        // wait a second for the login request to complete
+        await browser.pause(1000);
+        
+        // assert that we're logged in
+        await expect($('.error-messages li')).not.toBeExisting();
     });
 });
 ```
@@ -314,9 +341,9 @@ The command we use is `browser.pause` and we pass in the total number of millise
 
 If you run the test again, you'll notice it takes a bit, but it does fail. With our pause in place, when the `expect($('.error-messages li')).not.toBeExisting();` is run, that element does exist. The `expect-webdriverio` library keeps retrying for this element to disappear, but it's not going anywhere, so the wait ends up timing out and failing the test.
 
-That is, unless you're on a very slow connection. If your internet service isn't super speedy, you may have noticed that it still passes.
+That is, unless you're on a very slow connection. If your internet service isn't super speedy, you may have noticed that it still passes, failing for the same issue from before because we didn't wait long enough before checking. 
 
-But if you have a decent provider then things seem fine. You feel no pain right now, and that's just not right. Let's resolve that.
+But, again, if you have a decent provider then things seem fine. You feel no pain right now, and that's just not right. Let's resolve that.
 
 ## 2.3.3 Network Throttling
 
@@ -333,26 +360,26 @@ In our `wdio.conf.js` file, scroll down to the `before` hook section. It's about
  * @param {Array.<Object>} capabilities list of capabilities details
  * @param {Array.<String>} specs List of spec file paths that are to be run
  */
-// before: function (capabilities, specs) {
+// before: async function (capabilities, specs) {
 // },
 ```
 
 This is a "hook" that runs before our tests start running, but after the test session is created. This means we can mess with the browser at this point to make funny things happen. 
 
-The funny thing we're going to make happen is that we're going to artificially slow down our connection. This is done through [the `throttle` command](https://webdriver.io/docs/api/browser/throttle.html). This is what it looks like:
+The funny thing we're going to make happen is that we're going to artificially slow down our connection. This is done through [the `throttle` command](https://webdriver.io/docs/api/browser/throttle/). This is what it looks like:
 
 ```js
 // throttle to Regular 3G
-browser.throttle('Regular 3G');
+await browser.throttle('Regular3G');
 
 // disable network completely
-browser.throttle('Offline');
+await browser.throttle('offline');
 
 // set custom network throughput
-browser.throttle({
+await browser.throttle({
     offline: false,
-    downloadThroughput: (200 * 1024) / 8,
-    uploadThroughput: (200 * 1024) / 8,
+    downloadThroughput: (200 * 1024) / 8, // 25.6 kbps
+    uploadThroughput: (200 * 1024) / 8, // 25.6 kbps
     latency: 20
 });
 ```
@@ -368,19 +395,19 @@ Let's slow our network down by setting the latency to `1000`. This will ensure t
 In our `before` hook (which you should uncomment if you haven't), add these custom settings:
 
 ```js
-before: function (capabilities, specs) {
-    browser.throttle({
+before: async function (capabilities, specs) {
+    await browser.throttle({
         latency: 1000,
         offline: false,
-        downloadThroughput: 1000000,
-        uploadThroughput: 1000000
+        downloadThroughput: (500 * 1024),
+        uploadThroughput: (500 * 1024),
     });
 },
 ```
 
-Save the file and run your test again. Suddenly the `browser.pause` statement isn't so effective. The site still takes too long to process the login request and we're stuck checking an assertion a bit too early (and have a test passing when it shouldn't). 
+Save the file and run your test again. Suddenly the `browser.pause` statement isn't so effective anymore. The site still takes too long to process the login request and we're stuck checking an assertion a bit too early (and have a test passing when it shouldn't). 
 
-What to do now? Well, it's unfortunately common practice to just increase that `pause` amount a little bit more, increasing the length of the test but preventing problems due to slow connections. But you're always stuck playing this game of "am I waiting long enough," usually losing.
+What to do now? Well, it's unfortunately common practice to just increase that `pause` amount a little bit more, increasing the length of the test but preventing problems due to slow connections. But you're always stuck playing this game of "am I waiting long enough?", usually losing.
 
 Plus, every pause you add to your test slows it down just a little bit more. If you've got to do this for every page load, you can easily have tests that take 30 minutes to run due to all the unnecessary waiting.
 
@@ -390,7 +417,7 @@ What we really want to do is wait just the right amount of time and not a second
 
 The reason `browser.pause` is inefficient is that it ignores anything the page does during that time. Until that timer has gone off, it's not listening. 
 
-It would be much more intelligent if we kept an eye on the page and reacted to its updates. With WebdriverIO, we can do that very effectively.
+It would be much more intelligent if we kept an eye on the page and react to its updates. With WebdriverIO, we can do that very effectively.
 
 WebdriverIO comes with five commands built around this idea. They are:
 
@@ -406,8 +433,6 @@ The `waitFor` commands do as they say, and wait for an element to:
 2. Be enabled (for inputs that have a `disabled` HTML attribute)
 3. Be "displayed", which is a property that we'll put a definition to in a bit
 4. Be "clickable" (element exists, is visible, is within viewport (if not try to scroll to it), its center is not overlapped with another element, is not disabled)
-
-Sidenote: These commands are actually used under the hood by the `expect-webdriverio` library to help with our assertions.
 
 The last command, `waitUntil`, is a generic function used to define custom waits. For example, a common scenario is to wait until an element has specific text before moving on. We'll get into real code examples in a little bit, but for now we're going to jump back to the `waitForExist` command.
 
@@ -426,7 +451,7 @@ So, what are we going to wait for? Well, it can be any number of things unique t
 Let's go with that 'Settings' link. Using a text-based selector, we can wait for the link to exist on the page:
 
 ```js
-$('=Settings').waitForExist();
+await $('=Settings').waitForExist();
 ```
 
 This will tell WebdriverIO to wait until the following HTML element is on the page:
@@ -442,18 +467,24 @@ Throwing that code into our test, this is how the whole thing looks:
 {title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
-    it('should let you log in', function () {
-        browser.url('./login');
+    it('should let you log in', async function () {
+        // go to the login page
+        await browser.url('./login');
+        
+        // enter a valid username into the "email" input
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+        
+        // enter a valid password into the "password" input
+        await $('input[type="password"]').setValue('wdiodemo');
+        
+        // click the 'Sign In' button
+        await $('button=Sign in').click();
 
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
-        $('input[type="password"]').setValue('wdiodemo');
-
-        $('button*=Sign in').click();
-
-        $('=Settings').waitForExist();
-
-        // Get the URL of the page, which should no longer include 'login'
-        expect(browser.getUrl()).not.toContain('/login');
+        // wait for the 'Setting link to appear'
+        await $('=Settings').waitForExist();
+        
+        // assert that we're logged in
+        await expect($('.error-messages li')).not.toBeExisting();
     });
 });
 ```
@@ -468,10 +499,10 @@ Let's look at an alternative approach we can take, just to learn a little bit mo
 
 Instead of waiting for an element to appear, we can conversely wait for one to disappear. This is done through the same command by passing in a special option. 
 
-Instead of waiting for the 'Settings' link to appear, instead we'll wait for the "Sign In" button to stop existing, (it disappears from the DOM as soon as we navigate away from the login page). The command almost looks the same as before, but now we're passing in an options object with a property of `reverse` set to true:
+Instead of waiting for the 'Settings' link to appear, instead we'll wait for the "Sign In" button to stop existing, (it disappears from the DOM as soon as we navigate away from the login page). The command almost looks the same as before, but now we're passing in an "options" object with a property of `reverse` set to true:
 
 ```js
-$('button*=Sign in').waitForExist({ reverse: true });
+await $('button*=Sign in').waitForExist({ reverse: true });
 ```
 
 `waitForExist` (and the other `waitFor*` commands), takes a single argument, which is an object of several possible options:
@@ -479,33 +510,45 @@ $('button*=Sign in').waitForExist({ reverse: true });
 1. An override to the default `timeout` amount. Since we don't want to override it, we can just leave it out and WebdriverIO will stick with the default.
 2. A boolean flag that will reverse how the `waitFor` command works. In this case, if that flag is `true`, it instead waits for the selector to **not** match any elements (the default value is `false`). We want this, so we add it as an option
 3. A `timeoutMsg` to show if the `timeout` is met, which will be logged out upon that error showing.
-4. An `interval` to wait between checking for the element to exist. The `waitForExist` command run the `isExisting` command multiple times if necessary, and this `interval` defines how long to wait until running that `isExisting` command again if the previous one failed.
+4. An `interval` to wait between checking for the element to exist. The `waitForExist` command runs the `isExisting` command multiple times if necessary, and this `interval` defines how long to wait until running that `isExisting` command again if the previous one failed.
 
 Here it is in the full test:
 
 {title="test/specs/login.js"}
 ```js
 describe('Login Page', function () {
-    it('should let you log in', function () {
-        browser.url('./login');
-
-        $('input[type="email"]').setValue('demo@learnwebdriverio.com');
-        $('input[type="password"]').setValue('wdiodemo');
-
+    it('should let you log in', async function () {
+        // go to the login page
+        await browser.url('./login');
+        
+        // enter a valid username into the "email" input
+        await $('input[type="email"]').setValue('demo@learnwebdriverio.com');
+        
+        // enter a valid password into the "password" input
+        await $('input[type="password"]').setValue('wdiodemo');
+        
+        // get the 'Sign in' button element reference
         const $signIn = $('button*=Sign in');
-        $signIn.click();
-        $signIn.waitForExist({ reverse: true });
 
-        expect($('.error-messages li')).not.toBeExisting();
+        // click the 'Sign in' button
+        await $signIn.click();
+
+        // wait for the 'Sign in' button to disappear
+        await $signIn.waitForExist({ reverse: true });
+        
+        // assert that we're logged in
+        await expect($('.error-messages li')).not.toBeExisting();
     });
 });
 ```
 
-One thing to notice: I stored the `Sign in` button element for better re-use. Then I use that refence in the next two steps. By doing this, we only have to define our selector once, making updates to that selector changes much easier (this will be a common theme as we get into Page Objects).
+One thing to notice: I stored the `Sign in` button element for better re-use. Then I use that reference in the next two steps. By doing this, we only have to define our selector once, making updates to that selector much easier (this will be a common theme as we get into Page Objects).
 
-Also note the `$` prefix of our variable name. That's not required in any way, but I find it helpful to differentiate between WebdriverIO element references and other variables that might be stored. For example, if you were to see `$message` and `message`, it's not a stretch to guess that `$message` is a WebdriverIO element reference, while the other has to do with actual text.
+Also note the `$` prefix of our variable name. That's not required in any way, but I find it helpful to differentiate between WebdriverIO element references and other variables that might be stored.
 
-Well, it took a little bit of trial and error, but eventually we achieved a good solution! You should get to use this if you're going to continue down the path of testing. Nothing is as simple as it seems.
+For example, if you were to see `$message` and `message`, it's not a stretch to guess that `$message` is a WebdriverIO element reference, while the other has to do with actual text. This sort of practice makes reading existing code a little bit easier, which is always helpful.
+
+Well, it took a little bit of trial and error, but eventually we achieved a good solution! You should get use to this if you're going to continue down the path of testing. Unfortunately, nothing is as simple as it seems.
 
 We still have two more tests that we want to write for our login page, but we're going to save that for the next chapter.
 

@@ -6,4 +6,4 @@ This is the repo that contains the words for the book that talks about Web App T
 
 [Leanpub Page](https://leanpub.com/webapp-testing-guidebook/)
 
-[Slightly out-of-date online video course](https://learn.webdriver.io)
+[Online video course](https://learn.webdriver.io)

@@ -5,7 +5,6 @@
 I want to jump right in to setting up our WebdriverIO configuration, but first, a warning.
 
 One of the biggest traps I see newcomers face is their ambition. They start off over-optimistic, and use as many tools as they can get their hands on. It's easy (and kind of fun) to come up with a list of features you want your test framework to have. These tools may look easy-to-use on the outside, but getting them all to work together is a very different story. 
-
 It's not that they can't work together; they get along just fine most of the time. But when starting out, any mistake made along the way (or difference in setup), can cause errors that are difficult to understand.
 
 Take the following error I've run into before:
@@ -22,7 +21,7 @@ d. In the future, promise rejections that are not handled will terminate the Nod
  process with a non-zero exit code.
 ```
 
-So, is that caused by WebdriverIO, the Selenium-Standalone server, CucumberJS or the Allure reporter?
+Is that caused by WebdriverIO, the Selenium-Standalone server, or some other package installed like "CucumberJS" or "Allure Reporter"?
 
 Maybe some more error output will help?
 
@@ -35,7 +34,7 @@ TypeError: Cannot read property 'trim' of undefined
     at getTestStatus (/node_modules/wdio-allure-reporter/build/reporter.js:68:41)
 ```
 
-Ah, it must be the Allure reporter, right?
+Ah, it must be "Allure Reporter", right?
 
 Well, despite Allure throwing the error, it has nothing to do with the reporter. Instead, it's caused by having a CucumberJS step definition with an incorrect number of parameters in the callback function.
 
@@ -61,13 +60,13 @@ In there, do the usual NPM setup:
 
 ```sh
 npm init -y
-npm install @wdio/cli
+npm install @wdio/cli@7.12.5
 ```
 
 Next, let's get that config setup through the WDIO CLI:
 
 ```sh
-npx wdio
+npx wdio config
 ```
 
 Our answers will be:
@@ -79,18 +78,17 @@ WDIO Configuration Helper
 
 ? Where is your automation backend located? On my local machine
 ? Which framework do you want to use? mocha
-? Do you want to run WebdriverIO commands synchronous or asynchronous? sync
+? Do you want to use a compiler? No!
 ? Where are your test specs located? ./test/specs/**/*.js
 ? Do you want WebdriverIO to autogenerate some test files? No
-? Are you using a compiler? No!
 ? Which reporter do you want to use? spec
 ? Do you want to add a service to your test setup? chromedriver
 ? What is the base url? http://localhost:8080/
 ```
 
-Almost all of the above answers are defaults, except for a few:
+Almost all of the above answers are defaults, except for a couple:
 
-- We'll use the `chromedriver` service. Feel free to use `selenium-standalone` if you prefer (or neither).
+- We don't want WebdriverIO to autogenerate some test files. We'll be making our own files.
 - For the base url, we use the local server you set up in the previous chapter `http://localhost:8080/`. You're welcome to use the book's demo site here if you'd prefer ([https://demo.learnwebdriverio.com](https://demo.learnwebdriverio.com)), but do note it may cause problems in later chapters.
 
 Okay, now that we have our config ready, it's time to create our test directory. Since we went with the default path, we need to create two directories, `test` and a subdirectory called `specs`. You can do that how you like, but here's how I do it:
@@ -115,11 +113,13 @@ We call `describe` like a function, passing in two parameters. The first is a na
 
 The second half of our `describe` call is a function which contains all of the code we want to associate with this feature.
 
-Inside this function we'll be adding the `it` call. Similar to `describe`, `it` is a function call that takes two parameters, the first is the name of the specific test (we'll say it 'should take you to the login page'), and the second is a function which contains our actual test code. The full `it` call looks like this:
+Inside this function we'll be adding the `it` call. Similar to `describe`, `it` is a function call that takes two parameters, the first is the name of the specific test (we'll say it 'should load properly'), and the second is an async function which contains our actual test code. The full `it` call looks like this:
 
 ```js
-it('should load properly', function () { });
+it('should load properly', async function () { });
 ```
+
+It's important that you include the `async` keyword in this function definition, as it will be needed for our WebdriverIO commands in just a second.
 
 Just to recap and refresh on the Mocha syntax:
 
@@ -130,30 +130,30 @@ And remember, `it` always goes inside `describe`. Here's what the whole thing lo
 
 ```js
 describe('Homepage', function () {
-  it('should load properly', function () {
+  it('should load properly', async function () {
     // test code will go here
   });
 });
 ```
 
-Okay, now that we have our test structure in place, it's time to add our commands. Let's start by loading the main page of the site. You can find a full list of commands on the WebdriverIO site in [their API docs](https://webdriver.io/docs/api.html).
+Okay, now that we have our test structure in place, it's time to add our commands. Let's start by loading the main page of the site. You can find a full list of commands on the WebdriverIO site in [their API docs](https://webdriver.io/docs/api.html). The commands listed under the 'browser' and 'element' sub-menus contain the majority of commands you'll be using when writing tests. 
 
-The command we'll use is [`browser.url`](https://webdriver.io/docs/api/browser/url.html). This command tells the browser to open a URL (bet you didn't guess that). It does have a trick up its sleeve though.
+Right now, we're going to use [`browser.url`](https://webdriver.io/docs/api/browser/url.html). This command tells the browser to open a URL (bet you didn't guess that). It does have a trick up its sleeve though.
 
 Remember that `baseUrl` setting we provided? I mentioned this before, but in case you didn't catch it, `browser.url` will prepend that `baseUrl` value if you define a relative path. 
 
-For example, if I say `browser.url('./tag/wdio')`, it will load the full URL of `http://localhost:8080/tag/wdio`.
+For example, if I say `await browser.url('./tag/wdio')`, it will load the full URL of `http://localhost:8080/tag/wdio`.
 
 Here are some more complex examples, assuming the `baseUrl` is set to `http://example.com/one/`:
 
 ```js
-browser.url('./two');
+await browser.url('./two');
 // goes to 'http://example.com/one/two'
 
-browser.url('/two');
+await browser.url('/two');
 // goes to 'http://example.com/two'
 
-browser.url('http://anotherexample.com/one');
+await browser.url('http://anotherexample.com/one');
 // goes to 'http://anotherexample.com/one'
 ```
 
@@ -165,9 +165,9 @@ All right, let's use a simple `browser.url('./')` in our test to load up the hom
 
 ```js
 describe('Homepage', function () {
-    it('should load properly', function () {
+    it('should load properly', async function () {
         // load the page
-        browser.url('./');
+        await browser.url('./');
     });
 });
 ```
@@ -180,12 +180,12 @@ In our case, the title is `Conduit`, so we should see that logged out when runni
 
 ```js
 describe('Main Navigation', function () {
-    it('should take you to the login page', function () {
+    it('should take you to the login page', async function () {
         // Load the page
-        browser.url('./');
+        await browser.url('./');
         
         // Get the title of the homepage, should be 'Conduit'
-        console.log(browser.getTitle());
+        console.log(await browser.getTitle());
     });
 });
 ```
@@ -196,17 +196,19 @@ Pretty exciting, I know.
 
 Now let's try clicking something, like the `Sign In` link.
 
-To do that, we're going to use [the `click` command](https://webdriver.io/docs/api/element/click.html), but it won't be `browser.click()` which would throw an error in your face.
+To do that, we're going to use [the `click` command](https://webdriver.io/docs/api/element/click.html), but it won't be `browser.click()`, as that would throw an error in your face.
 
 No, in order to click an element, you need to let WebdriverIO know which element to click.
 
 If you've used jQuery, which was a very popular JavaScript library from 2006 to 2016-or-so, you'd be familiar with the `$` function. If not, what it does is pick an element out of the HTML based on a "Selector." Selectors are like getting someone's attention by calling their name. 
 
-Some selectors can be very specific, like getting the attention of someone named "Averyuniquenamethatnooneelsehas". Some are more general and might get multiple results, like yelling "John" at the store (apologies to the Johns out there and the store manager for yelling in her store). We'll get into selectors more in a little bit, but know that they come in all shapes and sizes.
+Some selectors can be very specific, like getting the attention of someone named "Averyuniquenamethatnooneelsehas". Some are more general and might get multiple results, like yelling "John" in a grocery store (apologies to the Johns out there and the store manager for yelling in her store). We'll get into selectors more in a little bit, but know that they come in all shapes and sizes.
 
-So WebdriverIO has mimicked the functionality of jQuery and provides [its own `$` function](https://webdriver.io/docs/api/element/$.html). We're going to pretend you know what I mean and use a partial text based selector (we'll talk more about selectors soon).
+WebdriverIO has mimicked the functionality of jQuery and provides [its own `$` function](https://webdriver.io/docs/api/element/$.html). Just like jQuery's `$` function, this one fetches a single element on the page based on the selector you pass in.
 
-What element are we getting? Well, we want to click the "Sign In" link at the top of the page. Here's what that HTML looks like:
+To click our element, we're going to pass in a "partial text selector". We haven't talked about what that is yet, but like I mentioned, we'll get into more details on selectors in the next chapter. For now, just imagine you know what I mean by that.
+
+I mentioned we want to click the "Sign In" link at the top of the page, but what HTML element matches that? To figure that out, let's look at the HTML of that section:
 
 ```html
 <ul data-qa-id="site-nav" class="nav navbar-nav pull-xs-right">
@@ -232,47 +234,47 @@ What element are we getting? Well, we want to click the "Sign In" link at the to
 
 Note: If you're unfamiliar with HTML syntax structure, I recommend having a watch through [this video tutorial teaching HTML basics](https://www.youtube.com/watch?v=UB1O30fR-EE) before moving on.
 
-There are a couple of ways we can specify the 'Sign In' link, but let's go with the simplest. We're going to request an `a` element on the page that has text containing `Sign In`. We could add more to this selector, like the link needs a class name of `nav-link`, but this is good enough for now. As I mentioned, we'll cover this more soon. 
+There are a couple of ways we can specify the 'Sign In' link, but let's go with the simplest. We're going to request an `a` element on the page that has text containing `Sign In`. We could add more to this selector, like the link needing a class name of `nav-link`, but this is good enough for now.
 
-To say we want a link that has specific text in it, we write our selector like this: `$('=the text to search by')`. For our needs, we're going to do `$('=Sign In')`. 
+To say we want a link that has specific text in it, we write our selector like this: `$('=the text to search by')`. For our needs, we're going to do `$('=Sign in')`. 
 
 By using that `$` function with our selector, we now have an element that we can call the `click` command on:
 
 ```js
 // Click the 'Sign In' navigation link
-$('=Sign In').click();
+await $('=Sign in').click();
 ```
 
 This triggers a mouse click on that element, which the website will take action on and route us to the 'Sign In' page. How can we know though? 
 
-## 2.1.5 Finishing up
+## 2.1.5 Checking URLs
 
-Well, we could log out the title of the page again, but there's a problem: The developers of the website didn't code in a title change. As with many things in testing, we need an alternate form of validation.
+Well, we could log out the tistle of the page again, but there's a problem: The developers of the website didn't code in a title change. As with many things in testing, we need an alternate form of validation.
 
-Let's use [the `getUrl` command](https://webdriver.io/docs/api/webdriver.html#geturl) instead. I'll let you guess what this command does. 
+So instead of checking the page title, let's get the URL of the page using [the `getUrl` command](https://webdriver.io/docs/api/webdriver.html#geturl).
 
 ```js        
 // Get the URL of the sign in page. It should include 'login'
-console.log(browser.getUrl());
+console.log(await browser.getUrl());
 ```
 
-That's the end of the test. Here's what the whole file looks like:
+That will finish up our test. Here's what the whole file looks like:
 
 {title="test/specs/navigation.js"}
 ```js
 describe('Homepage', function () {
-    it('should load properly', function () {
+    it('should load properly', async function () {
         // load the page
-        browser.url('./');
+        await browser.url('./');
 
         // Get the title of the homepage, should be 'Conduit'
-        console.log(browser.getTitle());
+        console.log(await browser.getTitle());
 
         // Click the 'Sign in' navigation link
-        $('=Sign in').click();
+        await $('=Sign in').click();
 
         // Get the URL of the sign in page. It should include 'login'
-        console.log(browser.getUrl());
+        console.log(await browser.getUrl());
     });
 });
 ```
@@ -284,14 +286,7 @@ Make sure it's saved because it's now time to run it. Back on the command line, 
 The test should take about half a minute to complete. Once finished, you'll see log output that looks very similar to this:
 
 ```sh
-/webdriverio/build/lib/utils/BaseReporter.js:336
-    throw _iteratorError;
-    ^
-
-TypeError: Cannot read property 'trim' of undefined
-    at getTestStatus 
-    (/node_modules/wdio-allure-reporter/build/reporter.js:68:41)aExecution of 1 spec
- files started at 2020-07-24T23:11:23.203Z
+Execution of 1 spec files started at 2020-07-24T23:11:23.203Z
 
 2020-07-24T23:11:23.231Z INFO @wdio/cli:launcher: Run onPrepare hook
 Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/br
@@ -404,7 +399,7 @@ ChromeDriver was started successfully.
 Spec Files:  1 passed, 1 total (100% completed) in 00:00:05
 ```
 
-As you see, the page title and URL are logged out. Looks like the site functions as hoped and our test passes!
+As you see, the page title and URL are logged out and correct. Looks like the site functions as hoped and our test is successful!
 
 ## 2.1.6 Adding Assertions
 
@@ -419,18 +414,18 @@ We can update our test to "throw" an error if the values we're looking for aren'
 Let's take that first log message. Replacing it, we want to assert that the title is `Conduit`. A simple `if` statement will do the trick:
 
 ```js
-if (browser.getTitle() !== 'Conduit') {
+if (await browser.getTitle() !== 'Conduit') {
     // throw an error explaining what went wrong
     throw new Error('Title of the homepage should be "Conduit"');
 }
 ```
 
-Now if the title isn't what we're looking for, it'll jump into the if statement and we can do our dirty work throwing an error. In JavaScript, we do that by saying `throw new Error('My error message')`. You can see the custom error message I include in the previous example.
+Now if the title isn't what we're looking for, it'll jump into the if statement and we can do our dirty work throwing an error. In JavaScript, we do that by saying `throw new Error('My error message')`. You can see I used a custom error message in our code.
 
 Let's make the update for our `getUrl` call as well:
 
 ```js
-if (browser.getUrl() !== 'http://localhost:8080/login') {
+if (await browser.getUrl() !== 'http://localhost:8080/login') {
     throw new Error('URL of "login" page should be correct');
 }
 ```
@@ -439,21 +434,21 @@ Here's the entirety of our updated test:
 
 ```js
 describe('Homepage', function () {
-    it('should load properly', function () {
+    it('should load properly', async function () {
         // load the page
-        browser.url('./');
+        await browser.url('./');
 
         // Get the title of the homepage, should be 'Conduit'
-        if (browser.getTitle() !== 'Conduit') {
+        if (await browser.getTitle() !== 'Conduit') {
             // throw an error explaining what went wrong
             throw new Error('Title of the homepage should be "Conduit"');
         }
 
         // Click the 'Sign in' navigation link
-        $('=Sign in').click();
+        await $('=Sign in').click();
 
         // Get the URL of the sign in page. It should include 'login'
-        if (browser.getUrl() !== 'http://localhost:8080/login') {
+        if (await browser.getUrl() !== 'http://localhost:8080/login') {
             throw new Error('URL of "login" page should be correct');
         }
     });
@@ -462,18 +457,19 @@ describe('Homepage', function () {
 
 %% > Code diff since last exercise: https://github.com/klamping/wdio-book-examples/commit/0eb4834866d27852d6161d6c74b6fc3f171c3640
 
-If we were to run our tests again, the only difference we'd see is that it no longer logs out those two messages (assuming the site didn't break in the time between our test runs). So how do we know our `if` conditions work? Well, say we changed one of the `if` conditions to no longer match the site values (e.g., `if (browser.getTitle() !== 'The wrong title') {` and ran the test again, you'd see the following message:
+If we were to run our tests again, the only difference we'd see is that it no longer logs out those two messages (assuming the site didn't break in the time between our test runs). So how do we know our `if` conditions work? Well, say we changed one of the `if` conditions to no longer match the site values (e.g., `if (await browser.getTitle() !== 'The wrong title') {` and ran the test again, you'd see the following message:
 
 ```sh
 [0-0] RUNNING in chrome - /test/specs/navigation.js
 [0-0] Error in "Homepage should load properly"
-Title of the homepage should be "Conduit"
+Error: Title of the homepage should be "Conduit"
+    at Context.<anonymous> (/test/specs/navigation.js:9:19)
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
 [0-0] FAILED in chrome - /test/specs/navigation.js
 
  "spec" Reporter:
 ------------------------------------------------------------------
-[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs
-/navigation.js
+[chrome 84.0.4147.89 mac os x #0-0] Spec: /test/specs/navigation.js
 [chrome 84.0.4147.89 mac os x #0-0] Running: chrome (v84.0.4147.89) on mac os x
 [chrome 84.0.4147.89 mac os x #0-0] Session ID: f237a09f87b12748ed7ef7e3ac862554
 [chrome 84.0.4147.89 mac os x #0-0]
@@ -486,8 +482,8 @@ Title of the homepage should be "Conduit"
 [chrome 84.0.4147.89 mac os x #0-0] Title of the homepage should be "Conduit"
 [chrome 84.0.4147.89 mac os x #0-0] Error: Title of the homepage should be "Conduit"
 
-[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/Users/klamping/wdio
--testrunner/test/specs/navigation.js:9:19)
+[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/test/specs/
+navigation.js:9:19)
 ```
 
 Now our test fails because it didn't get what it was expecting. We no longer need to check the log messages, having added a little more automation in our tests.
@@ -519,7 +515,7 @@ assert.notStrictEqual(myValue, 'b'); // You can check that it doesn't equal some
 We want to validate that the page title is a specific string of text. To do this, we use `assert.strictEqual` and pass in the actual value and then the expected value. The actual value is the result of the `getTitle` call and the expected value is a simple string of text containing our page title.
 
 ```js
-assert.strictEqual(browser.getTitle(), 'Conduit');
+assert.strictEqual(await browser.getTitle(), 'Conduit');
 ```
 
 Now if our test fails, it will look like:
@@ -536,8 +532,7 @@ Expected values to be strictly equal:
 
  "spec" Reporter:
 ------------------------------------------------------------------
-[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs
-/navigation.js
+[chrome 84.0.4147.89 mac os x #0-0] Spec: /test/specs/navigation.js
 [chrome 84.0.4147.89 mac os x #0-0] Running: chrome (v84.0.4147.89) on mac os x
 [chrome 84.0.4147.89 mac os x #0-0] Session ID: 1adcc0cea040b954eb9722daa2b8f49b
 [chrome 84.0.4147.89 mac os x #0-0]
@@ -558,8 +553,8 @@ to be strictly equal:
 [chrome 84.0.4147.89 mac os x #0-0]
 [chrome 84.0.4147.89 mac os x #0-0] + 'Conduit'
 [chrome 84.0.4147.89 mac os x #0-0] - 'The Wrong Title'
-[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/Users/klamping/wdio
--testrunner/test/specs/navigation.js:15:16)
+[chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> (/test/specs/
+navigation.js:15:16)
 ```
 
 Not only is the assertion a little less code to write, it's actually a more helpful message in that it provides the expected and actual values. Assuming we've updated our second check as well, here's what our test now looks like:
@@ -568,18 +563,18 @@ Not only is the assertion a little less code to write, it's actually a more help
 const assert = require('assert');
 
 describe('Homepage', function () {
-    it('should load properly', function () {
+    it('should load properly', async function () {
         // load the page
-        browser.url('./');
+        await browser.url('./');
 
         // Get the title of the homepage, should be 'Conduit'
-        assert.strictEqual(browser.getTitle(), 'Conduit');
+        assert.strictEqual(await browser.getTitle(), 'Conduit');
 
         // Click the 'Sign in' navigation link
-        $('=Sign in').click();
+        await $('=Sign in').click();
 
         // Get the URL of the sign in page. It should include 'login'
-        assert.strictEqual(browser.getUrl(), 'http://localhost:8080/login');
+        assert.strictEqual(await browser.getUrl(), 'http://localhost:8080/login');
     });
 });
 ```
@@ -593,15 +588,15 @@ One of the valuable additions of the Version 6 upgrade includes the bundling of 
 It's similar to how Node's `assert` library works, but the syntax is a bit different. For example, take the assertions we just looked at:
 
 ```js
-assert.strictEqual(browser.getTitle(), 'Conduit');
-assert.strictEqual(browser.getUrl(), 'http://localhost:8080/login');
+assert.strictEqual(await browser.getTitle(), 'Conduit');
+assert.strictEqual(await browser.getUrl(), 'http://localhost:8080/login');
 ```
 
 With the `expect-webdriverio` library, they can be changed to:
 
 ```js
-expect(browser).toHaveTitle('Conduit');
-expect(browser).toHaveUrl('http://localhost:8080/login');
+await expect(browser).toHaveTitle('Conduit');
+await expect(browser).toHaveUrl('http://localhost:8080/login');
 ```
 
 Can you tell why I like this format? To me, it's more sentence-like compared to the assert code: We expect the `browser` to have a title of 'Conduit'. I like when my tests read more like specifications and less like code.
@@ -610,18 +605,18 @@ We also don't need to load any libaries, as it's included in the base WebdriverI
 
 ```js
 describe('Homepage', function () {
-    it('should load properly', function () {
+    it('should load properly', async function () {
         // load the page
-        browser.url('./');
+        await browser.url('./');
 
         // Get the title of the homepage, should be 'Conduit'
-        expect(browser).toHaveTitle('Conduit');
+        await expect(browser).toHaveTitle('Conduit');
 
         // Click the 'Sign in' navigation link
-        $('=Sign in').click();
+        await $('=Sign in').click();
 
         // Get the URL of the sign in page. It should include 'login'
-        expect(browser).toHaveUrl('http://localhost:8080/login');
+        await expect(browser).toHaveUrl('http://localhost:8080/login');
     });
 });
 ```
@@ -634,7 +629,7 @@ And while functionally it's much the same, there are a few features that are wor
 
 By "better error messages", let's compare the "failure" output if our title was incorrect:
 
-Using `assert.strictEqual(browser.getTitle(), 'Conduit')`:
+Using `assert.strictEqual(await browser.getTitle(), 'Conduit')`:
 
 ```sh
 [chrome 83.0.4103.106 mac os x #0-0] Input A expected to strictly equal input B:
@@ -644,7 +639,7 @@ Using `assert.strictEqual(browser.getTitle(), 'Conduit')`:
 + 'Conduit'
 ```
 
-It's helpful, but let's see what it looks like with `expect(browser).toHaveTitle('Conduit')`:
+It's helpful, but let's see what it looks like with `await expect(browser).toHaveTitle('Conduit')`:
 
 ```sh
 [chrome 83.0.4103.106 mac os x #0-0] Expect window to have title
@@ -658,7 +653,7 @@ Received: "Incorrect Page Title"
 (/Users/klamping/Sites/wdio/test/specs/home.js:5:25)
 ```
 
-Now our message provides not just what the two conflicting values are, but where they came from (the window title). Small improvements like this can really help speed along debugging efforts, as you're able to more quickly understand what is failing. You don't have to look through the code to understand that it's the page title that's wrong.
+Now our message provides not just what the two conflicting values are, but where they came from (the window title). Small improvements like this can really help speed along debugging efforts, as you're more quickly able to understand what's failing. You don't have to look through the code to understand that it's the page title that's wrong.
 
 I also mentioned that the 'expect' functionality adds "automatic retries". It will automatically retry the assertion multiple times (assuming it's failing), which helps if the page isn't quite ready for the test yet. While this likely won't be helpful for checking the page title, it can be very valuable for asserting that page elements exist (or don't).
 
@@ -672,27 +667,28 @@ Looking at the second assertion, it's limited in its flexibility. In it, we vali
 
 We want the test to pass no matter the domain name (since we could be testing this same site on any number of different domains). Right now, with our `toHaveUrl` assertion, it will only pass if we're testing the `http://localhost:8080` site.
 
-Thankfully, there are options. Literally. [The `expect-webdriverio` additions comes with many options](https://webdriver.io/docs/api/expect.html#matcher-options) to customize our assertions. 
+Thankfully, there are options. Literally. [The `expect-webdriverio` assertions comes with many options](https://webdriver.io/docs/api/expect-webdriverio#matcher-options) to customize our checks. 
 
-For our needs, we can pass a `containing` boolean to tell it to "expect actual value to contain expected value". All options are passed in as an object after our expected value. For our URL check, that will be: `expect(browser).toHaveUrl('/login', { containing: true });`. Notice that we don't have to define every option available, only those we want to customize. 
-There are several other options avialable that you'll want to be aware of. Again, check out [the documention](https://webdriver.io/docs/api/expect.html#matcher-options) for more information.
+For our needs, we can pass a `containing` boolean to tell it to "expect actual value to contain expected value". All options are passed in as an object after our expected value. For our URL check, that will be: `await expect(browser).toHaveUrl('/login', { containing: true });`. Notice that we don't have to define every option available, only those we want to customize. 
+
+There are several other options available that you'll want to be aware of. Again, check out [the documention](https://webdriver.io/docs/api/expect-webdriverio#matcher-options) for more information.
 
 Here's the fully updated file:
 
 ```js
 describe('Homepage', function () {
-    it('should load properly', function () {
+    it('should load properly', async function () {
         // load the page
-        browser.url('./');
+        await browser.url('./');
 
         // Get the title of the homepage, should be 'Conduit'
-        expect(browser).toHaveTitle('Conduit');
+        await expect(browser).toHaveTitle('Conduit');
 
         // Click the 'Sign in' navigation link
-        $('=Sign in').click();
+        await $('=Sign in').click();
 
         // Get the URL of the sign in page. It should include 'login'
-        expect(browser).toHaveUrl('/login', { containing: true });
+        await expect(browser).toHaveUrl('/login', { containing: true });
     });
 });
 ```
@@ -710,8 +706,7 @@ Received: "http://localhost:8080/login"
 
  "spec" Reporter:
 ------------------------------------------------------------------
-[chrome 84.0.4147.89 mac os x #0-0] Spec: /Users/klamping/wdio-testrunner/test/specs
-/navigation.js
+[chrome 84.0.4147.89 mac os x #0-0] Spec: /test/specs/navigation.js
 [chrome 84.0.4147.89 mac os x #0-0] Running: chrome (v84.0.4147.89) on mac os x
 [chrome 84.0.4147.89 mac os x #0-0] Session ID: 401a1cda9409618a995325421823eae4
 [chrome 84.0.4147.89 mac os x #0-0]
@@ -730,7 +725,7 @@ Received: "http://localhost:8080/login"
 [chrome 84.0.4147.89 mac os x #0-0] Expected: "/other-login"
 [chrome 84.0.4147.89 mac os x #0-0] Received: "http://localhost:8080/login"
 [chrome 84.0.4147.89 mac os x #0-0]     at Context.<anonymous> 
-(/Users/klamping/wdio-testrunner/test/specs/navigation.js:13:25)
+(/test/specs/navigation.js:13:25)
 
 Spec Files:  0 passed, 1 failed, 1 total (100% completed) in 00:00:14
 ```
@@ -738,22 +733,24 @@ Spec Files:  0 passed, 1 failed, 1 total (100% completed) in 00:00:14
 One final note for now on this. Aside from the WebdriverIO specific assertions `expect-webdriverio` adds, you also gain access to the [built-in ExpectJS assertions](https://jestjs.io/docs/en/expect). Some example assertions are:
 
 ```js
-expect(browser.getUrl()).toEqual('https://jestjs.io/docs/en/expect'); 
+expect(await browser.getUrl()).toEqual('https://jestjs.io/docs/expect');
 // compared to
-expect(browser).toHaveUrl('https://jestjs.io/docs/en/expect'); 
+await expect(browser).toHaveUrl('https://jestjs.io/docs/expect');
 
 // Check that there are exactly five links on the page
-const links = $$('a');
+const links = await $$('a');
 expect(links).toHaveLength(5);
 ```
+
+Note that the `await` keyword is in different locations when using the `browser.getUrl` command directly, compared to using the `toHaveUrl` WebdriverIO assertion. 
 
 We also can use the `.not` switch to flip our assertion:
 
 ```js
-expect(browser).not.toHaveUrl('https://jestjs.io/docs/en/expect'); 
+await expect(browser).not.toHaveUrl('https://jestjs.io/docs/en/expect'); 
 
 // Check that there are not exactly five links on the page
-const links = $$('a');
+const links = await $$('a');
 expect(links).not.toHaveLength(5);
 ```
 
@@ -769,4 +766,4 @@ Next up, we'll look in-depth at a plethora of element selectors, along with how 
 
 Over the following chapters, I'll include a "Chapter Challenge" at the end of each of them. This is a challenge for you to tackle on your own if you're interested. Brief explanations and my recommended answer (but not necessarily the only answer) are in Chapter 3.0 near the end of this book.
 
-For your first challenge, in your existing test, add a check that validates that when you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.
+For your first challenge, in your existing test, add a check that validates that when on the login page, if you click on the "Conduit" logo in the top left of the site, it returns you to the homepage.

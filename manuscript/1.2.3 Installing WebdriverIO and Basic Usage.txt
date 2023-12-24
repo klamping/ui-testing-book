@@ -1,6 +1,6 @@
 ## 1.2.3 Installing WebdriverIO and Basic Usage
 
-The time has finally come! We've laid all the groundwork to understand the nuts and bolts behind UI testing. Now it's time to do some!
+The time has finally come! We've laid all the groundwork to understand the nuts and bolts behind UI testing. Now it's time to write some tests!
 
 To start off, we're going to create a new folder for our first example. In a directory of your choice, make a new folder called `wdio-standalone`:
 
@@ -14,7 +14,7 @@ Well, WebdriverIO allows you to use it through two modes. The first, which we're
 
 "Testrunner" mode, which we'll cover in the next section, is a bit more complicated. It provides an entire set of tools and hooks for full-fledged integration testing. I mentioned that standalone mode allows you to build wrappers around it. Well, the testrunner is essentially that.
 
-Right now, just to introduce you to WebdriverIO, we're going to use the standalone runner. This is only for this exercise though, and we'll be upgrading to the testrunner soon.
+Right now, just to introduce you to WebdriverIO, we're going to use the standalone runner. This is only for this exercise though, as we'll be upgrading to the testrunner soon.
 
 With all that said, let's 'move' our terminal into this `wdio-standalone` folder:
 
@@ -46,7 +46,7 @@ Now is a good time to mention that WebdriverIO is split into multiple NPM packag
 
 What it does give us is a Node.js module that we can use inside of a Node.js file. Let's use that.
 
-First, we'll create a new file called 'test.js`:
+First, we'll create a new file called 'test.js':
 
 ```sh
 touch test.js
@@ -58,7 +58,7 @@ On Windows, that command is:
 type nul > test.js
 ```
 
-Now we have a file to add our first test to. Go ahead and open that file up in the text editor of your choice.
+Now we have an empty file to add our first test to. Go ahead and open that file up in the text editor of your choice.
 
 Next, we'll copy the example given on the official WebdriverIO website. Throw the following code into your `test.js` file and save it:
 
@@ -68,18 +68,24 @@ const { remote } = require('webdriverio');
 
 (async () => {
     const browser = await remote({
+        logLevel: 'trace',
         capabilities: {
             browserName: 'chrome'
         }
-    });
+    })
 
-    await browser.url('https://webdriver.io');
+    await browser.url('https://duckduckgo.com')
 
-    const title = await browser.getTitle();
-    console.log('Title was: ' + title);
+    const inputElem = await browser.$('#search_form_input_homepage')
+    await inputElem.setValue('WebdriverIO')
 
-    await browser.deleteSession();
-})().catch((e) => console.error(e));
+    const submitBtn = await browser.$('#search_button_homepage')
+    await submitBtn.click()
+
+    console.log(await browser.getTitle()) // outputs: "Title is: WebdriverIO (Software) at DuckDuckGo"
+
+    await browser.deleteSession()
+})().catch((e) => console.error(e))
 ```
 
 Here's a quick overview of the file:
@@ -87,21 +93,28 @@ Here's a quick overview of the file:
 1. We load the `remote` object from the WebdriverIO package.
 2. We wrap our code in an `async` function so we can use `await` statements.
 3. We create a new session using `remote`, saving the reference to a `browser` object which we use to send commands.
-4. We send a `url` command, requesting the browser go to the WebdriverIO website.
-5. We then get the title of the page, storing it as a local variable.
-6. The title of the page is logged to the terminal.
+4. We send a `url` command, requesting the browser go to the DuckDuckGo website.
+5. We then get an 'element reference' to the search input textbox.
+6. We use that element to call as `setValue` command, which enters 'WebdriverIO' into the textbox.
+7. We get a second element, this time the 'Search' button.
+8. We trigger a mouse click action on that button.
+9. We then get the title of the page, logging it to the terminal
 7. The session is ended, since we're done with our test.
-8. A simple catch statement is added in case anything goes wrong.
+8. A simple catch hook is added in case anything goes wrong.
 
 Okay, that's what it does; let's run it to see it in action.
 
-To do that, we need to have a browser available to running. This can be through the built-in support from a Chrome install, through a specific browser driver, or through Selenium server. 
+To do that, we need to have a browser available to run in. This can be done via:
 
-In "Browsers and 'Driving' Them", I detailed Chrome DevTools, along with how to install and run ChromeDriver and the selenium-standalone NPM package. Now let's put that knowledge to use.
+- The built-in support from a Chrome install using the Chrome DevTools protocol
+- A specific browser driver, in this case ChromeDriver
+- A Selenium server
+
+In "Browsers and 'Driving' Them", we covered each of these options. We looked at Chrome DevTools, how to install and run ChromeDriver, and how to install and use the 'selenium-standalone' NPM package. Now let's put that knowledge to use.
 
 ### Running Through Chrome DevTools
 
-So long as you have Chrome (or a Blink-based browser installed), there's really nothing you need to do here for installation/start-up. All you need to do is run your test file through the node CLI. We do that by telling Node.js to execute our test file. That command looks like:
+So long as you have Chrome (or a Blink-based browser installed), there's really nothing you need to do here for installation/start-up. All you need to do is run your test file through the Node CLI. We do that by telling Node.js to execute our test file. That command looks like:
 
 ```sh
 node test.js
@@ -109,35 +122,13 @@ node test.js
 
 After a second, you should see a Chrome browser pop-up for a moment, and some similar output in your terminal:
 
-```sh
-2020-07-24T21:03:30.968Z INFO webdriverio: Initiate new session using the
-devtools protocol 2020-07-24T21:03:30.974Z INFO devtools: Launch Google Chrome
-with flags: --disable-extensions --disable-background-networking
---disable-background-timer-throttling --disable-backgrounding-occluded-windows
---disable-sync --metrics-recording-only --disable-default-apps --mute-audio
---no-first-run --disable-hang-monitor --disable-prompt-on-repost
---disable-client-side-phishing-detection --password-store=basic
---use-mock-keychain --disable-component-extensions-with-background-pages
---disable-breakpad --disable-dev-shm-usage --disable-ipc-flooding-protection
---disable-renderer-backgrounding
---enable-features=NetworkService,NetworkServiceInProcess
---disable-features=site-per-process,TranslateUI,BlinkGenPropertyTrees
---window-position=0,0 --window-size=1200,900 2020-07-24T21:03:31.535Z INFO
-devtools: Connect Puppeteer with browser on port 50210 2020-07-24T21:03:32.772Z
-INFO devtools: COMMAND navigateTo("https://webdriver.io/")
-2020-07-24T21:03:35.366Z INFO devtools: RESULT null 2020-07-24T21:03:35.373Z
-INFO devtools: COMMAND getTitle() 2020-07-24T21:03:35.377Z INFO devtools: RESULT
-WebdriverIO · Next-gen browser and mobile automation test framework for Node.js
-Title was: WebdriverIO · Next-gen browser and mobile automation test framework
-for Node.js 2020-07-24T21:03:35.380Z INFO devtools: COMMAND deleteSession()
-2020-07-24T21:03:35.382Z INFO devtools: RESULT null
-```
+![Terminal Output showing Chrome DevTools test execution](images/8E8F75880F7AEAC50B90EFF411272620.jpg)
 
 Congrats, you've just run your first WebdriverIO test!
 
 Notice that the first line says "Initiate new session using the devtools protocol". That will change depending on which protocol you use. 
 
-If you choose to go with the DevTools protocol, support for the various commands does differ from WebDriver. While in general everything is supported the same, there are still differences which can cause hiccups along the way. The book is written with support for the WebDriver protocol, so if you choose to stick with the DevTools protocol, expect some differences.
+If you choose to go with the DevTools protocol, support for the various commands does differ from WebDriver. While in general everything is supported the same, there are still differences which can cause hiccups along the way. The examples in this book are written using the WebDriver protocol, so if you choose to stick with the DevTools protocol, expect some differences.
 
 Now let's look at running via ChromeDriver.
     
@@ -153,48 +144,45 @@ So, we can either override the WebdriverIO defaults, or tell our ChromeDriver se
 
 It's most useful to see how to overwrite the WebdriverIO defaults, so let's do that next. If you are interested, you can do the latter by running `chromedriver --port=4444` when starting the ChromeDriver server.
 
-Back in your `test.js` file, take a look at lines 4-8:
+Back in your `test.js` file, take a look at lines 4-9:
 
 ```js
 const browser = await remote({
+    logLevel: 'trace',
     capabilities: {
         browserName: 'chrome'
     }
-});
+})
 ```
 
 What we're doing here is creating a new `remote` WebDriver session and telling it that we want to open up the 'chrome' browser. We'll get into capabilities at a later point, so don't worry too much about it right now.
 
-What we will worry about is how to customize that 'remote' session to use post 9515 instead of the default 4444.
+What we will worry about is how to customize that 'remote' session to use port 9515 instead of the default 4444.
 
-Along with customizing the `capabilities`, there are a number of other options available to us. [The official documentation](https://webdriver.io/docs/options.html#webdriver-options) gives the entire list, but there are three options that we're going to change:
-
-**hostname**
-Host of your driver server.
-Type: String
-Default: localhost
+When creating a new remote session, along with the ability to customize the browser `capabilities`, there are a number of other options available to us. [The official documentation](https://webdriver.io/docs/options.html#webdriver-options) gives the entire list, but we're going to focus on two specific options:
 
 **port**
 Port your driver server is on.
-Type: Number
-Default: 4444
+Type: `Number`
+Default: `4444`
 
 **path**
 Path to driver server endpoint.
-Type: String
-Default: /wd/hub
+Type: `String`
+Default: `/`
 
-We're only going to be looking at the `port` option right now, but I wanted to mention all three as they're related and important to know about (which we'll see when we get to the Selenium Standalone instructions.)
+We're only going to be looking at the `port` option right now, but I wanted to mention both as they're related and important to know about (which we'll see when we get to the Selenium Standalone instructions.)
 
 So to use a custom port, we pass it in as an option to the `remote` function:
 
 ```js
 const browser = await remote({
     port: 9515,
+    logLevel: 'trace',
     capabilities: {
         browserName: 'chrome'
     }
-});
+})
 ```
 
 Note that it's a number, not a string (i.e., `9515` versus `'9515'`). If you try using a string, you will get an error of `Error: Expected option "port" to be type of number but was string`. 
@@ -228,6 +216,8 @@ http://localhost:9515/session/8c1bfcbb0617b87676343fe9c658fc93
 
 While there are a few differences from before, the important one is the first line. See how it says it's using the WebDriver protocol? That's how we can know things are working as we want. 
 
+If it still mentioned that it was using the DevTools protocol, then we wouldn't actually be using ChromeDriver, as WebdriverIO is falling back using the Chrome DevTools installation. If that's the case, make sure you have your port information correct and the file saved.
+
 ### Running Through Selenium Standalone
 
 _Note: Selenium Standalone is **not** the same thing as WebdriverIO Standalone mode. They simply share the same name to describe their "independent" nature._
@@ -253,10 +243,11 @@ To use Selenium, we'll need to update that path setting to match where Selenium 
 ```js
 const browser = await remote({
     path: '/wd/hub',
+    logLevel: 'trace',
     capabilities: {
         browserName: 'chrome'
     }
-});
+})
 ```
 
 Running our test once more with `node test.js`, you should see similar output:
@@ -290,7 +281,7 @@ or Node.js
 
 Again, line one shows that we're using the WebDriver protocol. And notice on line two that it posts to `http://localhost:4444/wd/hub/session`, using the path we provided.
 
-If you instead of all that output you see an error that includes `RequestError: connect ECONNREFUSED 127.0.0.1:4444`, this means your Selenium server wasn't running. Start it back up and try again. 
+If instead of that output you see an error that includes `RequestError: connect ECONNREFUSED 127.0.0.1:4444`, this means your Selenium server wasn't running. Start it back up and try again. 
 
 ### Leaving It at That
 

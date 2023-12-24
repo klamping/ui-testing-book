@@ -4,7 +4,7 @@ Now that we've created and reviewed our configuration file, it's time to write a
 
 Since this is the first time we're creating a test, we need to create our folders for the test files to go into.
 
-During setup, we defined out specs path as `./test/specs/**/*.js`. But we don't have a test folder, nor a specs folder inside it.
+During setup, we defined our specs path as `./test/specs/**/*.js`. But we don't have a test folder, nor a specs folder inside it.
 
 Let's create those folders by running the following command from our `wdio-testrunner` project path:
 
@@ -24,98 +24,103 @@ That will create both folders for us. Now we can create our first test file:
 touch ./test/specs/example.js
 ```
 
-On Windows, `touch` will not work, so you can instead go to the `test/specs/` folder and create a JavaScript file named 'example.js'
+On Windows, the `touch` command isn't available, so you can instead go to the `test/specs/` folder in Windows File Explorer and create a JavaScript file named 'example.js'.
 
-Open that file in a text editor and paste in the example from the official WebdriverIO website:
+Open that file in a text editor and paste in the example test from [the Webdriver.io site](https://webdriver.io/docs/setuptypes#the-wdio-testrunner):
 
 {title="test/specs/example.js"}
 ```js
-describe('webdriver.io page', () => {
-    it('should have the right title', () => {
-        browser.url('https://webdriver.io');
-        expect(browser).toHaveTitle(
-            'WebdriverIO · Next-gen browser and mobile automation test \
-framework for Node.js'
-        );
-    });
-});
+describe('DuckDuckGo search', () => {
+    it('searches for WebdriverIO', async () => {
+        await browser.url('https://duckduckgo.com/')
+
+        await $('#search_form_input_homepage').setValue('WebdriverIO')
+        await $('#search_button_homepage').click()
+
+        const title = await browser.getTitle()
+        console.log('Title is: ' + title)
+        // outputs: "Title is: WebdriverIO (Software) at DuckDuckGo"
+    })
+})
 ```
 
-There is one thing we want to change. Where it sets the `url`, we instead want to use the `baseUrl` we defined in our configuration file.
-
-So change `browser.url('https://webdriver.io');` to be `browser.url('./');`. When WebdriverIO runs that command, it will see that it isn't a full website URL, and prepend our `baseUrl` from the config file.
-
-Okay, let's save the file and try running the test.
+This test is very similar to the standalone test we ran earlier and we'll compare these two in just a minute. For now, let's save the file and try running the test.
 
 ### Running Through Chrome DevTools
 
-Since the Chrome Devtools protocol only requires a supported browser to be installed, if you have a browser like that already installed, you don't need to do anything else. Do check that if you selected `chromedriver` from the `services` list during the `wdio config` section, you go to your `wdio.conf.js` file and comment out the `services` line (this was chromedriver won't start up when running your test).
+During our setup, we specified that the `chromedriver` service be installed. We'll be using this service soon, but I want to show two other options we have available. This first is using the Chrome DevTools protocol.
 
-Now, to run the tests, we call the testrunner in our terminal:
+Before we use it, we need to disable the `chromedriver` service. Back in your config file, scroll down to the `services` option. Comment out the `services` line, then save the configuration. This will ensure that Chromedriver does not automatically start up when running our tests, and instead our tests will fall back to using Chrome DevTools.
+
+Since the Chrome DevTools protocol only requires a supported browser to be installed, you don't need to do anything else. So, to run the tests, we call the test runner in our terminal:
 
 ```sh
 npx wdio
 ```
 
-The test will run, you should see a browser pop-up, and successful test output that looks something like:
+This will start a WebdriverIO session to run our test. You should see a browser pop-up, and successful test output that looks something like:
 
 ![Terminal output running our test via Chrome DevTools protocol](images/AE340D40E83E7C1D84D07A0034DE5819.jpg)
 
-Again, notice the line `INFO webdriverio: Initiate new session using the devtools protocol`. That let's us know we really are using the DevTools protocol.
+Notice the line `INFO devtools:puppeteer: Initiate new session using the DevTools protocol` several lines down in the log. That lets us know we really are using the DevTools protocol. This is just like the output we saw when running through `devtools` for our standalone tests.
+
+Also, make note of the output that says `I am inside your configuration file, running your tests!`. Recall, we added a line to the top of our configuration file that used `console.log` to output this statement. That's where this message comes from. I use `console.log` quite often in my tests to help with debugging, as I can log out variable values and get a better sense for what parts of my tests are running at specific times. 
 
 ### Running via Selenium Standalone
 
-Assuming you selected the Selenium Standalone service during our config run-through (and have it enabled in your `services` section in your `wdio.conf.js` file, `services: ['selenium-standalone']`), we don't have to do anything to run our tests through Selenium Standalone. This is because the service takes care of starting and stopping our Selenium for us.
+The other option to mention is the Selenium Standalone service. Similar to how the Chromedriver service works, this service automatically starts and stops a Selenium Standalone server during our test run.
 
-The one thing we should check on is making sure the Selenium server we started up earlier isn't still running. Check your terminal windows to make sure this isn't the case (remember you can stop the server by sending the `ctrl-c` key command).
+First, check that the Selenium server we started up for the standalone test isn't still running. Jump through your terminal windows to make sure this isn't the case (remember you can stop the server by sending the `ctrl-c` key command).
 
-You can also go to `http://localhost:4444/wd/hub` and make sure it returns a "site can't be reached" error. 
+You can also go to `http://localhost:4444/wd/hub` and make sure it returns a "site can't be reached" error. This lets us know that Selenium Standalone isn't running there.
 
-Okay, with that out of the way, let's run our tests by calling the WDIO testrunner inside our terminal: 
-
-```sh
-npx wdio
-```
-
-Like before, after a few moments, test output will start appearing. You'll probably see a browser window pop up. Just let it sit there and do it's thing (this can make for a neat magic trick for someone unfamiliar with automation).
-
-The test will take a few seconds to run, then shut everything down. Once finished, it'll print out the final results, something like:
-
-![Terminal output running our test via Selenium Standalone](images/39A9220512B697E18CB4AE724B3A8C08.jpg)
-
-And remember, our `selenium-standalone` service took care of shutting down the server it started, so we don't have to do anything. 
-
-If you want to try this out, but didn't select the `selenium-standalone` service during the config steps, you can manually install the package by running:
+Next, if you didn't select the `selenium-standalone` service during the config steps, you need to manually install the package by running:
 
 ```sh
 npm install @wdio/selenium-standalone-service
 ```
 
-Then add it to your `services` array and give it a shot. 
+Once that's installed, add it to your `services` array in your `wdio.conf.js` file:
+
+```
+services: ['selenium-standalone'],
+```
+
+If you recall when we used the Selenium Standalone server in our standalone test, we needed to specify a custom `path` endpoint (i.e., `path: '/wd/hub'`).  The service takes care of configuring that for us, so we don't need to set that in our config. Pretty handy!
+
+Let's run our tests by calling the WDIO testrunner inside our terminal:
+
+```sh
+npx wdio
+```
+
+Like before, after a few moments, test output will start appearing. You'll probably see a browser window pop up. Just let it sit there and do its thing (this can make for a neat magic trick for someone unfamiliar with automation).
+
+The test will take a few seconds to run, then shut everything down. Once finished, it'll print out the final results, something like:
+
+![Terminal output running our test via Selenium Standalone](images/39A9220512B697E18CB4AE724B3A8C08.jpg)
+
+And remember, our `selenium-standalone` service took care of shutting down the server it started, so we don't have to do anything extra. 
 
 ### Running with ChromeDriver
 
-ChromeDriver also comes with its own WebdriverIO service, allowing us to automatically start and stop a `chromedriver` server during our test run. 
+Now let's try running our test with the Chromedriver service we selected during our config setup.
 
 If you didn't select `chromedriver` from the `services` list during the config, installation and usage is much like `selenium-standalone`, beginning with our NPM install step.
 
-You'll need to install two packages:
+You'll need to install two packages this time though. Again, you only need to do this if you didn't select `chromedriver` in the `services` options during the config wizard. Otherwise, you can skip this installation step.
 
 ```sh
 npm install wdio-chromedriver-service chromedriver
 ```
 
-Even though, in an earlier example, we installed the `chromedriver` package globally, we're installing it locally so that it's added to our package.json file. 
-
-Information on the packages we install locally automatically get saved to a `dependency` section of our package.json file by NPM. This gives us the ability to re-install any missing dependencies later on by running `npm install`. This is helpful if you want to load your project from scratch.
-
-With the installation done, we need to do two more things. Jump back into your `wdio.conf.js` file and skip down to the services section. Ensure that the only service defined is `chromedriver` (e.g., `services: ['chromedriver']`)
+With ChromeDriver and its service installed, let's make sure our configuration is correct. Back in the `services` section of our `wdio.conf.js` file, ensure that the only service defined is `chromedriver` (e.g., `services: ['chromedriver']`)
 
 As I've mentioned before, you don't want to have both `selenium-standalone` and `chromedriver` in your services at the same time as they would conflict with each other.
 
-With that done, let's talk about one more thing. You may recall during our first time using ChromeDriver that we had to update the `port` and `path` settings in our WebDriver session initialization. Well, to help us out, the ChromeDriver service configures this for us. Before you'd need to set this manually in your config, but now it's all handled in the service.
+You may recall during our first time using ChromeDriver that we had to update the `port` setting in our WebDriver session initialization. Again, like the Selenium Standalone service and its `path` setting, the ChromeDriver service configures the `port` setting for us.
 
-With that all set up, let's run our tests again with our `wdio` command:
+Let's run our tests again with our `wdio` command:
 
 ```sh
 npx wdio
@@ -125,21 +130,19 @@ The output should look almost identical to before:
 
 ![Terminal output running our test via ChromeDriver](images/295EF6EFD41A012957D8763159977669.jpg)
 
-Notice the line `INFO webdriver: [POST] http://localhost:9515/session`. See how the port is set to `9515`? That's the ChromeDriver service managing it all for us!
+Notice the line `INFO webdriver: [POST] http://localhost:9515/session`. See how the port is set to `9515`? That's the ChromeDriver service managing things for us!
 
-Whether you use ChromeDriver or Selenium Standalone is entirely up to you. The benefit of ChromeDriver is that you don't need to have Java installed to run, but the drawback is that you can only run your tests in Chrome. 
+Whether you use ChromeDriver or Selenium Standalone is entirely up to you. The benefit of ChromeDriver is that you don't need to have Java installed to run, but the drawback is that you can only run your tests in Chrome. Selenium Standalone, however, installs and manages all the browser drivers for you, so you're free to run most any browser installed on your computer.
 
-On the other hand, Selenium Standalone installs and manages all the browser drivers for you, so you're free to run most any browser installed on your computer.
+Personally I use either of them depending on the situation. I usually lean on ChromeDriver when starting out, as it's quicker to run. I'll switch to Selenium Standalone when I need to expand my browser coverage. This adaptability is very useful to getting the most out of the tests. 
 
-Personally I use either of them depending on the situation. I usually lean on ChromeDriver when starting out, as it's usually quicker to run, then switch to Selenium Standalone when I need to expand my browser coverage.
-
-For the rest of the book, we'll be using ChromeDriver going forward. 
-
-Now that we've got our test running, let's take some time to review the actual code.
+For our needs, ChromeDriver will work just fine. We'll be using it to run our examples for the rest of the book.
 
 ### Reviewing the Example Test Code
 
-Just for a quick comparison, below is the sample code for standalone mode versus running through the test runner:
+Now that we've got our test running, let's take some time to review the actual code.
+
+Just for a quick comparison, below is the sample code for standalone mode, versus our new test runner example:
 
 **Standalone:**
 
@@ -149,39 +152,48 @@ const { remote } = require('webdriverio');
 
 (async () => {
     const browser = await remote({
+        logLevel: 'trace',
         capabilities: {
             browserName: 'chrome'
         }
-    });
+    })
 
-    await browser.url('https://webdriver.io');
+    await browser.url('https://duckduckgo.com')
 
-    const title = await browser.getTitle();
-    console.log('Title was: ' + title);
+    const inputElem = await browser.$('#search_form_input_homepage')
+    await inputElem.setValue('WebdriverIO')
 
-    await browser.deleteSession();
-})().catch((e) => console.error(e));
+    const submitBtn = await browser.$('#search_button_homepage')
+    await submitBtn.click()
+
+    console.log(await browser.getTitle()) // outputs: "Title is: WebdriverIO (Software) at DuckDuckGo"
+
+    await browser.deleteSession()
+})().catch((e) => console.error(e))
 ```
 
 **Test Runner:**
 
 {title="test/specs/example.js"}
 ```js
-describe('webdriver.io page', () => {
-    it('should have the right title', () => {
-        browser.url('https://webdriver.io');
-        expect(browser).toHaveTitle(
-            'WebdriverIO · Next-gen browser and mobile automation test \
-framework for Node.js'
-        );
-    });
-});
+describe('DuckDuckGo search', () => {
+    it('searches for WebdriverIO', async () => {
+        await browser.url('https://duckduckgo.com/')
+
+        await $('#search_form_input_homepage').setValue('WebdriverIO')
+        await $('#search_button_homepage').click()
+
+        const title = await browser.getTitle()
+        console.log('Title is: ' + title)
+        // outputs: "Title is: WebdriverIO (Software) at DuckDuckGo"
+    })
+})
 ```
 
 Overall our test runner code is much more succinct. This is due to quite a few things:
 
+* **No need to import the WebdriverIO library**: The test runner imports and sets this up for us automatically
 * **No need for `remote` and setting up our `browser` object**: This is all done via the configuration file and test runner
-* **No need for `async` and `await` keywords**: By running our tests in `sync` mode, we no longer need to add all that extra code.
 * **No need to delete the session**: The test runner manages both creating and ending the sessions, so we don't manually have to do this.
 
 Those are all the things that have been removed, but there are a couple new bits added as well.
@@ -193,33 +205,35 @@ There are these `describe` and `it` function calls. They are part of the Mocha f
  
 There are usually multiple `it` functions nested inside each `describe`, and sometimes `describe` functions are nested inside each other for a better defined test hierarchy. 
 
-As you can see in our file, `describe` is called as a function, passing in two parameters.
+As you can see in our file, `describe` is called as a function, passing in two parameters. Here's a simpler example:
 
 ```js
 describe('name of test section', function () { });
 ```
 
-The first parameter is a name for the feature we are testing, in this case `'name of test section'`. The second half of our `describe` call is a function which contains all of the code we want to associate with this feature. 
+The first parameter is the name for the feature we are testing, in this case `'name of test section'`. The second half of our `describe` call is a function which contains all of the code we want to associate with this feature. 
 
 Inside this function we'll be adding the `it` call. Similar to `describe`, `it` is a function call that takes two parameters:
 
 ```js
-it('name of individual test', function () { });
+it('name of individual test', async function () { });
 ```
 
 - The first parameter is the name we give our test, in this case `'name of individual test'`. I like to begin my test case names with `should`, so that it reads `it('should do whatever'...`
-- The second parameter is a function which contains our browser commands and assertions.
+- The second parameter is a function which contains our browser commands and assertions. Note the `async` inclusion in the function definition, which allows us to use `await` keywords inside the function.
 
 To bring it all together, here's an example test file with just the structure in place:
 
 ```js
 describe('Login Page', function () {
-    it('should allow you to log in using valid credentials', function () {
+    it('should allow you to log in using valid credentials', async function () {
         // valid login code here
     });
-    it('should not allow you to log in using invalid credentials', function () {
+    it('should not allow you to log in using invalid credentials', async function () {
         // invalid login code here
     });
 });
 ```
+
+We'll talk about some more advanced features of these `describe` and `it` blocks in a later chapter, but this is a good stopping place for this one. Up next, let's talk about the various options available when running your tests through the command line.
 
