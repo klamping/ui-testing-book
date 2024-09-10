@@ -1,0 +1,194 @@
+{
+  "main": {
+    "id": "3b026b8403623b53",
+    "type": "split",
+    "children": [
+      {
+        "id": "d4484f4566130913",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d8345a333db0be5b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "manuscript/2.1 Site Loading and Navigation.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "2d422b90765980fa",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "manuscript/1.2.3 Installing WebdriverIO and Basic Usage.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "6cce48b4838ae4d7",
+    "type": "split",
+    "children": [
+      {
+        "id": "ce116dc536c5f98d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "aea6c541dc9e09ae",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "edece707d2e0f86a",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "cfa673d9cd6d17ba",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "d26cf5f55cf01c97",
+    "type": "split",
+    "children": [
+      {
+        "id": "65cafca56fef47e1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3fc2701614459fdb",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "manuscript/1.2.3 Installing WebdriverIO and Basic Usage.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "d2a89f0e99e09131",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "manuscript/1.2.3 Installing WebdriverIO and Basic Usage.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "9f32a4122c7c1ce9",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "87ed2f99d1dfd7b5",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "manuscript/1.2.3 Installing WebdriverIO and Basic Usage.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "2d422b90765980fa",
+  "lastOpenFiles": [
+    "manuscript/1.2.2 Browsers and Driving Them.md",
+    "manuscript/1.2.3 Installing WebdriverIO and Basic Usage.md",
+    "manuscript/1.2.1 Software Requirements.md",
+    "manuscript/1.2.4 Upgrading to the WebdriverIO Test Runner.md",
+    "Quick Start.md",
+    "manuscript/2.1 Site Loading and Navigation.md",
+    "manuscript/1.2.6 Running the Example Test Runner Test.md",
+    "manuscript/1.1.3 Technical Details.md",
+    "manuscript/1.1.2 Why Use WebdriverIO.md",
+    "manuscript/1.1.1 Why read this book.md",
+    "CHANGELOG.md",
+    "README.md",
+    "manuscript/Sample.txt",
+    "manuscript/Book.txt",
+    "manuscript/Book.md",
+    "manuscript/Sample.md",
+    "manuscript/3.1 Final Thoughts.md",
+    "manuscript/3.0 Chapter Challenge Code Solutions.md",
+    "manuscript/2.9 Generating Data for Testing via APIs.md",
+    "manuscript/2.8 Creating Page Components.md",
+    "manuscript/2.7 Managing User Sessions.md",
+    "manuscript/2.6 Testing Complex Inputs.md",
+    "manuscript/2.5 Sharing Common Page Object Functionality.md",
+    "manuscript/2.4 Custom Functions, Page Objects and Actions.md",
+    "manuscript/2.3 Testing the Login Page.md",
+    "manuscript/2.2 Selectors of Every Shape and Size.md",
+    "manuscript/2.0 A Real World App.md",
+    "manuscript/1.2.7 Command Line Options (and Logging).md",
+    "manuscript/resources"
+  ]
+}
